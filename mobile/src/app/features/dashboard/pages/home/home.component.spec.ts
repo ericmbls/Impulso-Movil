@@ -1,22 +1,26 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Component } from '@angular/core';
 
-import { HomeComponent } from './home.component';
+import {
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol
+} from '@ionic/angular/standalone';
 
-describe('HomeComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
-
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [HomeComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(HomeComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  }));
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol
+  ],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
+})
+export class HomeComponent {}

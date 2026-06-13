@@ -1,32 +1,90 @@
-<ion-content>
+<ion-content fullscreen>
 
-  <div class="dashboard">
+  <div class="dashboard-container">
 
-    <h1>Hola, Eric 👋</h1>
+    <div class="hero">
 
-    <p>Bienvenido al sistema IMPULSO</p>
+      <div class="hero-content">
+
+        <h1>Hola, Eric 👋</h1>
+
+        <p>6° A • Programación</p>
+
+      </div>
+
+    </div>
+
+    <div class="student-card">
+
+      <div class="student-info">
+
+        <span class="badge">
+          CBTIS 61
+        </span>
+
+        <h2>Eric Morales</h2>
+
+        <p>Programación</p>
+
+        <small>Turno Matutino</small>
+
+      </div>
+
+    </div>
 
     <div class="stats-grid">
 
-      <div class="stat-card">
-        <h2>1250</h2>
-        <span>Alumnos</span>
+      <app-stat-card
+        value="94%"
+        title="Asistencia"
+        subtitle="Último mes">
+      </app-stat-card>
+
+      <app-stat-card
+        value="9.2"
+        title="Promedio"
+        subtitle="Actual">
+      </app-stat-card>
+
+    </div>
+
+    <div class="section">
+
+      <h3>Accesos rápidos</h3>
+
+      <div class="actions-grid">
+
+        <app-quick-action-card
+          icon="📅"
+          title="Horario">
+        </app-quick-action-card>
+
+        <app-quick-action-card
+          icon="📊"
+          title="Calificaciones">
+        </app-quick-action-card>
+
+        <app-quick-action-card
+          icon="✅"
+          title="Asistencia">
+        </app-quick-action-card>
+
+        <app-quick-action-card
+          icon="🪪"
+          title="Credencial">
+        </app-quick-action-card>
+
       </div>
 
-      <div class="stat-card">
-        <h2>94%</h2>
-        <span>Asistencia</span>
-      </div>
+    </div>
 
-      <div class="stat-card">
-        <h2>38</h2>
-        <span>Alertas</span>
-      </div>
+    <div class="card">
 
-      <div class="stat-card">
-        <h2>9.1</h2>
-        <span>Promedio</span>
-      </div>
+      <h3>Próxima clase</h3>
+
+      <p>Programación Web</p>
+
+      <small>08:00 - 09:00</small>
 
     </div>
 

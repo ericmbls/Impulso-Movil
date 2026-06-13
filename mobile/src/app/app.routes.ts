@@ -15,10 +15,25 @@ export const routes: Routes = [
   },
 
   {
-    path: 'dashboard',
+    path: 'app',
     loadComponent: () =>
-      import('./features/dashboard/pages/home/home.component')
-        .then(m => m.HomeComponent),
+      import('./layouts/main-layout/main-layout.component')
+        .then(m => m.MainLayoutComponent),
+
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/pages/home/home.component')
+            .then(m => m.HomeComponent),
+      },
+    ],
   },
 
   {
