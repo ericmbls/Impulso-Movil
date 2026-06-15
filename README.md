@@ -21,17 +21,6 @@ IMPULSO centraliza el control académico, asistencia, seguimiento escolar, crede
 
 ---
 
-# 🏗️ Arquitectura General
-
-```text
-IMPULSO/
-├── mobile/             # Aplicación móvil Ionic
-│
-└── .gitignore
-```
-
----
-
 # 🚀 Tecnologías Utilizadas
 
 ## Mobile
@@ -105,10 +94,6 @@ mobile/
 * Node.js 22+
 * npm 10+
 * Git
-
-## Backend
-
-* PostgreSQL 14+
 
 ## Mobile
 
