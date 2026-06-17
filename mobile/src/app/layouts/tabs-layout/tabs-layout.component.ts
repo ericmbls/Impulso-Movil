@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import {
   IonTabs,
@@ -11,7 +10,6 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-
 import {
   homeOutline,
   calendarOutline,
@@ -24,7 +22,6 @@ import {
   selector: 'app-tabs-layout',
   standalone: true,
   imports: [
-    RouterLink,
     IonTabs,
     IonRouterOutlet,
     IonTabBar,
@@ -36,9 +33,7 @@ import {
   styleUrls: ['./tabs-layout.component.scss']
 })
 export class TabsLayoutComponent {
-
   constructor() {
-
     addIcons({
       homeOutline,
       calendarOutline,
@@ -46,7 +41,5 @@ export class TabsLayoutComponent {
       personOutline,
       menuOutline
     });
-
   }
-
 }

@@ -4,8 +4,6 @@ import { IonContent } from '@ionic/angular/standalone';
 import { StudentCardComponent } from '../../../../shared/components/dashboard/student-card/student-card.component';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { QuickActionCardComponent } from '../../../../shared/components/quick-action-card/quick-action-card.component';
-import { ClassCardComponent } from '../../../../shared/components/dashboard/class-card/class-card.component';
-import { AnnouncementCardComponent } from '../../../../shared/components/dashboard/announcement-card/announcement-card.component';
 
 @Component({
   selector: 'app-home',
@@ -14,11 +12,9 @@ import { AnnouncementCardComponent } from '../../../../shared/components/dashboa
     IonContent,
     StudentCardComponent,
     StatCardComponent,
-    QuickActionCardComponent,
-    ClassCardComponent,
-    AnnouncementCardComponent
+    QuickActionCardComponent
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {}

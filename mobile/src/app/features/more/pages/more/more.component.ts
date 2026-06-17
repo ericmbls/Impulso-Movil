@@ -1,15 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-more',
-  templateUrl: './more.component.html',
-  styleUrls: ['./more.component.scss'],
   standalone: true,
+  imports: [
+    IonContent
+  ],
+  templateUrl: './more.component.html',
+  styleUrls: ['./more.component.scss']
 })
-export class MoreComponent  implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {}
-
-}
+export class MoreComponent {}
