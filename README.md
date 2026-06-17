@@ -1,23 +1,26 @@
 # 🏫 IMPULSO - Sistema Integral de Gestión Académica CBTIS 61
 
-Sistema integral de gestión académica desarrollado para el **Centro de Bachillerato Tecnológico Industrial y de Servicios No. 61 (CBTIS 61)**.
+**IMPULSO** es una plataforma integral de gestión académica desarrollada para el **Centro de Bachillerato Tecnológico Industrial y de Servicios No. 61 (CBTIS 61)**.
 
-IMPULSO centraliza el control académico, asistencia, seguimiento escolar, credenciales digitales y comunicación institucional mediante una plataforma moderna compuesta por backend, frontend web y aplicación móvil.
+Su objetivo es centralizar y modernizar los procesos académicos e institucionales mediante una solución tecnológica compuesta por una aplicación móvil, servicios backend y herramientas de administración, permitiendo una gestión eficiente de la información escolar.
 
+---
 
+# 📱 Aplicación Móvil
 
+Desarrollada con **Ionic, Angular y Capacitor**, la aplicación móvil ofrece acceso seguro y en tiempo real a la información académica para alumnos, docentes, padres de familia y administradores.
 
-## 📱 Aplicación Móvil (Ionic + Angular + Capacitor)
+## Funcionalidades Principales
 
-* ✅ Inicio de Sesión Seguro
-* ✅ Credencial Digital Institucional
-* ✅ Consulta de Horarios
-* ✅ Consulta de Calificaciones
-* ✅ Seguimiento de Asistencias
-* ✅ Notificaciones Escolares
-* ✅ Dashboard Personalizado
+* ✅ Inicio de sesión seguro
+* ✅ Credencial digital institucional
+* ✅ Consulta de horarios
+* ✅ Consulta de calificaciones
+* ✅ Seguimiento de asistencias
+* ✅ Notificaciones escolares
+* ✅ Dashboard personalizado
 * ✅ Experiencia Mobile First
-* ✅ Compatible con Android e iOS
+* ✅ Compatibilidad con Android e iOS
 
 ---
 
@@ -33,7 +36,7 @@ IMPULSO centraliza el control académico, asistencia, seguimiento escolar, crede
 
 ---
 
-# 📂 Estructura Mobile
+# 📂 Estructura del Proyecto Mobile
 
 ```text
 mobile/
@@ -91,54 +94,85 @@ mobile/
 
 ## Generales
 
-* Node.js 22+
-* npm 10+
+* Node.js 22 o superior
+* npm 10 o superior
 * Git
 
-## Mobile
+## Desarrollo Mobile
 
+* Angular CLI
+* Ionic CLI
+* Capacitor CLI
 * Android Studio
 * Android SDK
 * Java JDK 21
-* Capacitor
 
 ---
 
-# 📦 Instalación del Proyecto
+# 📦 Instalación
 
-# 📱 Mobile
+## 1. Instalar herramientas globales
 
-Entrar a la carpeta:
+### Actualizar npm
 
 ```bash
+npm install -g npm@latest
+```
+
+### Angular CLI
+
+```bash
+npm install -g @angular/cli
+```
+
+### Ionic CLI
+
+```bash
+npm install -g @ionic/cli
+```
+
+### Capacitor CLI
+
+```bash
+npm install -g @capacitor/cli
+```
+
+---
+
+## 2. Clonar el proyecto
+
+```bash
+git clone <repositorio>
 cd mobile
 ```
 
-Instalar dependencias:
+---
+
+## 3. Instalar dependencias
 
 ```bash
 npm install
 ```
 
-Instalar Capacitor:
+---
+
+## 4. Instalar Capacitor y plataformas
 
 ```bash
-npm install \
-@capacitor/core \
-@capacitor/cli \
-@capacitor/android \
-@capacitor/ios
+npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/ios
 ```
 
 ---
 
-# ▶️ Ejecutar en Navegador
+# ▶️ Ejecución en Navegador
+
+Iniciar servidor de desarrollo:
 
 ```bash
 ionic serve
 ```
 
-Disponible en:
+La aplicación estará disponible en:
 
 ```text
 http://localhost:8100
@@ -146,21 +180,21 @@ http://localhost:8100
 
 ---
 
-# 🤖 Android Studio
+# 🤖 Configuración para Android
 
-Agregar Android:
+## Agregar plataforma Android
 
 ```bash
 npx cap add android
 ```
 
-Sincronizar:
+## Sincronizar Capacitor
 
 ```bash
 npx cap sync
 ```
 
-Abrir Android Studio:
+## Abrir Android Studio
 
 ```bash
 npx cap open android
@@ -168,21 +202,21 @@ npx cap open android
 
 ---
 
-# 📲 Ejecutar en Emulador Android
+# 📲 Ejecución en Emulador Android
 
-Generar build web:
+Generar la aplicación web:
 
 ```bash
 npm run build
 ```
 
-Sincronizar:
+Sincronizar archivos con Android:
 
 ```bash
 npx cap sync android
 ```
 
-Ejecutar:
+Ejecutar en dispositivo o emulador:
 
 ```bash
 npx cap run android
@@ -190,9 +224,9 @@ npx cap run android
 
 ---
 
-# 🔐 Configuración JAVA_HOME
+# ☕ Configuración de JAVA_HOME
 
-Verificar:
+Verificar la variable de entorno:
 
 ```bash
 echo %JAVA_HOME%
@@ -204,7 +238,7 @@ Debe apuntar a:
 C:\Program Files\Android\Android Studio\jbr
 ```
 
-Verificar Java:
+Verificar versión instalada:
 
 ```bash
 java -version
@@ -223,63 +257,59 @@ Java 21
 ## 👨‍🎓 Alumno
 
 * Dashboard personal
-* Horario
-* Calificaciones
-* Asistencia
-* Credencial Digital
-* Notificaciones
-
----
+* Consulta de horarios
+* Consulta de calificaciones
+* Seguimiento de asistencias
+* Credencial digital
+* Notificaciones institucionales
 
 ## 👨‍👩‍👧 Padre de Familia
 
 * Seguimiento académico
-* Calificaciones
-* Asistencia
-* Alertas escolares
-
----
+* Consulta de calificaciones
+* Consulta de asistencias
+* Recepción de alertas escolares
 
 ## 👨‍🏫 Docente
 
 * Pase de lista
 * Registro de asistencias
 * Captura de calificaciones
-* Horario docente
-
----
+* Consulta de horario docente
 
 ## 👨‍💼 Administrador
 
 * Gestión institucional
-* Usuarios
-* Horarios
-* Reportes
-* Alertas académicas
+* Administración de usuarios
+* Gestión de horarios
+* Generación de reportes
+* Seguimiento de alertas académicas
 
 ---
 
-# 🎯 Estado Actual
+# 🎯 Estado Actual del Desarrollo
 
-## Mobile
+## Aplicación Mobile
 
-* ✅ Login UI
-* ✅ Dashboard Alumno
-* ✅ Layout Principal
-* ✅ Sidebar / Navegación
-* 🚧 Horarios
-* 🚧 Calificaciones
-* 🚧 Asistencias
-* 🚧 Credencial Digital
-* 🚧 Notificaciones
-* 🚧 Perfil
+| Módulo               | Estado           |
+| -------------------- | ---------------- |
+| Login                | ✅ Completado     |
+| Dashboard Alumno     | ✅ Completado     |
+| Layout Principal     | ✅ Completado     |
+| Navegación / Sidebar | ✅ Completado     |
+| Horarios             | 🚧 En desarrollo |
+| Calificaciones       | 🚧 En desarrollo |
+| Asistencias          | 🚧 En desarrollo |
+| Credencial Digital   | 🚧 En desarrollo |
+| Notificaciones       | 🚧 En desarrollo |
+| Perfil               | 🚧 En desarrollo |
 
 ---
 
 # 📄 Licencia
 
-Proyecto desarrollado exclusivamente para el **CBTIS 61**.
+Este proyecto ha sido desarrollado exclusivamente para el **CBTIS 61** y su uso está restringido a fines institucionales.
 
 ---
 
-### Desarrollado con ❤️ para la transformación digital de la educación.
+## ❤️ Desarrollado para impulsar la transformación digital de la educación.
