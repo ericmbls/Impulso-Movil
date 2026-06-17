@@ -4,14 +4,16 @@ import { Component, Input } from '@angular/core';
   selector: 'app-stat-card',
   standalone: true,
   templateUrl: './stat-card.component.html',
-  styleUrl: './stat-card.component.scss'
+  styleUrl: './stat-card.component.scss',
 })
 export class StatCardComponent {
 
-  @Input() title = '';
-
   @Input() value = '';
 
+  @Input() title = '';
+
   @Input() subtitle = '';
+
+  @Input() icon = 'school';
 
 }

@@ -10,13 +10,23 @@
           <ion-label>🏠 Inicio</ion-label>
         </ion-item>
 
-        <ion-item routerLink="/app/schedule">
-          <ion-label>📅 Horario</ion-label>
-        </ion-item>
+        <ion-item
+  button="true"
+  [routerLink]="['/app/dashboard']">
+  <ion-label>🏠 Inicio</ion-label>
+</ion-item>
 
-        <ion-item routerLink="/app/grades">
-          <ion-label>📊 Calificaciones</ion-label>
-        </ion-item>
+<ion-item
+  button="true"
+  [routerLink]="['/app/schedule']">
+  <ion-label>📅 Horario</ion-label>
+</ion-item>
+
+<ion-item
+  button="true"
+  [routerLink]="['/app/grades']">
+  <ion-label>📊 Calificaciones</ion-label>
+</ion-item>
 
         <ion-item routerLink="/app/attendance">
           <ion-label>✅ Asistencia</ion-label>

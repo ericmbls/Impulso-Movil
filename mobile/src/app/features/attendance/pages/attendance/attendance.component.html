@@ -1,3 +1,30 @@
-<p>
-  attendance works!
-</p>
+<ion-content fullscreen>
+
+  <div class="attendance-container">
+
+    <h1>Asistencia</h1>
+
+    <p class="subtitle">
+      Segundo Parcial
+    </p>
+
+    <app-attendance-summary
+      percentage="94"
+      status="Excelente">
+    </app-attendance-summary>
+
+    <h2>Registro</h2>
+
+    @for (item of attendance; track item.subject) {
+
+      <app-attendance-card
+        [subject]="item.subject"
+        [status]="item.status"
+        [present]="item.present">
+      </app-attendance-card>
+
+    }
+
+  </div>
+
+</ion-content>

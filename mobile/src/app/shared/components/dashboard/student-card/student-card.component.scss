@@ -1,0 +1,92 @@
+.student-card {
+
+  background: #fff;
+
+  border-radius: 22px;
+
+  padding: 22px;
+
+  border: 1px solid rgba(199,161,90,.45);
+
+  box-shadow: 0 8px 22px rgba(0,0,0,.06);
+
+  margin-bottom: 20px;
+}
+
+.top{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:20px;
+}
+
+.badge{
+
+  background:#f5eef1;
+
+  color:#7d1736;
+
+  padding:8px 14px;
+
+  border-radius:30px;
+
+  font-weight:700;
+
+  font-size:13px;
+}
+
+.status{
+
+  color:#2e7d32;
+
+  font-size:13px;
+
+  font-weight:600;
+}
+
+h2{
+
+  margin:0;
+
+  font-size:28px;
+
+  color:#222;
+
+  font-weight:700;
+}
+
+p{
+
+  margin:8px 0;
+
+  color:#666;
+
+  font-size:17px;
+}
+
+small{
+
+  color:#999;
+
+  font-size:15px;
+}
+
+.divider{
+
+  height:1px;
+
+  background:#ececec;
+
+  margin:20px 0;
+}
+
+.footer{
+
+  color:#7d1736;
+
+  font-weight:600;
+}

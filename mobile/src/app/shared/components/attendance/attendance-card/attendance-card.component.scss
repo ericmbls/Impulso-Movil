@@ -1,0 +1,67 @@
+.attendance-card{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  background:white;
+
+  padding:18px;
+
+  margin-bottom:14px;
+
+  border-radius:18px;
+
+  border:1px solid rgba(199,161,90,.35);
+
+}
+
+h3{
+
+  margin:0;
+
+  color:#333;
+
+}
+
+small{
+
+  color:#777;
+
+}
+
+.badge{
+
+  width:42px;
+
+  height:42px;
+
+  border-radius:50%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  color:white;
+
+  font-weight:700;
+
+  font-size:18px;
+
+}
+
+.present{
+
+  background:#2E7D32;
+
+}
+
+.absent{
+
+  background:#C62828;
+
+}

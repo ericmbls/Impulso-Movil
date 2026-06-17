@@ -1,35 +1,65 @@
-.action-card {
+.action-card{
 
-  background: white;
+  background:white;
 
-  border-radius: 16px;
+  border-radius:22px;
 
-  padding: 16px;
+  padding:20px;
 
-  border: 1px solid rgba(199,161,90,.35);
+  display:flex;
 
-  display: flex;
+  flex-direction:column;
 
-  align-items: center;
+  align-items:center;
 
-  gap: 12px;
+  justify-content:center;
+
+  gap:14px;
+
+  border:1px solid rgba(199,161,90,.35);
+
+  box-shadow:0 6px 16px rgba(0,0,0,.05);
+
+  transition:.25s;
+
 }
 
-.icon {
+.action-card:active{
 
-  width: 42px;
+  transform:scale(.97);
 
-  height: 42px;
+}
 
-  border-radius: 10px;
+.icon{
 
-  background: rgba(125,23,54,.08);
+  width:56px;
 
-  display: flex;
+  height:56px;
 
-  align-items: center;
+  border-radius:50%;
 
-  justify-content: center;
+  display:flex;
 
-  font-size: 22px;
+  align-items:center;
+
+  justify-content:center;
+
+  background:#f6eef2;
+
+}
+
+ion-icon{
+
+  font-size:28px;
+
+  color:#7d1736;
+
+}
+
+span{
+
+  font-weight:600;
+
+  color:#333;
+
 }

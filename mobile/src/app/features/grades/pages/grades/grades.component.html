@@ -1,3 +1,30 @@
-<p>
-  grades works!
-</p>
+<ion-content fullscreen>
+
+  <div class="grades-container">
+
+    <h1>Calificaciones</h1>
+
+    <p class="subtitle">
+      Segundo Parcial
+    </p>
+
+    <app-average-card
+      average="9.2">
+    </app-average-card>
+
+    <h2>Materias</h2>
+
+    @for (item of grades; track item.subject) {
+
+      <app-grade-card
+        [subject]="item.subject"
+        [teacher]="item.teacher"
+        [grade]="item.grade"
+        [status]="item.status">
+      </app-grade-card>
+
+    }
+
+  </div>
+
+</ion-content>

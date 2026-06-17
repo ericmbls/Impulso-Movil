@@ -1,0 +1,67 @@
+ion-content{
+
+  --background:#f5f2ed;
+
+}
+
+.schedule-container{
+
+  padding:20px;
+
+}
+
+h1{
+
+  color:#7d1736;
+
+  font-size:30px;
+
+  margin-bottom:6px;
+
+}
+
+.subtitle{
+
+  color:#666;
+
+  margin-bottom:22px;
+
+}
+
+.days{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  margin-bottom:22px;
+
+}
+
+.days button{
+
+  width:50px;
+
+  height:50px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:white;
+
+  color:#7d1736;
+
+  font-weight:700;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+
+}
+
+.days button.active{
+
+  background:#7d1736;
+
+  color:white;
+
+}

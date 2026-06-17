@@ -1,0 +1,59 @@
+.grade-card{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  background:white;
+
+  border-radius:18px;
+
+  padding:18px;
+
+  margin-bottom:14px;
+
+  border:1px solid rgba(199,161,90,.35);
+
+  box-shadow:0 5px 12px rgba(0,0,0,.05);
+
+}
+
+.left h3{
+
+  margin:0;
+
+  color:#333;
+
+}
+
+.left small{
+
+  color:#777;
+
+}
+
+.right{
+
+  text-align:right;
+
+}
+
+.grade{
+
+  font-size:28px;
+
+  font-weight:700;
+
+  color:#7d1736;
+
+}
+
+.right span{
+
+  font-size:13px;
+
+  color:#888;
+
+}

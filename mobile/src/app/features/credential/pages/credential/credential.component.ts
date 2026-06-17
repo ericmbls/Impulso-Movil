@@ -1,15 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import {
+  IonContent,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonAvatar
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-credential',
-  templateUrl: './credential.component.html',
-  styleUrls: ['./credential.component.scss'],
   standalone: true,
+  imports: [
+    IonContent,
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonAvatar
+  ],
+  templateUrl: './credential.component.html',
+  styleUrl: './credential.component.scss',
 })
-export class CredentialComponent  implements OnInit {
+export class CredentialComponent {
 
-  constructor() { }
-
-  ngOnInit() {}
+  student = {
+    name: 'Eric Morales Baltazar',
+    enrollment: '22180045',
+    semester: '6°',
+    group: 'A',
+    career: 'Programación',
+    school: 'CBTIS 61',
+    validity: '2026'
+  };
 
 }

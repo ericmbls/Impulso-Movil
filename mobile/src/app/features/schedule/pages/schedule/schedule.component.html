@@ -1,3 +1,35 @@
-<p>
-  schedule works!
-</p>
+<ion-content fullscreen>
+
+  <div class="schedule-container">
+
+    <h1>Horario</h1>
+
+    <p class="subtitle">
+      {{ selectedDay }}
+    </p>
+
+    <div class="days">
+
+      <button class="active">L</button>
+      <button>M</button>
+      <button>Mi</button>
+      <button>J</button>
+      <button>V</button>
+
+    </div>
+
+    @for (item of classes; track item.subject) {
+
+      <app-schedule-card
+        [subject]="item.subject"
+        [teacher]="item.teacher"
+        [classroom]="item.classroom"
+        [time]="item.time"
+        [color]="item.color">
+      </app-schedule-card>
+
+    }
+
+  </div>
+
+</ion-content>

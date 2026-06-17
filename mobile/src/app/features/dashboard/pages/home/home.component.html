@@ -1,46 +1,27 @@
-<ion-content fullscreen>
+<ion-content fullscreen="true">
 
   <div class="dashboard-container">
 
     <div class="hero">
-
       <div class="hero-content">
-
         <h1>Hola, Eric 👋</h1>
-
         <p>6° A • Programación</p>
-
       </div>
-
     </div>
 
-    <div class="student-card">
-
-      <div class="student-info">
-
-        <span class="badge">
-          CBTIS 61
-        </span>
-
-        <h2>Eric Morales</h2>
-
-        <p>Programación</p>
-
-        <small>Turno Matutino</small>
-
-      </div>
-
-    </div>
+    <app-student-card></app-student-card>
 
     <div class="stats-grid">
 
       <app-stat-card
+        icon="📅"
         value="94%"
         title="Asistencia"
         subtitle="Último mes">
       </app-stat-card>
 
       <app-stat-card
+        icon="⭐"
         value="9.2"
         title="Promedio"
         subtitle="Actual">
@@ -55,22 +36,22 @@
       <div class="actions-grid">
 
         <app-quick-action-card
-          icon="📅"
+          icon="calendar-outline"
           title="Horario">
         </app-quick-action-card>
 
         <app-quick-action-card
-          icon="📊"
+          icon="stats-chart-outline"
           title="Calificaciones">
         </app-quick-action-card>
 
         <app-quick-action-card
-          icon="✅"
+          icon="checkmark-circle-outline"
           title="Asistencia">
         </app-quick-action-card>
 
         <app-quick-action-card
-          icon="🪪"
+          icon="card-outline"
           title="Credencial">
         </app-quick-action-card>
 
@@ -78,15 +59,9 @@
 
     </div>
 
-    <div class="card">
+    <app-class-card></app-class-card>
 
-      <h3>Próxima clase</h3>
-
-      <p>Programación Web</p>
-
-      <small>08:00 - 09:00</small>
-
-    </div>
+    <app-announcement-card></app-announcement-card>
 
   </div>
 
