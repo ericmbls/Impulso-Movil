@@ -108,29 +108,28 @@ mobile/
 
 # 📱 Mobile
 
-Entrar a la carpeta:
+Requisitos Generales
+Node.js 22+
 
-```bash
+npm 10+ 
+npm install -g npm@latest
+
+Angular CLI
+npm install -g @angular/cli
+
+Ionic CLI
+npm install -g @ionic/cli
+
+Capacitor CLI 
+npm install -g @capacitor/cli
+
+Entrar a la carpeta del proyecto:
 cd mobile
-```
-
 Instalar dependencias:
-
-```bash
 npm install
-```
+Instalar Capacitor y plataformas:
+npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/ios
 
-Instalar Capacitor:
-
-```bash
-npm install \
-@capacitor/core \
-@capacitor/cli \
-@capacitor/android \
-@capacitor/ios
-```
-
----
 
 # ▶️ Ejecutar en Navegador
 
