@@ -1,67 +1,183 @@
-ion-content{
-
-  --background:#f5f2ed;
-
+ion-content {
+  --background: #f5f2ed;
 }
 
-.schedule-container{
-
-  padding:20px;
-
+.schedule-container {
+  padding: 20px;
+  padding-bottom: 100px;
+  background: #f5f2ed;
 }
 
-h1{
-
-  color:#7d1736;
-
-  font-size:30px;
-
-  margin-bottom:6px;
-
+.hero {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 20px;
+  color: white;
 }
 
-.subtitle{
-
-  color:#666;
-
-  margin-bottom:22px;
-
+.hero .hero-content h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.days{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  margin-bottom:22px;
-
+.hero .hero-content h1 ion-icon {
+  font-size: 28px;
 }
 
-.days button{
-
-  width:50px;
-
-  height:50px;
-
-  border:none;
-
-  border-radius:16px;
-
-  background:white;
-
-  color:#7d1736;
-
-  font-weight:700;
-
-  box-shadow:0 4px 12px rgba(0,0,0,.05);
-
+.hero .hero-content p {
+  margin-top: 8px;
+  opacity: .9;
 }
 
-.days button.active{
+.days {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
 
-  background:#7d1736;
+.day-btn {
+  background: white;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  border-radius: 16px;
+  padding: 12px 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: #666;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
 
-  color:white;
+.day-btn.active {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  color: white;
+  border-color: #7d1736;
+  box-shadow: 0 4px 12px rgba(125, 23, 54, 0.3);
+}
 
+.day-btn:hover:not(.active) {
+  background: rgba(125, 23, 54, 0.05);
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  color: #7d1736;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3 ion-icon {
+  font-size: 20px;
+}
+
+app-schedule-card {
+  display: block;
+  margin-bottom: 12px;
+}
+
+app-schedule-card:last-child {
+  margin-bottom: 0;
+}ion-content {
+  --background: #f5f2ed;
+}
+
+.schedule-container {
+  padding: 20px;
+  padding-bottom: 100px;
+  background: #f5f2ed;
+}
+
+.hero {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.hero .hero-content h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero .hero-content h1 ion-icon {
+  font-size: 28px;
+}
+
+.hero .hero-content p {
+  margin-top: 8px;
+  opacity: .9;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.day-btn {
+  background: white;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  border-radius: 16px;
+  padding: 12px 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: #666;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.day-btn.active {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  color: white;
+  border-color: #7d1736;
+  box-shadow: 0 4px 12px rgba(125, 23, 54, 0.3);
+}
+
+.day-btn:hover:not(.active) {
+  background: rgba(125, 23, 54, 0.05);
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  color: #7d1736;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3 ion-icon {
+  font-size: 20px;
+}
+
+app-schedule-card {
+  display: block;
+  margin-bottom: 12px;
+}
+
+app-schedule-card:last-child {
+  margin-bottom: 0;
 }

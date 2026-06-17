@@ -1,64 +1,77 @@
 <ion-content>
-
   <div class="dashboard-container">
 
     <div class="hero">
       <div class="hero-content">
-        <h1>Hola, Eric 👋</h1>
-        <p>6° A • Programación</p>
+        <div class="greeting">
+          <span class="wave">👋</span>
+          <h1>Hola, Eric</h1>
+        </div>
+        <div class="user-badge">
+          <span class="badge">6° A</span>
+          <span class="badge">Programación</span>
+        </div>
+      </div>
+      <div class="hero-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
       </div>
     </div>
 
     <app-student-card></app-student-card>
 
     <div class="stats-grid">
-
-      <app-stat-card
-        icon="📅"
-        value="94%"
-        title="Asistencia"
-        subtitle="Último mes">
-      </app-stat-card>
-
-      <app-stat-card
-        icon="⭐"
-        value="9.2"
-        title="Promedio"
-        subtitle="Actual">
-      </app-stat-card>
-
+      @for (stat of stats; track stat.title) {
+        <app-stat-card
+          [icon]="stat.icon"
+          [value]="stat.value"
+          [title]="stat.title"
+          [subtitle]="stat.subtitle">
+        </app-stat-card>
+      }
     </div>
 
     <div class="section">
-
-      <h3>⚡ Accesos rápidos</h3>
-
-      <div class="actions-grid">
-
-        <app-quick-action-card
-          icon="card-outline"
-          title="Credencial">
-        </app-quick-action-card>
-
-        <app-quick-action-card
-          icon="checkmark-circle-outline"
-          title="Asistencia">
-        </app-quick-action-card>
-
-        <app-quick-action-card
-          icon="notifications-outline"
-          title="Avisos">
-        </app-quick-action-card>
-
-        <app-quick-action-card
-          icon="person-outline"
-          title="Perfil">
-        </app-quick-action-card>
-
+      <div class="section-header">
+        <h3>⚡ Accesos rápidos</h3>
+        <span class="see-all">Ver todos</span>
       </div>
 
+      <div class="actions-grid">
+        @for (action of quickActions; track action.title) {
+          <app-quick-action-card
+            [icon]="action.icon"
+            [title]="action.title">
+          </app-quick-action-card>
+        }
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h3>📖 Próximas clases</h3>
+        <span class="see-all">Ver horario</span>
+      </div>
+
+      <div class="next-classes">
+        @for (classItem of nextClasses; track classItem.name) {
+          <div class="class-item">
+            <div class="class-color" [style.background]="classItem.color"></div>
+            <div class="class-info">
+              <p class="class-name">{{ classItem.name }}</p>
+              <p class="class-time">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ classItem.time }}
+              </p>
+            </div>
+            <span class="class-room">
+              <ion-icon name="school-outline"></ion-icon>
+              {{ classItem.room }}
+            </span>
+          </div>
+        }
+      </div>
     </div>
 
   </div>
-
 </ion-content>

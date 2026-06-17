@@ -1,59 +1,77 @@
-.grade-card{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  background:white;
-
-  border-radius:18px;
-
-  padding:18px;
-
-  margin-bottom:14px;
-
-  border:1px solid rgba(199,161,90,.35);
-
-  box-shadow:0 5px 12px rgba(0,0,0,.05);
-
+:host {
+  display: block;
 }
 
-.left h3{
-
-  margin:0;
-
-  color:#333;
-
+.grade-card {
+  background: white;
+  border-radius: 20px;
+  padding: 16px 20px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.left small{
-
-  color:#777;
-
+.grade-card .info {
+  flex: 1;
+  min-width: 0;
 }
 
-.right{
-
-  text-align:right;
-
+.grade-card .info .subject {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
 }
 
-.grade{
-
-  font-size:28px;
-
-  font-weight:700;
-
-  color:#7d1736;
-
+.grade-card .info .teacher {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #666;
 }
 
-.right span{
+.grade-card .grade-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
 
-  font-size:13px;
+.grade-card .grade-wrapper .value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #7d1736;
+  min-width: 44px;
+  text-align: right;
+}
 
-  color:#888;
+.grade-card .grade-wrapper .status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
 
+.grade-card .grade-wrapper .status.Excelente {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.grade-card .grade-wrapper .status.Bueno {
+  background: rgba(46, 125, 50, 0.08);
+  color: #388e3c;
+}
+
+.grade-card .grade-wrapper .status.Regular {
+  background: rgba(237, 108, 2, 0.12);
+  color: #ed6c02;
+}
+
+.grade-card .grade-wrapper .status.Malas {
+  background: rgba(198, 40, 40, 0.12);
+  color: #c62828;
 }

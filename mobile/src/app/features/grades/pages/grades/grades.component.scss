@@ -1,37 +1,88 @@
-ion-content{
-
-  --background:#f5f2ed;
-
+ion-content {
+  --background: #f5f2ed;
 }
 
-.grades-container{
-
-  padding:20px;
-
+.grades-container {
+  padding: 20px;
+  padding-bottom: 100px;
+  background: #f5f2ed;
 }
 
-h1{
-
-  color:#7d1736;
-
-  font-size:30px;
-
-  margin-bottom:4px;
-
+.hero {
+  background: linear-gradient(
+    135deg,
+    #7d1736,
+    #5d1028
+  );
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 20px;
+  color: white;
 }
 
-.subtitle{
-
-  color:#777;
-
-  margin-bottom:24px;
-
+.hero .hero-content h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
 }
 
-h2{
+.hero .hero-content p {
+  margin-top: 8px;
+  opacity: .9;
+}
 
-  color:#7d1736;
+.parcial-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
 
-  margin-bottom:18px;
+.parcial-btn {
+  background: white;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  border-radius: 16px;
+  padding: 12px 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #666;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+}
 
+.parcial-btn.active {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  color: white;
+  border-color: #7d1736;
+  box-shadow: 0 4px 12px rgba(125, 23, 54, 0.3);
+}
+
+.parcial-btn:hover:not(.active) {
+  background: rgba(125, 23, 54, 0.05);
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  color: #7d1736;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+app-average-card {
+  display: block;
+  margin-bottom: 16px;
+}
+
+app-grade-card {
+  display: block;
+  margin-bottom: 12px;
+}
+
+app-grade-card:last-child {
+  margin-bottom: 0;
 }

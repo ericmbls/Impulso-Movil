@@ -1,51 +1,38 @@
 <ion-content>
-
   <div class="more-container">
 
-    <div class="header">
-      <h1>Más</h1>
-      <p>Opciones y herramientas adicionales</p>
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Más ⚙️</h1>
+        <p>Opciones y herramientas adicionales</p>
+      </div>
     </div>
 
-    <div class="menu-card">
-
-      <button class="menu-item">
-        <span class="icon">🪪</span>
-        <span>Credencial</span>
-      </button>
-
-      <button class="menu-item">
-        <span class="icon">✅</span>
-        <span>Asistencia</span>
-      </button>
-
-      <button class="menu-item">
-        <span class="icon">🔔</span>
-        <span>Notificaciones</span>
-      </button>
-
-      <button class="menu-item">
-        <span class="icon">⚙️</span>
-        <span>Configuración</span>
-      </button>
-
+    <div class="section">
+      <h3>Opciones</h3>
+      <div class="menu-card">
+        @for (item of menuItems; track item.label) {
+          <button class="menu-item" (click)="navigateTo(item.route)">
+            <div class="icon-wrapper">
+              <ion-icon [name]="item.icon"></ion-icon>
+            </div>
+            <span class="label">{{ item.label }}</span>
+            <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+          </button>
+        }
+      </div>
     </div>
 
-    <div class="logout-card">
-
-      <button class="logout-btn">
-        🚪 Cerrar sesión
-      </button>
-
-    </div>
+    <div class="footer-spacer"></div>
 
     <div class="footer">
-
+      <button class="logout-btn" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Cerrar sesión
+      </button>
       <p>Versión 1.0.0</p>
       <small>CBTIS 61 • IMPULSO</small>
-
     </div>
 
   </div>
-
 </ion-content>

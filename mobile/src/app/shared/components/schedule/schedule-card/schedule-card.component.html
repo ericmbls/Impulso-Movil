@@ -1,24 +1,14 @@
 <div class="schedule-card">
-
-  <div
-    class="color-bar"
-    [style.background]="color">
-  </div>
-
-  <div class="content">
-
-    <div class="top">
-
-      <h3>{{ subject }}</h3>
-
-      <span>{{ time }}</span>
-
+  <div class="color-bar" [style.background]="color"></div>
+  <div class="info">
+    <p class="subject">{{ subject }}</p>
+    <div class="meta">
+      <span class="teacher">{{ teacher }}</span>
+      <span class="classroom">{{ classroom }}</span>
     </div>
-
-    <p>{{ teacher }}</p>
-
-    <small>{{ classroom }}</small>
-
   </div>
-
+  <div class="time">
+    <ion-icon name="time-outline"></ion-icon>
+    {{ time }}
+  </div>
 </div>

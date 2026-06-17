@@ -1,30 +1,47 @@
-<ion-content fullscreen>
-
+<ion-content>
   <div class="grades-container">
 
-    <h1>Calificaciones</h1>
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Calificaciones ⭐</h1>
+        <p>{{ getParcialLabel() }} • 6° A • Programación</p>
+      </div>
+    </div>
 
-    <p class="subtitle">
-      Segundo Parcial
-    </p>
+    <div class="parcial-selector">
+      <button 
+        class="parcial-btn" 
+        [class.active]="parcialActual === 1"
+        (click)="cambiarParcial(1)">
+        Primer Parcial
+      </button>
+      <button 
+        class="parcial-btn" 
+        [class.active]="parcialActual === 2"
+        (click)="cambiarParcial(2)">
+        Segundo Parcial
+      </button>
+      <button 
+        class="parcial-btn" 
+        [class.active]="parcialActual === 3"
+        (click)="cambiarParcial(3)">
+        Tercer Parcial
+      </button>
+    </div>
 
-    <app-average-card
-      average="9.2">
-    </app-average-card>
+    <app-average-card [average]="getAverage()"></app-average-card>
 
-    <h2>Materias</h2>
-
-    @for (item of grades; track item.subject) {
-
-      <app-grade-card
-        [subject]="item.subject"
-        [teacher]="item.teacher"
-        [grade]="item.grade"
-        [status]="item.status">
-      </app-grade-card>
-
-    }
+    <div class="section">
+      <h3>📚 Materias</h3>
+      @for (item of getGrades(); track item.subject) {
+        <app-grade-card
+          [subject]="item.subject"
+          [teacher]="item.teacher"
+          [grade]="item.grade"
+          [status]="item.status">
+        </app-grade-card>
+      }
+    </div>
 
   </div>
-
 </ion-content>

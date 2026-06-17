@@ -1,43 +1,30 @@
-.average-card{
-
-  background: linear-gradient(135deg,#7d1736,#5d1028);
-
-  color:white;
-
-  border-radius:22px;
-
-  padding:28px;
-
-  text-align:center;
-
-  margin-bottom:24px;
-
-  box-shadow:0 8px 20px rgba(0,0,0,.12);
-
+:host {
+  display: block;
 }
 
-span{
-
-  opacity:.85;
-
-  font-size:15px;
-
+.average-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  text-align: center;
 }
 
-h1{
-
-  margin:12px 0;
-
-  font-size:54px;
-
-  font-weight:700;
-
+.average-card .label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
-p{
+.average-card .value {
+  font-size: 48px;
+  font-weight: 700;
+  color: #7d1736;
+  line-height: 1;
+}
 
-  margin:0;
-
-  opacity:.9;
-
+.average-card .max {
+  font-size: 14px;
+  color: #999;
 }

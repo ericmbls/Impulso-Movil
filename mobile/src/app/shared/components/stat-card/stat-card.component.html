@@ -1,15 +1,10 @@
 <div class="stat-card">
-
-  <div class="icon">
-
-    {{ icon }}
-
+  <div class="stat-icon">
+    <ion-icon [name]="icon"></ion-icon>
   </div>
-
-  <h2>{{ value }}</h2>
-
-  <h4>{{ title }}</h4>
-
-  <small>{{ subtitle }}</small>
-
+  <div class="stat-content">
+    <p class="stat-value">{{ value }}</p>
+    <p class="stat-title">{{ title }}</p>
+    <p class="stat-subtitle">{{ subtitle }}</p>
+  </div>
 </div>

@@ -1,35 +1,39 @@
 <ion-content fullscreen>
-
   <div class="schedule-container">
 
-    <h1>Horario</h1>
-
-    <p class="subtitle">
-      {{ selectedDay }}
-    </p>
-
-    <div class="days">
-
-      <button class="active">L</button>
-      <button>M</button>
-      <button>Mi</button>
-      <button>J</button>
-      <button>V</button>
-
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Horario <ion-icon name="calendar-outline"></ion-icon></h1>
+        <p>{{ getSelectedDay() }} • 6° A • Programación</p>
+      </div>
     </div>
 
-    @for (item of classes; track item.subject) {
+    <div class="days">
+      @for (day of days; track day.label; let i = $index) {
+        <button 
+          class="day-btn" 
+          [class.active]="diaActual === i"
+          (click)="cambiarDia(i)">
+          {{ day.label }}
+        </button>
+      }
+    </div>
 
-      <app-schedule-card
-        [subject]="item.subject"
-        [teacher]="item.teacher"
-        [classroom]="item.classroom"
-        [time]="item.time"
-        [color]="item.color">
-      </app-schedule-card>
-
-    }
+    <div class="section">
+      <h3>
+        <ion-icon name="time-outline"></ion-icon>
+        Clases
+      </h3>
+      @for (item of getClasses(); track item.subject) {
+        <app-schedule-card
+          [subject]="item.subject"
+          [teacher]="item.teacher"
+          [classroom]="item.classroom"
+          [time]="item.time"
+          [color]="item.color">
+        </app-schedule-card>
+      }
+    </div>
 
   </div>
-
 </ion-content>
