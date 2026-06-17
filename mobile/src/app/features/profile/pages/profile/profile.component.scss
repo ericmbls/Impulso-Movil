@@ -1,0 +1,283 @@
+ion-content {
+  --background: #f5f2ed;
+}
+
+.profile-container {
+  padding: 20px;
+  padding-bottom: 40px;
+  background: #f5f2ed;
+}
+
+.hero {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.hero .hero-content h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.hero .hero-content p {
+  margin-top: 8px;
+  opacity: .9;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 24px;
+  padding: 28px 20px 24px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #7d1736, #c7a15a);
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.25);
+}
+
+.user-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+}
+
+.user-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.user-badges .badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(125, 23, 54, 0.06);
+  color: #7d1736;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(199, 161, 90, 0.2);
+}
+
+.user-id {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: #999;
+  letter-spacing: 0.5px;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  color: #7d1736;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3 ion-icon {
+  font-size: 20px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  overflow: hidden;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(199, 161, 90, 0.1);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(125, 23, 54, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info-icon ion-icon {
+  font-size: 20px;
+  color: #7d1736;
+}
+
+.info-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-label {
+  margin: 0;
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.info-value {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+}
+
+.menu-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(199, 161, 90, 0.1);
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: rgba(125, 23, 54, 0.04);
+}
+
+.menu-item:active {
+  background: rgba(125, 23, 54, 0.08);
+  transform: scale(0.98);
+}
+
+.menu-item .icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(125, 23, 54, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-item .icon-wrapper ion-icon {
+  font-size: 18px;
+  color: #7d1736;
+}
+
+.menu-item .label {
+  flex: 1;
+}
+
+.menu-item .arrow {
+  font-size: 16px;
+  color: #ccc;
+  flex-shrink: 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.2);
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(125, 23, 54, 0.3);
+}
+
+.logout-btn:active {
+  transform: scale(0.98);
+}
+
+.logout-btn ion-icon {
+  font-size: 22px;
+}
+
+.footer {
+  text-align: center;
+  padding-top: 8px;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.footer small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
+}

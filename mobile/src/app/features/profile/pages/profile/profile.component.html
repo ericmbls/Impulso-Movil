@@ -1,3 +1,81 @@
-<p>
-  profile works!
-</p>
+<ion-content>
+  <div class="profile-container">
+
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Perfil 👤</h1>
+        <p>Información personal</p>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <div class="avatar">
+        {{ user.photo }}
+      </div>
+      <h2 class="user-name">{{ user.name }}</h2>
+      <div class="user-badges">
+        <span class="badge">{{ user.group }}</span>
+        <span class="badge">{{ user.career }}</span>
+      </div>
+      <p class="user-id">📋 {{ user.controlNumber }}</p>
+    </div>
+
+    <div class="section">
+      <h3>
+        <ion-icon name="person-outline"></ion-icon>
+        Información de contacto
+      </h3>
+
+      <div class="info-card">
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <p class="info-label">Correo electrónico</p>
+            <p class="info-value">{{ user.email }}</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <p class="info-label">Teléfono</p>
+            <p class="info-value">{{ user.phone }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>
+        <ion-icon name="menu-outline"></ion-icon>
+        Menú
+      </h3>
+
+      <div class="menu-card">
+        @for (item of menuItems; track item.label) {
+          <button class="menu-item" (click)="navigateTo(item.route)">
+            <div class="icon-wrapper">
+              <ion-icon [name]="item.icon"></ion-icon>
+            </div>
+            <span class="label">{{ item.label }}</span>
+            <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <button class="logout-btn" (click)="logout()">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Cerrar sesión
+    </button>
+
+    <div class="footer">
+      <p>Versión 1.0.0</p>
+      <small>CBTIS 61 • IMPULSO</small>
+    </div>
+
+  </div>
+</ion-content>
