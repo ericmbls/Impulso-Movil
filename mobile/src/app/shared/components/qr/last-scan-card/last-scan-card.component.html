@@ -1,0 +1,26 @@
+<div class="last-scan-card">
+  <div class="card-header">
+    <div class="scan-info">
+      <div class="scan-icon">
+        <ion-icon name="qr-code-outline"></ion-icon>
+      </div>
+      <div>
+        <h3 class="subject">{{ subject }}</h3>
+        <p class="student-name">{{ studentName }}</p>
+      </div>
+    </div>
+    <span class="status-badge" [class]="getStatusClass()">
+      <ion-icon [name]="getStatusIcon()"></ion-icon>
+      {{ getStatusText() }}
+    </span>
+  </div>
+  <div class="card-footer">
+    <p class="date-time">
+      <ion-icon name="calendar-outline"></ion-icon>
+      {{ date }}
+      <span class="divider">•</span>
+      <ion-icon name="time-outline"></ion-icon>
+      {{ time }}
+    </p>
+  </div>
+</div>

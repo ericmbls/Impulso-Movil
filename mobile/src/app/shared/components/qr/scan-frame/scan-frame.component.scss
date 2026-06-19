@@ -1,0 +1,210 @@
+:host {
+  display: block;
+}
+
+.scan-frame {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.scan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(199, 161, 90, 0.1);
+}
+
+.scan-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #7d1736;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scan-header h3 ion-icon {
+  font-size: 22px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: rgba(125, 23, 54, 0.06);
+  color: #7d1736;
+  transform: rotate(90deg);
+}
+
+.frame {
+  background: #f8f6f4;
+  padding: 24px;
+  border: none;
+  border-radius: 0;
+}
+
+.scanner {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  border-radius: 16px;
+  background: #0d0d0d;
+  overflow: hidden;
+}
+
+.scanner.active {
+  background: #1a1a1a;
+}
+
+.corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: rgba(199, 161, 90, 0.8);
+  border-style: solid;
+  border-width: 0;
+  z-index: 2;
+}
+
+.tl {
+  top: 12px;
+  left: 12px;
+  border-top-width: 4px;
+  border-left-width: 4px;
+  border-radius: 4px 0 0 0;
+}
+
+.tr {
+  top: 12px;
+  right: 12px;
+  border-top-width: 4px;
+  border-right-width: 4px;
+  border-radius: 0 4px 0 0;
+}
+
+.bl {
+  bottom: 12px;
+  left: 12px;
+  border-bottom-width: 4px;
+  border-left-width: 4px;
+  border-radius: 0 0 0 4px;
+}
+
+.br {
+  bottom: 12px;
+  right: 12px;
+  border-bottom-width: 4px;
+  border-right-width: 4px;
+  border-radius: 0 0 4px 0;
+}
+
+.scan-line {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 32px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c7a15a, transparent);
+  animation: scanLine 2s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(199, 161, 90, 0.3);
+  z-index: 1;
+}
+
+@keyframes scanLine {
+  0% {
+    top: 32px;
+  }
+  50% {
+    top: calc(100% - 32px);
+  }
+  100% {
+    top: 32px;
+  }
+}
+
+.scan-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 64px;
+  color: rgba(255, 255, 255, 0.08);
+  z-index: 0;
+}
+
+.scan-placeholder {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+
+.scan-placeholder p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.scan-footer {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid rgba(199, 161, 90, 0.1);
+}
+
+.scan-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scan-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.25);
+}
+
+.scan-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.scan-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.scan-btn ion-icon {
+  font-size: 22px;
+}

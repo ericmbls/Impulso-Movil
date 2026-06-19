@@ -1,0 +1,27 @@
+<ion-content fullscreen>
+  <div class="qr-container">
+
+    <div class="hero">
+      <div class="hero-content">
+        <h1>
+          <ion-icon name="qr-code-outline"></ion-icon>
+          QR Smart-Check
+        </h1>
+        <p>Escanea el código QR mostrado por tu docente</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <app-scan-frame></app-scan-frame>
+    </div>
+
+    <div class="section">
+      <h3>
+        <ion-icon name="time-outline"></ion-icon>
+        Último escaneo
+      </h3>
+      <app-last-scan-card></app-last-scan-card>
+    </div>
+
+  </div>
+</ion-content>

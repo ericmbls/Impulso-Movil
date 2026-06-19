@@ -44,6 +44,13 @@ export const routes: Routes = [
       },
 
       {
+        path: 'qr-check',
+        loadComponent: () =>
+          import('./features/qr-check/pages/qr-check/qr-check.component')
+            .then(m => m.QrCheckComponent),
+      },
+
+      {
         path: 'grades',
         loadComponent: () =>
           import('./features/grades/pages/grades/grades.component')
@@ -76,13 +83,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/profile/pages/profile/profile.component')
             .then(m => m.ProfileComponent),
-      },
-
-      {
-        path: 'more',
-        loadComponent: () =>
-          import('./features/more/pages/more/more.component')
-            .then(m => m.MoreComponent),
       }
 
     ]

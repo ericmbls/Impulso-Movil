@@ -1,0 +1,36 @@
+<div class="scan-frame">
+  <div class="scan-header">
+    <h3>
+      <ion-icon name="scan-outline"></ion-icon>
+      Escanear QR
+    </h3>
+    <button 
+      class="close-btn" 
+      (click)="cancelScan()"
+      aria-label="Cerrar escáner"
+      title="Cerrar escáner">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="frame">
+    <div class="scanner" [class.active]="isScanning">
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+      <div class="scan-line" *ngIf="isScanning"></div>
+      <ion-icon name="scan-outline" class="scan-icon"></ion-icon>
+      <div class="scan-placeholder" *ngIf="!isScanning">
+        <p>Apunta la cámara al código QR</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="scan-footer">
+    <button class="scan-btn" (click)="startScan()" [disabled]="isScanning">
+      <ion-icon name="scan-outline"></ion-icon>
+      {{ isScanning ? 'Escaneando...' : 'Iniciar escaneo' }}
+    </button>
+  </div>
+</div>

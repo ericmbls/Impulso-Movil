@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.last-scan-card {
+  background: white;
+  border-radius: 20px;
+  padding: 16px 18px;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.last-scan-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(199, 161, 90, 0.7);
+  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.06);
+}
+
+.last-scan-card:active {
+  transform: scale(0.98);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.scan-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.scan-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(125, 23, 54, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.scan-icon ion-icon {
+  font-size: 20px;
+  color: #7d1736;
+}
+
+.subject {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+.student-name {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-badge ion-icon {
+  font-size: 16px;
+}
+
+.status-badge.success {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.status-badge.pending {
+  background: rgba(237, 108, 2, 0.12);
+  color: #ed6c02;
+}
+
+.status-badge.error {
+  background: rgba(198, 40, 40, 0.12);
+  color: #c62828;
+}
+
+.card-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(199, 161, 90, 0.1);
+}
+
+.date-time {
+  margin: 0;
+  font-size: 13px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-time ion-icon {
+  font-size: 16px;
+  color: #7d1736;
+}
+
+.date-time .divider {
+  color: #ddd;
+}
