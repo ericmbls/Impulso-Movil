@@ -19,6 +19,8 @@
         <ion-item class="custom-input">
 
           <ion-input
+            [(ngModel)]="email"
+            type="email"
             placeholder="ej. usuario@institucion.edu">
           </ion-input>
 
@@ -41,6 +43,7 @@
         <ion-item class="custom-input">
 
           <ion-input
+            [(ngModel)]="password"
             type="password"
             placeholder="••••••••">
           </ion-input>
@@ -51,8 +54,7 @@
 
       <div class="remember-row">
 
-        <ion-checkbox labelPlacement="end">
-        </ion-checkbox>
+        <ion-checkbox labelPlacement="end"></ion-checkbox>
 
         <span>Mantener sesión iniciada</span>
 
@@ -60,9 +62,10 @@
 
       <ion-button
         expand="block"
-        routerLink="/app/dashboard">
+        [disabled]="isLoading"
+        (click)="login()">
 
-        Ingresar al Sistema
+        {{ isLoading ? 'Ingresando...' : 'Ingresar al Sistema' }}
 
       </ion-button>
 
@@ -82,9 +85,7 @@
     <div class="footer-links">
 
       <span>Aviso de Privacidad</span>
-
       <span>Términos de Uso</span>
-
       <span>Ayuda</span>
 
     </div>

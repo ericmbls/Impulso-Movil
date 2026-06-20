@@ -11,6 +11,11 @@ import {
   provideIonicAngular
 } from '@ionic/angular/standalone';
 
+import {
+  provideHttpClient,
+  withInterceptors
+} from '@angular/common/http';
+
 import { addIcons } from 'ionicons';
 
 import {
@@ -36,10 +41,16 @@ bootstrapApplication(AppComponent, {
       provide: RouteReuseStrategy,
       useClass: IonicRouteStrategy,
     },
+
     provideIonicAngular(),
+
     provideRouter(
       routes,
       withPreloading(PreloadAllModules)
+    ),
+
+    provideHttpClient(
+      
     ),
   ],
 });

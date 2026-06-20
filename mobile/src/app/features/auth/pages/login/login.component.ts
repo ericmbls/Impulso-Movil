@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
@@ -8,6 +9,9 @@ import {
   IonItem,
   IonCheckbox
 } from '@ionic/angular/standalone';
+
+import { AuthService } from '../../../../core/services/auth.service';
+import { StorageService } from '../../../../core/services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -18,9 +22,57 @@ import {
     IonInput,
     IonItem,
     IonCheckbox,
-    RouterLink
+    FormsModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {}
+export class LoginComponent {
+
+  email = '';
+  password = '';
+  isLoading = false;
+
+  constructor(
+    private authService: AuthService,
+    private storageService: StorageService,
+    private router: Router
+  ) {}
+
+  login() {
+
+    if (!this.email || !this.password) {
+      alert('Ingrese usuario y contraseña.');
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.authService.login(this.email, this.password).subscribe({
+
+      next: async (response: any) => {
+
+        await this.storageService.saveToken(response.accessToken);
+        await this.storageService.saveUser(response.user);
+
+        this.isLoading = false;
+
+        await this.router.navigateByUrl('/app/dashboard', {
+          replaceUrl: true
+        });
+
+      },
+
+      error: () => {
+
+        this.isLoading = false;
+
+        alert('Usuario o contraseña incorrectos.');
+
+      }
+
+    });
+
+  }
+
+}
