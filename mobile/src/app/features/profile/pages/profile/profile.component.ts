@@ -1,17 +1,28 @@
-import { Component } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
+import {
+  IonContent,
+  IonIcon
+} from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
-import { 
-  personOutline, 
-  schoolOutline, 
-  mailOutline, 
+
+import {
+  personOutline,
+  schoolOutline,
+  mailOutline,
   callOutline,
   calendarOutline,
   idCardOutline,
   logOutOutline,
-  chevronForwardOutline
+  chevronForwardOutline,
+  menuOutline
 } from 'ionicons/icons';
+
+import { StorageService } from '../../../../core/services/storage.service';
+import { AuthStateService } from '../../../../core/services/auth-state.service';
 
 @Component({
   selector: 'app-profile',
@@ -26,24 +37,11 @@ import {
 })
 export class ProfileComponent {
 
-  user = {
-    name: 'Eric Hernández',
-    email: 'eric.hernandez@cbtis61.edu.mx',
-    phone: '744-123-4567',
-    group: '6° A',
-    career: 'Programación',
-    controlNumber: '2023123456',
-    photo: 'E'
-  };
-
-  menuItems = [
-    { icon: 'id-card-outline', label: 'Mi credencial', route: '/credential' },
-    { icon: 'calendar-outline', label: 'Horario', route: '/schedule' },
-    { icon: 'school-outline', label: 'Calificaciones', route: '/grades' },
-    { icon: 'person-outline', label: 'Datos personales', route: '/edit-profile' }
-  ];
-
-  constructor() {
+  constructor(
+    private storageService: StorageService,
+    private router: Router,
+    public authState: AuthStateService
+  ) {
     addIcons({
       personOutline,
       schoolOutline,
@@ -52,15 +50,82 @@ export class ProfileComponent {
       calendarOutline,
       idCardOutline,
       logOutOutline,
-      chevronForwardOutline
+      chevronForwardOutline,
+      menuOutline
     });
   }
 
+  user = computed(() => {
+
+    const u = this.authState.user();
+
+    if (!u) {
+      return {
+        name: '',
+        email: '',
+        phone: '',
+        group: '',
+        career: '',
+        controlNumber: '',
+        photo: '?'
+      };
+    }
+
+    return {
+      name: `${u.firstName} ${u.lastName}`,
+      email: u.email,
+      phone:
+        u.studentProfile?.phone ??
+        u.teacherProfile?.phone ??
+        '',
+      group:
+        u.studentProfile?.group?.name ??
+        u.role,
+      career:
+        u.studentProfile?.group?.career?.name ??
+        u.teacherProfile?.specialty ??
+        '',
+      controlNumber:
+        u.studentProfile?.controlNumber ??
+        u.teacherProfile?.employeeId ??
+        '',
+      photo: u.firstName.charAt(0).toUpperCase()
+    };
+
+  });
+
+  menuItems = [
+    {
+      icon: 'id-card-outline',
+      label: 'Mi credencial',
+      route: '/app/credential'
+    },
+    {
+      icon: 'calendar-outline',
+      label: 'Horario',
+      route: '/app/schedule'
+    },
+    {
+      icon: 'school-outline',
+      label: 'Calificaciones',
+      route: '/app/grades'
+    }
+  ];
+
   navigateTo(route: string) {
-    console.log('Navegando a:', route);
+    this.router.navigateByUrl(route);
   }
 
-  logout() {
-    console.log('Cerrando sesión...');
+  async logout() {
+
+    await this.storageService.clear();
+
+    this.authState.clear();
+
+    await this.router.navigateByUrl('/login', {
+      replaceUrl: true
+    });
+
   }
+
 }

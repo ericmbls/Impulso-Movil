@@ -10,14 +10,14 @@
 
     <div class="profile-card">
       <div class="avatar">
-        {{ user.photo }}
+        {{ user().photo }}
       </div>
-      <h2 class="user-name">{{ user.name }}</h2>
+      <h2 class="user-name">{{ user().name }}</h2>
       <div class="user-badges">
-        <span class="badge">{{ user.group }}</span>
-        <span class="badge">{{ user.career }}</span>
+        <span class="badge">{{ user().group }}</span>
+        <span class="badge">{{ user().career }}</span>
       </div>
-      <p class="user-id">📋 {{ user.controlNumber }}</p>
+      <p class="user-id">📋 {{ user().controlNumber }}</p>
     </div>
 
     <div class="section">
@@ -33,7 +33,7 @@
           </div>
           <div class="info-content">
             <p class="info-label">Correo electrónico</p>
-            <p class="info-value">{{ user.email }}</p>
+            <p class="info-value">{{ user().email }}</p>
           </div>
         </div>
         <div class="info-item">
@@ -42,7 +42,7 @@
           </div>
           <div class="info-content">
             <p class="info-label">Teléfono</p>
-            <p class="info-value">{{ user.phone }}</p>
+            <p class="info-value">{{ user().phone }}</p>
           </div>
         </div>
       </div>
