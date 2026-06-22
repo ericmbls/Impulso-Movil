@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 
 import { StorageService } from '../services/storage.service';
 
-export const authGuard: CanActivateFn = async () => {
+export const guestGuard: CanActivateFn = async () => {
 
   const storage = inject(StorageService);
   const router = inject(Router);
@@ -11,9 +11,9 @@ export const authGuard: CanActivateFn = async () => {
   const logged = await storage.isLoggedIn();
 
   if (logged) {
-    return true;
+    return router.createUrlTree(['/app/dashboard']);
   }
 
-  return router.createUrlTree(['/login']);
+  return true;
 
 };

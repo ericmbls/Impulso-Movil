@@ -12,6 +12,7 @@ import {
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { StorageService } from '../../../../core/services/storage.service';
+import { AuthStateService } from '../../../../core/services/auth-state.service';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +37,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private storageService: StorageService,
+    private authState: AuthStateService,
     private router: Router
   ) {}
 
@@ -53,12 +55,31 @@ export class LoginComponent {
       next: async (response: any) => {
 
         await this.storageService.saveToken(response.accessToken);
-        await this.storageService.saveUser(response.user);
 
-        this.isLoading = false;
+        this.authService.getProfile().subscribe({
 
-        await this.router.navigateByUrl('/app/dashboard', {
-          replaceUrl: true
+          next: async (profile: any) => {
+
+            await this.storageService.saveUser(profile);
+
+            this.authState.setUser(profile);
+
+          this.isLoading = false;
+
+          await this.router.navigateByUrl('/app/dashboard', {
+        replaceUrl: true
+          });
+
+          },
+
+          error: () => {
+
+            this.isLoading = false;
+
+            alert('No se pudo obtener el perfil.');
+
+          }
+
         });
 
       },

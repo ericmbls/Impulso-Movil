@@ -1,3 +1,4 @@
+import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 import { bootstrapApplication } from '@angular/platform-browser';
 import {
   RouteReuseStrategy,
@@ -50,6 +51,9 @@ bootstrapApplication(AppComponent, {
     ),
 
     provideHttpClient(
+      withInterceptors([
+    authInterceptor
+  ])
       
     ),
   ],
