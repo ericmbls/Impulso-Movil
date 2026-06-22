@@ -24,17 +24,14 @@ import { AuthStateService } from '../../../../core/services/auth-state.service';
 export class StudentCardComponent {
 
   constructor(public authState: AuthStateService) {
-
     addIcons({
       mailOutline,
       callOutline,
       ellipse
     });
-
   }
 
   user = computed(() => {
-
     const u = this.authState.user();
 
     if (!u) {
@@ -50,12 +47,12 @@ export class StudentCardComponent {
       name: `${u.firstName} ${u.lastName}`,
       email: u.email,
       phone:
-        u.studentProfile?.phone ??
-        u.teacherProfile?.phone ??
+        u.teacherProfile?.phone ??              
+        u.parentProfile?.phone ??               
+        u.studentProfile?.parent?.phone ??     
         '',
       photo: u.firstName.charAt(0).toUpperCase()
     };
-
   });
 
 }
