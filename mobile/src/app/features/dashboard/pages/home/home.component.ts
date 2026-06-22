@@ -11,7 +11,9 @@ import {
   notificationsOutline,
   personOutline,
   timeOutline,
-  schoolOutline
+  schoolOutline,
+  flashOutline,
+  bookOutline
 } from 'ionicons/icons';
 
 import { StudentCardComponent } from '../../../../shared/components/dashboard/student-card/student-card.component';
@@ -47,7 +49,9 @@ export class HomeComponent {
       notificationsOutline,
       personOutline,
       timeOutline,
-      schoolOutline
+      schoolOutline,
+      flashOutline,
+      bookOutline
     });
   }
 

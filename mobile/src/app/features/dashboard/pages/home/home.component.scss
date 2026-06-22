@@ -120,6 +120,14 @@ ion-content {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-header h3 ion-icon {
+  font-size: 20px;
 }
 
 .section-header .see-all {

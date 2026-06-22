@@ -42,6 +42,7 @@ export class ProfileComponent {
     private router: Router,
     public authState: AuthStateService
   ) {
+
     addIcons({
       personOutline,
       schoolOutline,
@@ -53,6 +54,7 @@ export class ProfileComponent {
       chevronForwardOutline,
       menuOutline
     });
+
   }
 
   user = computed(() => {
@@ -60,6 +62,7 @@ export class ProfileComponent {
     const u = this.authState.user();
 
     if (!u) {
+
       return {
         name: '',
         email: '',
@@ -69,27 +72,38 @@ export class ProfileComponent {
         controlNumber: '',
         photo: '?'
       };
+
     }
 
     return {
+
       name: `${u.firstName} ${u.lastName}`,
+
       email: u.email,
+
       phone:
         u.studentProfile?.phone ??
         u.teacherProfile?.phone ??
         '',
+
       group:
         u.studentProfile?.group?.name ??
         u.role,
+
       career:
         u.studentProfile?.group?.career?.name ??
         u.teacherProfile?.specialty ??
         '',
+
       controlNumber:
         u.studentProfile?.controlNumber ??
         u.teacherProfile?.employeeId ??
         '',
-      photo: u.firstName.charAt(0).toUpperCase()
+
+      photo: (u.firstName || '?')
+        .charAt(0)
+        .toUpperCase()
+
     };
 
   });
@@ -113,7 +127,9 @@ export class ProfileComponent {
   ];
 
   navigateTo(route: string) {
+
     this.router.navigateByUrl(route);
+
   }
 
   async logout() {
