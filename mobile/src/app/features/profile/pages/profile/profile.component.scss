@@ -20,6 +20,13 @@ ion-content {
   margin: 0;
   font-size: 28px;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero .hero-content h1 ion-icon {
+  font-size: 28px;
 }
 
 .hero .hero-content p {
@@ -30,12 +37,13 @@ ion-content {
 .profile-card {
   background: white;
   border-radius: 24px;
-  padding: 28px 20px 24px;
+  padding: 32px 24px 28px;
   border: 1px solid rgba(199, 161, 90, 0.4);
   text-align: center;
   margin-bottom: 24px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 32px rgba(125, 23, 54, 0.06);
 }
 
 .profile-card::before {
@@ -61,6 +69,7 @@ ion-content {
   color: white;
   margin: 0 auto 16px;
   box-shadow: 0 4px 16px rgba(125, 23, 54, 0.25);
+  border: 3px solid rgba(199, 161, 90, 0.2);
 }
 
 .user-name {
@@ -79,13 +88,15 @@ ion-content {
 
 .user-badges .badge {
   display: inline-block;
-  padding: 4px 14px;
+  padding: 4px 16px;
   border-radius: 20px;
   background: rgba(125, 23, 54, 0.06);
   color: #7d1736;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   border: 1px solid rgba(199, 161, 90, 0.2);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .user-id {
@@ -93,6 +104,15 @@ ion-content {
   font-size: 14px;
   color: #999;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.user-id ion-icon {
+  font-size: 18px;
+  color: #7d1736;
 }
 
 .section {
@@ -110,7 +130,7 @@ ion-content {
 }
 
 .section h3 ion-icon {
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .info-card {
@@ -118,13 +138,14 @@ ion-content {
   border-radius: 20px;
   border: 1px solid rgba(199, 161, 90, 0.4);
   overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
 }
 
 .info-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 18px;
+  padding: 16px 20px;
   border-bottom: 1px solid rgba(199, 161, 90, 0.1);
 }
 
@@ -144,7 +165,7 @@ ion-content {
 }
 
 .info-icon ion-icon {
-  font-size: 20px;
+  font-size: 22px;
   color: #7d1736;
 }
 
@@ -173,6 +194,7 @@ ion-content {
   border-radius: 20px;
   border: 1px solid rgba(199, 161, 90, 0.4);
   overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
 }
 
 .menu-item {
@@ -180,7 +202,7 @@ ion-content {
   align-items: center;
   gap: 14px;
   width: 100%;
-  padding: 14px 18px;
+  padding: 16px 20px;
   background: transparent;
   border: none;
   border-bottom: 1px solid rgba(199, 161, 90, 0.1);
@@ -217,7 +239,7 @@ ion-content {
 }
 
 .menu-item .icon-wrapper ion-icon {
-  font-size: 18px;
+  font-size: 20px;
   color: #7d1736;
 }
 
@@ -265,7 +287,9 @@ ion-content {
 
 .footer {
   text-align: center;
-  padding-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(199, 161, 90, 0.15);
+  margin-top: 8px;
 }
 
 .footer p {

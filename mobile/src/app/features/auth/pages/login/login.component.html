@@ -1,95 +1,102 @@
 <ion-content fullscreen>
+  <div class="login-container">
 
-  <div class="login-page">
+    <div class="hero">
+      <div class="hero-content">
+        <ion-icon name="school-outline" class="brand-icon"></ion-icon>
+        <h1>IMPULSO</h1>
+        <p>Sistema Escolar Inteligente</p>
+        <span class="badge">CBTIS No. 61</span>
+      </div>
+      <div class="hero-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
+    </div>
 
     <div class="login-card">
-
-      <div class="top-bar"></div>
-
-      <h1>Iniciar Sesión</h1>
-
-      <p class="subtitle">
-        Ingrese sus credenciales institucionales para acceder al sistema.
-      </p>
+      <h2>Bienvenido de vuelta</h2>
+      <p class="subtitle">Ingresa tus credenciales para continuar</p>
 
       <div class="form-group">
-
-        <label>Usuario</label>
-
+        <label>
+          <ion-icon name="mail-outline"></ion-icon>
+          Correo institucional
+        </label>
         <ion-item class="custom-input">
-
           <ion-input
             [(ngModel)]="email"
             type="email"
             placeholder="ej. usuario@institucion.edu">
           </ion-input>
-
         </ion-item>
-
       </div>
 
       <div class="form-group">
-
-        <div class="label-row">
-
-          <label>Contraseña</label>
-
-          <a href="#">
-            ¿Olvidó su contraseña?
-          </a>
-
-        </div>
-
+        <label>
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          Contraseña
+        </label>
         <ion-item class="custom-input">
-
           <ion-input
             [(ngModel)]="password"
-            type="password"
+            [type]="showPassword ? 'text' : 'password'"
             placeholder="••••••••">
           </ion-input>
-
+          <ion-icon
+            slot="end"
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+            (click)="togglePassword()"
+            class="toggle-password">
+          </ion-icon>
         </ion-item>
-
       </div>
 
-      <div class="remember-row">
-
-        <ion-checkbox labelPlacement="end"></ion-checkbox>
-
-        <span>Mantener sesión iniciada</span>
-
+      <div class="form-options">
+        <div class="remember-wrapper">
+          <ion-checkbox
+            [(ngModel)]="rememberMe"
+            name="rememberMe"
+            id="rememberCheckbox">
+          </ion-checkbox>
+          <label for="rememberCheckbox" class="remember-label">Recordar mi sesión</label>
+        </div>
+        <a class="forgot-link" (click)="$event.preventDefault()">
+          ¿Olvidaste tu contraseña?
+        </a>
       </div>
 
       <ion-button
         expand="block"
+        class="login-btn"
         [disabled]="isLoading"
         (click)="login()">
-
-        {{ isLoading ? 'Ingresando...' : 'Ingresar al Sistema' }}
-
+        <ion-icon slot="start" name="log-in-outline"></ion-icon>
+        {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
       </ion-button>
-
-      <div class="support">
-
-        <h4>SOPORTE</h4>
-
-        <p>
-          ¿Problemas con el acceso?
-          Contacte al Departamento de TI.
-        </p>
-
-      </div>
-
     </div>
 
-    <div class="footer-links">
+    <div class="support-card">
+      <ion-icon name="desktop-outline" class="support-icon"></ion-icon>
+      <div class="support-content">
+        <p>
+          ¿Problemas con el acceso?
+          <a class="support-email">soporte@cbetis61.edu.mx</a>
+        </p>
+      </div>
+    </div>
 
-      <span>Aviso de Privacidad</span>
-      <span>Términos de Uso</span>
-      <span>Ayuda</span>
-
+    <div class="footer">
+      <div class="footer-links">
+        <a>Aviso de Privacidad</a>
+        <span class="separator">•</span>
+        <a>Términos de Uso</a>
+        <span class="separator">•</span>
+        <a>Ayuda</a>
+      </div>
+      <p class="footer-version">Versión 1.0.0</p>
+      <p class="footer-copy">© 2026 CBTIS No. 61</p>
     </div>
 
   </div>
-
 </ion-content>

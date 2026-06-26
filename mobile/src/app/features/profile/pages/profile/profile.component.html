@@ -3,7 +3,10 @@
 
     <div class="hero">
       <div class="hero-content">
-        <h1>Perfil 👤</h1>
+        <h1>
+          Perfil
+          <ion-icon name="person-outline"></ion-icon>
+        </h1>
         <p>Información personal</p>
       </div>
     </div>
@@ -17,7 +20,10 @@
         <span class="badge">{{ user().group }}</span>
         <span class="badge">{{ user().career }}</span>
       </div>
-      <p class="user-id">📋 {{ user().controlNumber }}</p>
+      <p class="user-id">
+        <ion-icon name="id-card-outline"></ion-icon>
+        {{ user().controlNumber }}
+      </p>
     </div>
 
     <div class="section">

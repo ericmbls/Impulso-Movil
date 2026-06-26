@@ -7,8 +7,16 @@ export const routes: Routes = [
 
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'welcome',
     pathMatch: 'full',
+  },
+
+  {
+    path: 'welcome',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/welcome/welcome.component')
+        .then(m => m.WelcomeComponent),
   },
 
   {
@@ -96,7 +104,7 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'welcome',
   }
 
 ];
