@@ -1,18 +1,4 @@
 <div class="scan-frame">
-  <div class="scan-header">
-    <h3>
-      <ion-icon name="scan-outline"></ion-icon>
-      Escanear QR
-    </h3>
-    <button 
-      class="close-btn" 
-      (click)="cancelScan()"
-      aria-label="Cerrar escáner"
-      title="Cerrar escáner">
-      <ion-icon name="close-outline"></ion-icon>
-    </button>
-  </div>
-
   <div class="frame">
     <div class="scanner" [class.active]="isScanning">
       <div class="corner tl"></div>

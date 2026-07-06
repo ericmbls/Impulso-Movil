@@ -8,7 +8,7 @@ export const routes: Routes = [
   {
     path: '',
     redirectTo: 'welcome',
-    pathMatch: 'full',
+    pathMatch: 'full'
   },
 
   {
@@ -16,7 +16,7 @@ export const routes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/pages/welcome/welcome.component')
-        .then(m => m.WelcomeComponent),
+        .then(c => c.WelcomeComponent)
   },
 
   {
@@ -24,7 +24,7 @@ export const routes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/pages/login/login.component')
-        .then(m => m.LoginComponent),
+        .then(c => c.LoginComponent)
   },
 
   {
@@ -32,70 +32,77 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./layouts/tabs-layout/tabs-layout.component')
-        .then(m => m.TabsLayoutComponent),
+        .then(c => c.TabsLayoutComponent),
 
     children: [
 
       {
         path: '',
         redirectTo: 'dashboard',
-        pathMatch: 'full',
+        pathMatch: 'full'
       },
 
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/pages/home/home.component')
-            .then(m => m.HomeComponent),
+            .then(c => c.HomeComponent)
       },
 
       {
         path: 'schedule',
         loadComponent: () =>
           import('./features/schedule/pages/schedule/schedule.component')
-            .then(m => m.ScheduleComponent),
+            .then(c => c.ScheduleComponent)
       },
 
       {
         path: 'qr-check',
         loadComponent: () =>
           import('./features/qr-check/pages/qr-check/qr-check.component')
-            .then(m => m.QrCheckComponent),
+            .then(c => c.QrCheckComponent)
+      },
+
+      {
+        path: 'teacher-scanner',
+        loadComponent: () =>
+          import('./features/teacher-scanner/pages/scanner/scanner.component')
+            .then(c => c.ScannerComponent)
       },
 
       {
         path: 'grades',
         loadComponent: () =>
           import('./features/grades/pages/grades/grades.component')
-            .then(m => m.GradesComponent),
+            .then(c => c.GradesComponent)
       },
 
       {
         path: 'attendance',
         loadComponent: () =>
           import('./features/attendance/pages/attendance/attendance.component')
-            .then(m => m.AttendanceComponent),
+            .then(c => c.AttendanceComponent)
       },
 
       {
         path: 'credential',
         loadComponent: () =>
           import('./features/credential/pages/credential/credential.component')
-            .then(m => m.CredentialComponent),
+            .then(c => c.CredentialComponent)
       },
 
       {
         path: 'notifications',
         loadComponent: () =>
           import('./features/notifications/pages/notifications/notifications.component')
-            .then(m => m.NotificationsComponent),
+            .then(c => c.NotificationsComponent)
       },
 
       {
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/pages/profile/profile.component')
-            .then(m => m.ProfileComponent),
+            .then(c => c.ProfileComponent)
       }
 
     ]
@@ -104,7 +111,7 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: 'welcome',
+    redirectTo: 'welcome'
   }
 
 ];

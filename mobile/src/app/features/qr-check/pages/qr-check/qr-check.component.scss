@@ -6,6 +6,7 @@ ion-content {
   padding: 20px;
   padding-bottom: 40px;
   background: #f5f2ed;
+  min-height: 100%;
 }
 
 .hero {
@@ -41,7 +42,7 @@ ion-content {
   border: 1px solid rgba(199, 161, 90, .35);
   padding: 28px 24px;
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,.04);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .04);
 }
 
 .qr-image {
@@ -72,7 +73,6 @@ ion-content {
   from {
     transform: rotate(0);
   }
-
   to {
     transform: rotate(360deg);
   }
@@ -105,3 +105,34 @@ ion-content {
   font-size: 18px;
 }
 
+.section {
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  color: #7d1736;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3 ion-icon {
+  font-size: 20px;
+}
+
+app-scan-frame {
+  display: block;
+  margin-bottom: 16px;
+}
+
+app-last-scan-card {
+  display: block;
+  margin-bottom: 12px;
+}
+
+app-last-scan-card:last-child {
+  margin-bottom: 0;
+}

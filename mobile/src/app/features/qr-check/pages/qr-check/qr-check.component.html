@@ -1,70 +1,70 @@
 <ion-content fullscreen>
-
   <div class="qr-container">
 
     <div class="hero">
-
       <div class="hero-content">
-
         <h1>
-          <ion-icon name="qr-code-outline"></ion-icon>
-          Mi código QR
+          <ion-icon [name]="isTeacher ? 'scan-outline' : 'qr-code-outline'"></ion-icon>
+          {{ isTeacher ? 'Escanear QR' : 'Mi código QR' }}
         </h1>
-
         <p>
-          Muéstralo al docente para registrar tu asistencia.
+          {{ isTeacher ? 'Escanea el código QR del estudiante' : 'Muéstralo al docente para registrar tu asistencia.' }}
         </p>
-
       </div>
-
     </div>
 
-    <div class="qr-card">
-
-      @if (loading) {
-
-        <div class="loading">
-
-          <ion-icon
-            name="refresh-outline"
-            class="loading-icon">
-          </ion-icon>
-
-          <p>Cargando código QR...</p>
-
-        </div>
-
-      } @else {
-
-        @if (qr?.isValid) {
-
-          <img
-            [src]="qr?.qrImage"
-            alt="Código QR de asistencia"
-            class="qr-image" />
-
-          <p class="expires">
-            <ion-icon name="time-outline"></ion-icon>
-            Expira en
-            <strong>{{ countdown }}</strong>
-          </p>
-
-        } @else {
-
-          <div class="expired">
-
-            <ion-icon name="time-outline"></ion-icon>
-
-            <p>El código QR ha expirado.</p>
-
+    @if (!isTeacher) {
+      <div class="qr-card">
+        @if (loading) {
+          <div class="loading">
+            <ion-icon name="refresh-outline" class="loading-icon"></ion-icon>
+            <p>Cargando código QR...</p>
           </div>
-
+        } @else {
+          @if (qr?.isValid) {
+            <img [src]="qr?.qrImage" alt="Código QR de asistencia" class="qr-image" />
+            <p class="expires">
+              <ion-icon name="time-outline"></ion-icon>
+              Expira en
+              <strong>{{ countdown }}</strong>
+            </p>
+          } @else {
+            <div class="expired">
+              <ion-icon name="time-outline"></ion-icon>
+              <p>El código QR ha expirado.</p>
+            </div>
+          }
         }
+      </div>
+    }
 
-      }
+    @if (isTeacher) {
+      <app-scan-frame
+        (scan)="onScanSuccess($event)"
+        (close)="onScanClose()"
+      ></app-scan-frame>
 
-    </div>
+      <div class="section">
+        <h3>
+          <ion-icon name="time-outline"></ion-icon>
+          Últimos registros
+        </h3>
+        <app-last-scan-card
+          subject="Programación Web"
+          studentName="Eric Hernández"
+          date="Hoy, 19 de junio"
+          time="08:01 AM"
+          status="success"
+        ></app-last-scan-card>
+        <app-last-scan-card
+          subject="Base de Datos"
+          studentName="María García"
+          date="Hoy, 19 de junio"
+          time="10:00 AM"
+          status="pending"
+        ></app-last-scan-card>
+      </div>
+    }
 
   </div>
-
 </ion-content>
