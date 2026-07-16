@@ -1,5 +1,6 @@
-<ion-content fullscreen>
+<ion-content [fullscreen]="true" class="ion-padding">
   <div class="welcome-container">
+
     <div class="hero">
       <div class="hero-content">
         <ion-icon name="school-outline" class="brand-icon"></ion-icon>
@@ -24,9 +25,31 @@
       </ion-button>
     </div>
 
+    <div class="features-section">
+      <h3 class="features-title">¿Qué puedes hacer?</h3>
+      <div class="features-grid">
+        <div class="feature-card">
+          <ion-icon name="calendar-outline" class="feature-icon"></ion-icon>
+          <h4>Horario</h4>
+          <p>Consulta tu horario de clases al instante.</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="clipboard-outline" class="feature-icon"></ion-icon>
+          <h4>Calificaciones</h4>
+          <p>Revisa tus notas y seguimiento académico.</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="people-outline" class="feature-icon"></ion-icon>
+          <h4>Asistencia</h4>
+          <p>Registra y monitorea tu presencia.</p>
+        </div>
+      </div>
+    </div>
+
     <div class="footer">
       <p>Versión 1.0.0</p>
       <small>© 2026 CBTIS No. 61</small>
     </div>
+
   </div>
 </ion-content>

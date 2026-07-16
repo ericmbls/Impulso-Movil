@@ -3,7 +3,13 @@ import { Router } from '@angular/router';
 import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { schoolOutline, logInOutline } from 'ionicons/icons';
+import {
+  schoolOutline,
+  logInOutline,
+  calendarOutline,
+  clipboardOutline,
+  peopleOutline
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-welcome',
@@ -14,7 +20,7 @@ import { schoolOutline, logInOutline } from 'ionicons/icons';
 })
 export class WelcomeComponent {
   constructor(private router: Router) {
-    addIcons({ schoolOutline, logInOutline });
+    addIcons({ schoolOutline, logInOutline, calendarOutline, clipboardOutline, peopleOutline });
   }
 
   goToLogin() {

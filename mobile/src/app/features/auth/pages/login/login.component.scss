@@ -9,6 +9,7 @@ ion-content {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  animation: fadeInPage 0.6s ease-out both;
 }
 
 .hero {
@@ -24,6 +25,8 @@ ion-content {
   align-items: center;
   justify-content: center;
   text-align: center;
+  animation: heroEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.1s;
 }
 
 .hero-content {
@@ -96,12 +99,14 @@ ion-content {
   padding: 24px 20px;
   border: 1px solid rgba(199, 161, 90, 0.4);
   margin-bottom: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 32px rgba(125, 23, 54, 0.06);
+  animation: cardEntrance 0.8s ease-out both;
+  animation-delay: 0.2s;
 }
 
 .login-card h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: #222;
   text-align: center;
@@ -141,6 +146,12 @@ ion-content {
   --padding-start: 16px;
   --padding-end: 12px;
   --min-height: 50px;
+  transition: --border-color 0.2s ease;
+}
+
+.custom-input:focus-within {
+  --border-color: #7d1736;
+  --border-width: 2px;
 }
 
 .custom-input ion-input {
@@ -192,8 +203,8 @@ ion-content {
   font-size: 14px;
   color: #444;
   cursor: pointer;
-  -webkit-user-select: none;
   user-select: none;
+  -webkit-user-select: none;
 }
 
 .forgot-link {
@@ -220,18 +231,46 @@ ion-content {
   font-size: 16px;
   letter-spacing: 0.3px;
   margin-top: 4px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.5s ease;
 }
 
 .login-btn:hover:not([disabled]) {
   --box-shadow: 0 6px 24px rgba(125, 23, 54, 0.3);
+  transform: translateY(-3px) scale(1.01);
+}
+
+.login-btn:hover:not([disabled])::before {
+  left: 100%;
 }
 
 .login-btn:active:not([disabled]) {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .login-btn[disabled] {
   opacity: 0.6;
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .support-card {
@@ -243,6 +282,9 @@ ion-content {
   align-items: center;
   gap: 14px;
   margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  animation: cardEntrance 0.8s ease-out both;
+  animation-delay: 0.3s;
 }
 
 .support-icon {
@@ -272,6 +314,8 @@ ion-content {
   text-align: center;
   margin-top: auto;
   padding-top: 4px;
+  animation: footerEntrance 0.8s ease-out both;
+  animation-delay: 0.4s;
 }
 
 .footer-links {
@@ -336,4 +380,24 @@ ion-content {
   .forgot-link {
     white-space: normal;
   }
+}
+
+@keyframes fadeInPage {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroEntrance {
+  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes cardEntrance {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes footerEntrance {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
