@@ -8,10 +8,9 @@ import { calendarOutline, starOutline } from 'ionicons/icons';
   standalone: true,
   imports: [IonIcon],
   templateUrl: './stat-card.component.html',
-  styleUrl: './stat-card.component.scss',
+  styleUrls: ['./stat-card.component.scss']
 })
 export class StatCardComponent {
-
   @Input() value = '';
   @Input() title = '';
   @Input() subtitle = '';
