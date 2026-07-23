@@ -54,25 +54,6 @@
       </div>
     </div>
 
-    <div class="section">
-      <h3>
-        <ion-icon name="menu-outline"></ion-icon>
-        Menú
-      </h3>
-
-      <div class="menu-card">
-        @for (item of menuItems; track item.label) {
-          <button class="menu-item" (click)="navigateTo(item.route)">
-            <div class="icon-wrapper">
-              <ion-icon [name]="item.icon"></ion-icon>
-            </div>
-            <span class="label">{{ item.label }}</span>
-            <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
-          </button>
-        }
-      </div>
-    </div>
-
     <button class="logout-btn" (click)="logout()">
       <ion-icon name="log-out-outline"></ion-icon>
       Cerrar sesión

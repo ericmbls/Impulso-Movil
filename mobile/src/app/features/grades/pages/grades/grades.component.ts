@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import { IonContent } from '@ionic/angular/standalone';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { IonContent } from '@ionic/angular/standalone';
+
+import { StorageService } from '../../../../core/services/storage.service';
+import { GradesService } from '../../../../core/services/grades.service';
 
 import { AverageCardComponent } from '../../../../shared/components/grades/average-card/average-card.component';
 import { GradeCardComponent } from '../../../../shared/components/grades/grade-card/grade-card.component';
@@ -28,11 +31,21 @@ interface ParcialData {
     GradeCardComponent
   ],
   templateUrl: './grades.component.html',
-  styleUrl: './grades.component.scss',
+  styleUrl: './grades.component.scss'
 })
-export class GradesComponent {
+export class GradesComponent implements OnInit {
 
-  parcialActual: number = 2;
+  parcialActual = 2;
+
+  constructor(
+    private storageService: StorageService,
+    private gradesService: GradesService
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    const user: any = await this.storageService.getUser();
+    console.log('Usuario:', user);
+  }
 
   private data: { [key: number]: ParcialData } = {
     1: {
@@ -43,7 +56,7 @@ export class GradesComponent {
         { subject: 'Base de Datos', teacher: 'Mtra. García', grade: '8.5', status: 'Bueno' },
         { subject: 'Matemáticas', teacher: 'Mtro. Hernández', grade: '7.5', status: 'Regular' },
         { subject: 'Física', teacher: 'Ing. López', grade: '8.0', status: 'Bueno' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.5', status: 'Excelente' },
+        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.5', status: 'Excelente' }
       ]
     },
     2: {
@@ -54,7 +67,7 @@ export class GradesComponent {
         { subject: 'Base de Datos', teacher: 'Mtra. García', grade: '9.5', status: 'Excelente' },
         { subject: 'Matemáticas', teacher: 'Mtro. Hernández', grade: '8.7', status: 'Bueno' },
         { subject: 'Física', teacher: 'Ing. López', grade: '8.4', status: 'Bueno' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.4', status: 'Excelente' },
+        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.4', status: 'Excelente' }
       ]
     },
     3: {
@@ -65,26 +78,27 @@ export class GradesComponent {
         { subject: 'Base de Datos', teacher: 'Mtra. García', grade: '9.8', status: 'Excelente' },
         { subject: 'Matemáticas', teacher: 'Mtro. Hernández', grade: '9.0', status: 'Excelente' },
         { subject: 'Física', teacher: 'Ing. López', grade: '9.2', status: 'Excelente' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.7', status: 'Excelente' },
+        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.7', status: 'Excelente' }
       ]
     }
   };
 
-  cambiarParcial(parcial: number) {
+  cambiarParcial(parcial: number): void {
     if (this.data[parcial]) {
       this.parcialActual = parcial;
     }
   }
 
   getParcialLabel(): string {
-    return this.data[this.parcialActual]?.label || 'Segundo Parcial';
+    return this.data[this.parcialActual].label;
   }
 
   getAverage(): string {
-    return this.data[this.parcialActual]?.average || '0.0';
+    return this.data[this.parcialActual].average;
   }
 
   getGrades(): Grade[] {
-    return this.data[this.parcialActual]?.grades || [];
+    return this.data[this.parcialActual].grades;
   }
+
 }
