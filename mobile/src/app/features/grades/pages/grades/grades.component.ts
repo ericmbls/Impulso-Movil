@@ -15,12 +15,6 @@ interface Grade {
   status: string;
 }
 
-interface ParcialData {
-  label: string;
-  average: string;
-  grades: Grade[];
-}
-
 @Component({
   selector: 'app-grades',
   standalone: true,
@@ -36,6 +30,7 @@ interface ParcialData {
 export class GradesComponent implements OnInit {
 
   parcialActual = 2;
+  grades: any[] = [];
 
   constructor(
     private storageService: StorageService,
@@ -43,62 +38,93 @@ export class GradesComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+
     const user: any = await this.storageService.getUser();
-    console.log('Usuario:', user);
+
+    const studentId = user?.studentProfile?.id;
+
+    if (!studentId) {
+      return;
+    }
+
+    this.gradesService.getStudentGrades(studentId).subscribe({
+      next: (grades: any) => {
+        this.grades = grades;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+
   }
 
-  private data: { [key: number]: ParcialData } = {
-    1: {
-      label: 'Primer Parcial',
-      average: '8.8',
-      grades: [
-        { subject: 'Programación Web', teacher: 'Ing. Juan Pérez', grade: '9.0', status: 'Excelente' },
-        { subject: 'Base de Datos', teacher: 'Mtra. García', grade: '8.5', status: 'Bueno' },
-        { subject: 'Matemáticas', teacher: 'Mtro. Hernández', grade: '7.5', status: 'Regular' },
-        { subject: 'Física', teacher: 'Ing. López', grade: '8.0', status: 'Bueno' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.5', status: 'Excelente' }
-      ]
-    },
-    2: {
-      label: 'Segundo Parcial',
-      average: '9.2',
-      grades: [
-        { subject: 'Programación Web', teacher: 'Ing. Juan Pérez', grade: '9.8', status: 'Excelente' },
-        { subject: 'Base de Datos', teacher: 'Mtra. García', grade: '9.5', status: 'Excelente' },
-        { subject: 'Matemáticas', teacher: 'Mtro. Hernández', grade: '8.7', status: 'Bueno' },
-        { subject: 'Física', teacher: 'Ing. López', grade: '8.4', status: 'Bueno' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.4', status: 'Excelente' }
-      ]
-    },
-    3: {
-      label: 'Tercer Parcial',
-      average: '9.6',
-      grades: [
-        { subject: 'Programación Web', teacher: 'Ing. Juan Pérez', grade: '10.0', status: 'Excelente' },
-        { subject: 'Base de Datos', teacher: 'Mtra. García', grade: '9.8', status: 'Excelente' },
-        { subject: 'Matemáticas', teacher: 'Mtro. Hernández', grade: '9.0', status: 'Excelente' },
-        { subject: 'Física', teacher: 'Ing. López', grade: '9.2', status: 'Excelente' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', grade: '9.7', status: 'Excelente' }
-      ]
-    }
-  };
-
   cambiarParcial(parcial: number): void {
-    if (this.data[parcial]) {
-      this.parcialActual = parcial;
-    }
+    this.parcialActual = parcial;
   }
 
   getParcialLabel(): string {
-    return this.data[this.parcialActual].label;
+
+    switch (this.parcialActual) {
+      case 1:
+        return 'Primer Parcial';
+      case 2:
+        return 'Segundo Parcial';
+      case 3:
+        return 'Tercer Parcial';
+      default:
+        return '';
+    }
+
   }
 
   getAverage(): string {
-    return this.data[this.parcialActual].average;
+
+    if (!this.grades.length) {
+      return '0.0';
+    }
+
+    let total = 0;
+
+    this.grades.forEach(g => {
+
+      switch (this.parcialActual) {
+        case 1:
+          total += g.partial1 ?? 0;
+          break;
+        case 2:
+          total += g.partial2 ?? 0;
+          break;
+        case 3:
+          total += g.partial3 ?? 0;
+          break;
+      }
+
+    });
+
+    return (total / this.grades.length).toFixed(1);
+
   }
 
   getGrades(): Grade[] {
-    return this.data[this.parcialActual].grades;
+
+    return this.grades.map(g => ({
+
+      subject: g.subject.name,
+
+      teacher: `Docente #${g.subject.teacherId}`,
+
+      grade: String(
+        this.parcialActual === 1
+          ? g.partial1
+          : this.parcialActual === 2
+            ? g.partial2
+            : g.partial3
+      ),
+
+      status: g.status
+
+    }));
+
   }
 
 }

@@ -1,28 +1,38 @@
-<div class="student-card">
+<div class="student-card" [class.inactive-card]="!user().active">
 
-  <div class="avatar">
-    {{ user().photo }}
+  <div class="badge-wrapper">
+    <span class="status-badge" [class.inactive]="!user().active">
+      <ion-icon name="ellipse"></ion-icon>
+      {{ user().active ? 'Activo' : 'Inactivo' }}
+    </span>
   </div>
 
-  <div class="info">
+  <div class="main-info">
+    <div class="avatar">
+      {{ user().avatar }}
+    </div>
+    <div class="name-group">
+      <h2>{{ user().name }}</h2>
+      @if (user().group) {
+        <p class="group">{{ user().group }}</p>
+      }
+      @if (user().career) {
+        <small class="career">{{ user().career }}</small>
+      }
+    </div>
+  </div>
 
-    <h2>{{ user().name }}</h2>
-
+  <div class="contact-info">
     <p>
       <ion-icon name="mail-outline"></ion-icon>
       {{ user().email }}
     </p>
-
-    <small>
-      <ion-icon name="call-outline"></ion-icon>
-      {{ user().phone }}
-    </small>
-
+    @if (user().phone) {
+      <small>
+        <ion-icon name="call-outline"></ion-icon>
+        {{ user().phone }}
+      </small>
+    }
   </div>
-
-  <span class="status-badge">
-    <ion-icon name="ellipse"></ion-icon>
-    Activo
-  </span>
 
 </div>

@@ -43,15 +43,15 @@ import {
     FormsModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent {
 
   email = '';
   password = '';
-  isLoading = false;
   rememberMe = false;
   showPassword = false;
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
@@ -71,18 +71,20 @@ export class LoginComponent {
       desktopOutline,
       refreshOutline
     });
+
     this.loadSavedEmail();
   }
 
-  private loadSavedEmail() {
-    const saved = localStorage.getItem('saved_email');
-    if (saved) {
-      this.email = saved;
+  private loadSavedEmail(): void {
+    const savedEmail = localStorage.getItem('saved_email');
+
+    if (savedEmail) {
+      this.email = savedEmail;
       this.rememberMe = true;
     }
   }
 
-  onRememberChange() {
+  onRememberChange(): void {
     if (this.rememberMe) {
       localStorage.setItem('saved_email', this.email);
     } else {
@@ -90,18 +92,19 @@ export class LoginComponent {
     }
   }
 
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  async login() {
+  async login(): Promise<void> {
+
     if (!this.email || !this.password) {
-      this.showToast('Ingresa tu correo y contraseña.', 'warning');
+      await this.showToast('Ingresa tu correo y contraseña.', 'warning');
       return;
     }
 
     if (!this.isValidEmail(this.email)) {
-      this.showToast('El correo no tiene un formato válido.', 'danger');
+      await this.showToast('El correo no tiene un formato válido.', 'danger');
       return;
     }
 
@@ -117,59 +120,102 @@ export class LoginComponent {
       .pipe(first())
       .subscribe({
         next: async (response: any) => {
-          await this.storageService.saveToken(response.accessToken);
 
-          this.authService.getProfile()
-            .pipe(first())
-            .subscribe({
-              next: async (profile: any) => {
-                await this.storageService.saveUser(profile);
-                this.authState.setUser(profile);
-                this.isLoading = false;
-                await this.router.navigateByUrl('/app/dashboard', { replaceUrl: true });
-              },
-              error: async () => {
-                this.isLoading = false;
-                this.showAlert('Error', 'No se pudo obtener tu perfil. Intenta de nuevo.');
-              }
+          try {
+
+            await this.storageService.saveToken(response.accessToken);
+
+            const profile = await this.authService
+              .getProfile()
+              .pipe(first())
+              .toPromise();
+
+            await this.storageService.saveUser(profile);
+
+            this.authState.setUser(profile);
+
+            await this.router.navigateByUrl('/app/dashboard', {
+              replaceUrl: true
             });
-        },
-        error: async (err) => {
-          this.isLoading = false;
-          let message = 'Usuario o contraseña incorrectos.';
-          if (err.status === 0) {
-            message = 'Error de conexión. Verifica tu internet.';
-          } else if (err.status === 401) {
-            message = 'Credenciales inválidas. Verifica tus datos.';
+
+          } catch {
+
+            await this.showAlert(
+              'Error',
+              'No fue posible obtener la información del usuario.'
+            );
+
+          } finally {
+
+            this.isLoading = false;
+
           }
-          this.showAlert('Inicio de sesión fallido', message);
+
+        },
+        error: async (error) => {
+
+          this.isLoading = false;
+
+          let message = 'Usuario o contraseña incorrectos.';
+
+          if (error.status === 0) {
+            message = 'No fue posible conectarse al servidor.';
+          }
+
+          if (error.status === 401) {
+            message = 'Credenciales inválidas.';
+          }
+
+          await this.showAlert(
+            'Inicio de sesión fallido',
+            message
+          );
+
         }
       });
+
   }
 
   private isValidEmail(email: string): boolean {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'danger') {
+  private async showToast(
+    message: string,
+    color: 'success' | 'danger' | 'warning' = 'danger'
+  ): Promise<void> {
+
     const toast = await this.toastCtrl.create({
       message,
       duration: 3000,
       color,
       position: 'bottom',
-      buttons: [{ text: 'OK', role: 'cancel' }]
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
     });
+
     await toast.present();
+
   }
 
-  private async showAlert(header: string, message: string) {
+  private async showAlert(
+    header: string,
+    message: string
+  ): Promise<void> {
+
     const alert = await this.alertCtrl.create({
       header,
       message,
-      buttons: ['Entendido'],
-      backdropDismiss: false
+      backdropDismiss: false,
+      buttons: ['Entendido']
     });
+
     await alert.present();
+
   }
+
 }
