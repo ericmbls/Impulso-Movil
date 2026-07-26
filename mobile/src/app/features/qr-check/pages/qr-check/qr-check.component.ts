@@ -5,10 +5,10 @@ import { addIcons } from 'ionicons';
 import { qrCodeOutline, refreshOutline, timeOutline, scanOutline, personOutline } from 'ionicons/icons';
 import { interval, Subscription } from 'rxjs';
 
-import { QrService, StudentQr } from '../../../../core/services/qr.service';
-import { AuthStateService } from '../../../../core/services/auth-state.service';
-import { ScanFrameComponent } from '../../../../shared/components/qr/scan-frame/scan-frame.component';
-import { LastScanCardComponent } from '../../../../shared/components/qr/last-scan-card/last-scan-card.component';
+import { QrService, StudentQr } from '@features/qr-check/services/qr.service';
+import { AuthStateService } from '@core/auth/services/auth-state.service';
+import { ScanFrameComponent } from '@shared/components/qr/scan-frame/scan-frame.component';
+import { LastScanCardComponent } from '@shared/components/qr/last-scan-card/last-scan-card.component';
 
 @Component({
   selector: 'app-qr-check',
@@ -32,10 +32,8 @@ export class QrCheckComponent implements OnInit, OnDestroy {
   secondsRemaining = 0;
   private timer?: Subscription;
 
-  // Obtenemos el rol del usuario actual
   userRole = this.authState.user()?.role;
 
-  // Determina si es docente
   get isTeacher(): boolean {
     return this.userRole === 'TEACHER';
   }
@@ -109,12 +107,9 @@ export class QrCheckComponent implements OnInit, OnDestroy {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  // ---- MÉTODOS PARA DOCENTE ----
-
   onScanSuccess(result: string) {
     console.log('QR escaneado:', result);
     // Aquí se procesa el escaneo (registrar asistencia)
-    // Ejemplo: this.attendanceService.register(result);
   }
 
   onScanClose() {

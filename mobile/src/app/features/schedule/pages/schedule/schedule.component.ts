@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { timeOutline, calendarOutline } from 'ionicons/icons';
 
-import { ScheduleCardComponent } from '../../../../shared/components/schedule/schedule-card/schedule-card.component';
+import { ScheduleCardComponent } from '@shared/components/schedule/schedule-card/schedule-card.component';
 
 interface ClassItem {
   subject: string;
@@ -33,8 +33,7 @@ interface DayData {
   styleUrl: './schedule.component.scss',
 })
 export class ScheduleComponent {
-
-  diaActual: number = 0;
+  diaActual = 0;
 
   days: DayData[] = [
     {
@@ -88,7 +87,7 @@ export class ScheduleComponent {
     addIcons({ timeOutline, calendarOutline });
   }
 
-  cambiarDia(index: number) {
+  cambiarDia(index: number): void {
     if (this.days[index]) {
       this.diaActual = index;
     }

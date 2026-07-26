@@ -10,8 +10,9 @@ import {
   idCardOutline,
   logOutOutline
 } from 'ionicons/icons';
-import { StorageService } from '../../../../core/services/storage.service';
-import { AuthStateService } from '../../../../core/services/auth-state.service';
+
+import { StorageService } from '@core/http/services/storage.service';
+import { AuthStateService } from '@core/auth/services/auth-state.service';
 
 @Component({
   selector: 'app-profile',
@@ -25,7 +26,6 @@ import { AuthStateService } from '../../../../core/services/auth-state.service';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent {
-
   constructor(
     private storageService: StorageService,
     private router: Router,
@@ -64,7 +64,7 @@ export class ProfileComponent {
     };
   });
 
-  async logout() {
+  async logout(): Promise<void> {
     await this.storageService.clear();
     this.authState.clear();
     await this.router.navigateByUrl('/login', { replaceUrl: true });

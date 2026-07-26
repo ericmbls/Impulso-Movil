@@ -1,17 +1,13 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { from, switchMap } from 'rxjs';
-
-import { StorageService } from '../services/storage.service';
+import { StorageService } from '@core/http/services/storage.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-
   const storage = inject(StorageService);
 
   return from(storage.getToken()).pipe(
-
     switchMap(token => {
-
       if (!token) {
         return next(req);
       }
@@ -23,9 +19,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       });
 
       return next(authReq);
-
     })
-
   );
-
 };

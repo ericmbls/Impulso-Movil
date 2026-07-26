@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { StorageService } from './storage.service';
+import { StorageService } from '@core/http/services/storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {

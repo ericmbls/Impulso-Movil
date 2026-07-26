@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   cardOutline, 
@@ -9,6 +10,9 @@ import {
   settingsOutline,
   logOutOutline
 } from 'ionicons/icons';
+
+import { AuthStateService } from '@core/auth/services/auth-state.service';
+import { StorageService } from '@core/http/services/storage.service';
 
 @Component({
   selector: 'app-more',
@@ -22,7 +26,6 @@ import {
   styleUrl: './more.component.scss',
 })
 export class MoreComponent {
-
   menuItems = [
     { icon: 'card-outline', label: 'Credencial', route: '/credential' },
     { icon: 'checkmark-circle-outline', label: 'Asistencia', route: '/attendance' },
@@ -30,7 +33,11 @@ export class MoreComponent {
     { icon: 'settings-outline', label: 'Configuración', route: '/settings' }
   ];
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private storageService: StorageService,
+    private authState: AuthStateService
+  ) {
     addIcons({
       cardOutline,
       checkmarkCircleOutline,
@@ -40,13 +47,13 @@ export class MoreComponent {
     });
   }
 
-  navigateTo(route: string) {
-    // Aquí va tu lógica de navegación
-    console.log('Navegando a:', route);
+  navigateTo(route: string): void {
+    this.router.navigateByUrl(route);
   }
 
-  logout() {
-    // Aquí va tu lógica de cerrar sesión
-    console.log('Cerrando sesión...');
+  async logout(): Promise<void> {
+    await this.storageService.clear();
+    this.authState.clear();
+    await this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

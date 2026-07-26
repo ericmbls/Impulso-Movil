@@ -17,10 +17,10 @@ import {
   peopleOutline
 } from 'ionicons/icons';
 
-import { StudentCardComponent } from '../../../../shared/components/dashboard/student-card/student-card.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
-import { AuthStateService } from '../../../../core/services/auth-state.service';
-import { DashboardService } from '../../../../core/services/dashboard.service';
+import { StudentCardComponent } from '@shared/components/dashboard/student-card/student-card.component';
+import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
+import { AuthStateService } from '@core/auth/services/auth-state.service';
+import { DashboardService } from '@features/dashboard/services/dashboard.service';
 
 type StatItem = {
   icon: string;
@@ -143,27 +143,23 @@ export class HomeComponent implements OnInit {
           { icon: 'calendar-outline', value: this.attendance, title: 'Asistencia', subtitle: 'Actual' },
           { icon: 'star-outline', value: this.average, title: 'Promedio', subtitle: 'General' }
         ];
-
       case 'TEACHER':
         return [
           { icon: 'people-outline', value: '5', title: 'Grupos', subtitle: 'Activos' },
           { icon: 'person-outline', value: '120', title: 'Alumnos', subtitle: 'Totales' },
           { icon: 'calendar-outline', value: '4', title: 'Clases hoy', subtitle: 'Pendientes' }
         ];
-
       case 'ADMIN':
         return [
           { icon: 'people-outline', value: '23', title: 'Docentes', subtitle: 'Activos' },
           { icon: 'school-outline', value: '18', title: 'Grupos', subtitle: 'Totales' },
           { icon: 'calendar-outline', value: '8', title: 'Clases hoy', subtitle: 'En curso' }
         ];
-
       case 'PARENT':
         return [
           { icon: 'star-outline', value: this.average, title: 'Promedio', subtitle: 'Hijo(a)' },
           { icon: 'calendar-outline', value: this.attendance, title: 'Asistencia', subtitle: 'Actual' }
         ];
-
       default:
         return [];
     }

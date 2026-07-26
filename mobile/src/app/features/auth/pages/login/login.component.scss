@@ -3,8 +3,7 @@ ion-content {
 }
 
 .login-container {
-  padding: 20px;
-  padding-bottom: 30px;
+  padding: 20px 20px 30px;
   background: #f5f2ed;
   min-height: 100%;
   display: flex;
@@ -17,7 +16,7 @@ ion-content {
   border-radius: 24px;
   padding: 28px 24px;
   margin-bottom: 20px;
-  color: white;
+  color: #fff;
   position: relative;
   overflow: hidden;
   min-height: 140px;
@@ -94,7 +93,7 @@ ion-content {
 }
 
 .login-card {
-  background: white;
+  background: #fff;
   border-radius: 24px;
   padding: 24px 20px;
   border: 1px solid rgba(199, 161, 90, 0.4);
@@ -192,9 +191,9 @@ ion-content {
   --border-radius: 6px;
   --border-color: rgba(199, 161, 90, 0.5);
   --border-color-checked: #7d1736;
-  --background: #ffffff;
+  --background: #fff;
   --background-checked: #7d1736;
-  --checkmark-color: #ffffff;
+  --checkmark-color: #fff;
   margin: 0;
   flex-shrink: 0;
 }
@@ -204,7 +203,6 @@ ion-content {
   color: #444;
   cursor: pointer;
   user-select: none;
-  -webkit-user-select: none;
 }
 
 .forgot-link {
@@ -226,7 +224,7 @@ ion-content {
   --box-shadow: 0 4px 16px rgba(125, 23, 54, 0.2);
   --padding-top: 14px;
   --padding-bottom: 14px;
-  --color: #ffffff;
+  --color: #fff;
   font-weight: 700;
   font-size: 16px;
   letter-spacing: 0.3px;
@@ -268,13 +266,8 @@ ion-content {
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .support-card {
-  background: white;
+  background: #fff;
   border-radius: 20px;
   padding: 14px 18px;
   border: 1px solid rgba(199, 161, 90, 0.3);
@@ -282,7 +275,7 @@ ion-content {
   align-items: center;
   gap: 14px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
   animation: cardEntrance 0.8s ease-out both;
   animation-delay: 0.3s;
 }
@@ -400,4 +393,9 @@ ion-content {
 @keyframes footerEntrance {
   0% { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

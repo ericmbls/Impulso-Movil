@@ -1,14 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '@env/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class DashboardService {
-
   private http = inject(HttpClient);
-
   private readonly gradesApi = `${environment.apiUrl}/grades`;
   private readonly attendanceApi = `${environment.apiUrl}/attendance`;
   private readonly schedulesApi = `${environment.apiUrl}/schedules`;
