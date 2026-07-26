@@ -1,41 +1,24 @@
 <ion-content>
   <div class="dashboard-container">
-
     <div class="hero">
       <div class="hero-content">
         <div class="greeting">
           <span class="wave">👋</span>
-
-          <h1>
-            Hola, {{ fullName || 'Usuario' }}
-          </h1>
+          <h1>Hola, {{ fullName || 'Usuario' }}</h1>
         </div>
-
         <div class="user-badge">
-          <span class="badge">
-            {{ role }}
-          </span>
-
+          <span class="badge">{{ role }}</span>
           @if (authState.user()?.studentProfile?.group) {
-            <span class="badge">
-              {{ authState.user()?.studentProfile?.group?.name }}
-            </span>
+            <span class="badge">{{ authState.user()?.studentProfile?.group?.name }}</span>
           }
-
           @if (authState.user()?.teacherProfile?.specialty) {
-            <span class="badge">
-              {{ authState.user()?.teacherProfile?.specialty }}
-            </span>
+            <span class="badge">{{ authState.user()?.teacherProfile?.specialty }}</span>
           }
-
           @if (authState.user()?.adminProfile?.position) {
-            <span class="badge">
-              {{ authState.user()?.adminProfile?.position }}
-            </span>
+            <span class="badge">{{ authState.user()?.adminProfile?.position }}</span>
           }
         </div>
       </div>
-
       <div class="hero-decoration">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
@@ -61,44 +44,29 @@
           <ion-icon name="calendar-outline"></ion-icon>
           Próximas clases
         </h3>
-
-        <span class="see-all" (click)="goToSchedule()">
-          Ver horario
-        </span>
+        <span class="see-all" (click)="goToSchedule()">Ver horario</span>
       </div>
-
       <div class="next-classes">
-        @for (classItem of nextClasses; track classItem.name) {
+        @for (classItem of nextClasses; track $index) {
           <div class="class-item">
-
-            <div
-              class="class-color"
-              [style.background]="classItem.color">
-            </div>
-
+            <div class="class-color" [style.background]="classItem.color"></div>
             <div class="class-info">
-              <p class="class-name">
-                {{ classItem.name }}
-              </p>
-
+              <p class="class-name">{{ classItem.name }}</p>
               <p class="class-time">
                 <ion-icon name="time-outline"></ion-icon>
                 {{ classItem.time }}
               </p>
             </div>
-
             <span class="class-room">
               <ion-icon name="school-outline"></ion-icon>
               {{ classItem.room }}
             </span>
-
             @if (classItem.remaining) {
-              <span class="class-remaining">
-                {{ classItem.remaining }}
-              </span>
+              <span class="class-remaining">{{ classItem.remaining }}</span>
             }
-
           </div>
+        } @empty {
+          <div class="empty-state">No hay clases programadas.</div>
         }
       </div>
     </div>
@@ -109,55 +77,26 @@
           <ion-icon name="notifications-outline"></ion-icon>
           Actividad reciente
         </h3>
-
-        <span
-          class="see-all"
-          (click)="goToNotifications()">
-          Ver todas
-        </span>
+        <span class="see-all" (click)="goToNotifications()">Ver todas</span>
       </div>
-
       <div class="activity-list">
         @for (activity of recentActivities; track activity.id) {
-
           <div class="activity-item">
-
-            <ion-icon
-              [name]="activity.icon"
-              class="activity-icon">
-            </ion-icon>
-
+            <ion-icon [name]="activity.icon" class="activity-icon"></ion-icon>
             <div class="activity-content">
-              <p class="activity-text">
-                {{ activity.text }}
-              </p>
-
-              <span class="activity-time">
-                {{ activity.time }}
-              </span>
+              <p class="activity-text">{{ activity.text }}</p>
+              <span class="activity-time">{{ activity.time }}</span>
             </div>
-
           </div>
-
         } @empty {
-
-          <p class="empty-state">
-            No hay actividad reciente
-          </p>
-
+          <div class="empty-state">No hay actividad reciente.</div>
         }
       </div>
     </div>
 
     <div class="footer">
-      <p class="footer-version">
-        Versión 1.0.0
-      </p>
-
-      <p class="footer-copy">
-        © 2026 CBTIS No. 61
-      </p>
+      <p class="footer-version">Versión 1.0.0</p>
+      <p class="footer-copy">© 2026 CBTIS No. 61</p>
     </div>
-
   </div>
 </ion-content>
