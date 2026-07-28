@@ -1,5 +1,7 @@
 {
-  "name": "mobile",
-  "integrations": {},
+  "name": "IMPULSO",
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular-standalone"
 }

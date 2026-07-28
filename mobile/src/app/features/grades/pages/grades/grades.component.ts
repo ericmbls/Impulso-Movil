@@ -27,6 +27,7 @@ interface Grade {
   styleUrl: './grades.component.scss'
 })
 export class GradesComponent implements OnInit {
+
   parcialActual = 2;
   grades: any[] = [];
 
@@ -38,10 +39,13 @@ export class GradesComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const user: any = await this.storageService.getUser();
     const studentId = user?.studentProfile?.id;
-    if (!studentId) return;
+
+    if (!studentId) {
+      return;
+    }
 
     this.gradesService.getStudentGrades(studentId).subscribe({
-      next: (grades: any) => {
+      next: (grades: any[]) => {
         this.grades = grades;
       },
       error: (error) => {
@@ -56,35 +60,56 @@ export class GradesComponent implements OnInit {
 
   getParcialLabel(): string {
     switch (this.parcialActual) {
-      case 1: return 'Primer Parcial';
-      case 2: return 'Segundo Parcial';
-      case 3: return 'Tercer Parcial';
-      default: return '';
+      case 1:
+        return 'Primer Parcial';
+      case 2:
+        return 'Segundo Parcial';
+      case 3:
+        return 'Tercer Parcial';
+      default:
+        return '';
     }
   }
 
   getAverage(): string {
-    if (!this.grades.length) return '0.0';
+    if (!this.grades.length) {
+      return '0.0';
+    }
+
     let total = 0;
+
     this.grades.forEach(g => {
       switch (this.parcialActual) {
-        case 1: total += g.partial1 ?? 0; break;
-        case 2: total += g.partial2 ?? 0; break;
-        case 3: total += g.partial3 ?? 0; break;
+        case 1:
+          total += g.partial1 ?? 0;
+          break;
+        case 2:
+          total += g.partial2 ?? 0;
+          break;
+        case 3:
+          total += g.partial3 ?? 0;
+          break;
       }
     });
+
     return (total / this.grades.length).toFixed(1);
   }
 
   getGrades(): Grade[] {
     return this.grades.map(g => ({
       subject: g.subject.name,
-      teacher: `Docente #${g.subject.teacherId}`,
+      teacher: g.subject.teacher
+        ? `${g.subject.teacher.user.firstName} ${g.subject.teacher.user.lastName}`
+        : 'Sin asignar',
       grade: String(
-        this.parcialActual === 1 ? g.partial1 :
-        this.parcialActual === 2 ? g.partial2 : g.partial3
+        this.parcialActual === 1
+          ? (g.partial1 ?? '-')
+          : this.parcialActual === 2
+            ? (g.partial2 ?? '-')
+            : (g.partial3 ?? '-')
       ),
       status: g.status
     }));
   }
+
 }
