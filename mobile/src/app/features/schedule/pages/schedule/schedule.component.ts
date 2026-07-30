@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { timeOutline, calendarOutline } from 'ionicons/icons';
+import { calendarOutline, timeOutline } from 'ionicons/icons';
 
+import { StorageService } from '@core/http/services/storage.service';
+import { ScheduleService } from '@features/schedule/services/schedule.service';
 import { ScheduleCardComponent } from '@shared/components/schedule/schedule-card/schedule-card.component';
 
 interface ClassItem {
@@ -17,6 +19,7 @@ interface ClassItem {
 interface DayData {
   label: string;
   fullLabel: string;
+  day: string;
   classes: ClassItem[];
 }
 
@@ -30,74 +33,60 @@ interface DayData {
     ScheduleCardComponent
   ],
   templateUrl: './schedule.component.html',
-  styleUrl: './schedule.component.scss',
+  styleUrl: './schedule.component.scss'
 })
-export class ScheduleComponent {
+export class ScheduleComponent implements OnInit {
   diaActual = 0;
 
   days: DayData[] = [
-    {
-      label: 'L',
-      fullLabel: 'Lunes',
-      classes: [
-        { subject: 'Programación Web', teacher: 'Ing. Juan Pérez', classroom: 'Aula 301', time: '8:00 - 9:30', color: '#7d1736' },
-        { subject: 'Base de Datos', teacher: 'Mtra. García', classroom: 'Aula 205', time: '10:00 - 11:30', color: '#c7a15a' },
-        { subject: 'Matemáticas', teacher: 'Mtro. Hernández', classroom: 'Aula 108', time: '12:00 - 13:30', color: '#2e7d32' },
-      ]
-    },
-    {
-      label: 'M',
-      fullLabel: 'Martes',
-      classes: [
-        { subject: 'Física', teacher: 'Ing. López', classroom: 'Aula 302', time: '8:00 - 9:30', color: '#1565c0' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', classroom: 'Aula 204', time: '10:00 - 11:30', color: '#6a1b9a' },
-        { subject: 'Programación Web', teacher: 'Ing. Juan Pérez', classroom: 'Aula 301', time: '12:00 - 13:30', color: '#7d1736' },
-      ]
-    },
-    {
-      label: 'Mi',
-      fullLabel: 'Miércoles',
-      classes: [
-        { subject: 'Base de Datos', teacher: 'Mtra. García', classroom: 'Aula 205', time: '8:00 - 9:30', color: '#c7a15a' },
-        { subject: 'Matemáticas', teacher: 'Mtro. Hernández', classroom: 'Aula 108', time: '10:00 - 11:30', color: '#2e7d32' },
-        { subject: 'Física', teacher: 'Ing. López', classroom: 'Aula 302', time: '12:00 - 13:30', color: '#1565c0' },
-      ]
-    },
-    {
-      label: 'J',
-      fullLabel: 'Jueves',
-      classes: [
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', classroom: 'Aula 204', time: '8:00 - 9:30', color: '#6a1b9a' },
-        { subject: 'Programación Web', teacher: 'Ing. Juan Pérez', classroom: 'Aula 301', time: '10:00 - 11:30', color: '#7d1736' },
-        { subject: 'Base de Datos', teacher: 'Mtra. García', classroom: 'Aula 205', time: '12:00 - 13:30', color: '#c7a15a' },
-      ]
-    },
-    {
-      label: 'V',
-      fullLabel: 'Viernes',
-      classes: [
-        { subject: 'Matemáticas', teacher: 'Mtro. Hernández', classroom: 'Aula 108', time: '8:00 - 9:30', color: '#2e7d32' },
-        { subject: 'Física', teacher: 'Ing. López', classroom: 'Aula 302', time: '10:00 - 11:30', color: '#1565c0' },
-        { subject: 'Inglés', teacher: 'Lic. Sánchez', classroom: 'Aula 204', time: '12:00 - 13:30', color: '#6a1b9a' },
-      ]
-    }
+    { label: 'L', fullLabel: 'Lunes', day: 'MONDAY', classes: [] },
+    { label: 'M', fullLabel: 'Martes', day: 'TUESDAY', classes: [] },
+    { label: 'Mi', fullLabel: 'Miércoles', day: 'WEDNESDAY', classes: [] },
+    { label: 'J', fullLabel: 'Jueves', day: 'THURSDAY', classes: [] },
+    { label: 'V', fullLabel: 'Viernes', day: 'FRIDAY', classes: [] }
   ];
 
-  constructor() {
-    addIcons({ timeOutline, calendarOutline });
+  constructor(
+    private storageService: StorageService,
+    private scheduleService: ScheduleService
+  ) {
+    addIcons({ calendarOutline, timeOutline });
+  }
+
+  async ngOnInit(): Promise<void> {
+    const user: any = await this.storageService.getUser();
+    const studentId = user?.studentProfile?.id;
+
+    if (!studentId) return;
+
+    this.scheduleService.getStudentSchedule(studentId).subscribe({
+      next: (response: any[]) => {
+        response.forEach(schedule => {
+          const day = this.days.find(d => d.day === schedule.dayOfWeek);
+          if (!day) return;
+
+          day.classes.push({
+            subject: schedule.class.subject.name,
+            teacher: `${schedule.class.subject.teacher.user.firstName} ${schedule.class.subject.teacher.user.lastName}`,
+            classroom: schedule.class.classroom?.name ?? 'Sin aula',
+            time: `${schedule.startTime} - ${schedule.endTime}`,
+            color: '#7d1736'
+          });
+        });
+      },
+      error: err => console.error(err)
+    });
   }
 
   cambiarDia(index: number): void {
-    if (this.days[index]) {
-      this.diaActual = index;
-    }
+    this.diaActual = index;
   }
 
   getSelectedDay(): string {
-    return this.days[this.diaActual]?.fullLabel || 'Lunes';
+    return this.days[this.diaActual].fullLabel;
   }
 
   getClasses(): ClassItem[] {
-    return this.days[this.diaActual]?.classes || [];
+    return this.days[this.diaActual].classes;
   }
 }
