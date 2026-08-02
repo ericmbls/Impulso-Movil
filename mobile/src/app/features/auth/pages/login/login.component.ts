@@ -99,8 +99,16 @@ export class LoginComponent {
       return;
     }
 
+    this.email = this.email.trim().toLowerCase();
+    this.password = this.password.trim();
+
     if (!this.isValidEmail(this.email)) {
       await this.showToast('El correo no tiene un formato válido.', 'danger');
+      return;
+    }
+
+    if (this.password.length < 6) {
+      await this.showToast('La contraseña debe tener al menos 6 caracteres.', 'warning');
       return;
     }
 
@@ -125,16 +133,49 @@ export class LoginComponent {
 
       await this.router.navigateByUrl('/app/dashboard', { replaceUrl: true });
     } catch (error: any) {
-      let message = 'Usuario o contraseña incorrectos.';
-      if (error.status === 0) {
-        message = 'No fue posible conectarse al servidor.';
-      } else if (error.status === 401) {
-        message = 'Credenciales inválidas.';
-      }
+      const message = this.getErrorMessage(error);
       await this.showAlert('Inicio de sesión fallido', message);
     } finally {
       this.isLoading = false;
     }
+  }
+
+  private getErrorMessage(error: any): string {
+    const serverMessage = error?.error?.message;
+
+    if (Array.isArray(serverMessage)) {
+      return serverMessage.join(' ');
+    }
+
+    if (typeof serverMessage === 'string' && serverMessage.trim()) {
+      return serverMessage;
+    }
+
+    if (typeof error?.error?.error === 'string' && error.error.error.trim()) {
+      return error.error.error;
+    }
+
+    if (error?.status === 0) {
+      return 'No fue posible conectarse al servidor. Verifica tu conexión o que el backend esté disponible.';
+    }
+
+    if (error?.status === 400) {
+      return 'Revisa tu correo y contraseña. La contraseña debe tener al menos 6 caracteres.';
+    }
+
+    if (error?.status === 401) {
+      return 'Credenciales inválidas. Verifica tu correo y contraseña.';
+    }
+
+    if (error?.status === 404) {
+      return 'El servicio de autenticación no está disponible.';
+    }
+
+    if (error?.status === 500) {
+      return 'El servidor devolvió un error inesperado. Intenta de nuevo más tarde.';
+    }
+
+    return 'Usuario o contraseña incorrectos.';
   }
 
   private isValidEmail(email: string): boolean {
