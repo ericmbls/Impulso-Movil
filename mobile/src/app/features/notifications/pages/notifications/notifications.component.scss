@@ -1,0 +1,130 @@
+ion-content {
+  --background: #f5f2ed;
+}
+
+.notifications-container {
+  padding: 20px;
+  padding-bottom: 100px;
+  background: #f5f2ed;
+}
+
+.hero {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border-radius: 24px;
+  padding: 28px 24px;
+  margin-bottom: 24px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.hero-content h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-content h1 ion-icon {
+  font-size: 28px;
+}
+
+.hero-content p {
+  margin: 6px 0 0;
+  font-size: 15px;
+  opacity: 0.8;
+}
+
+.notification-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(199, 161, 90, 0.2);
+  transition: background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notification-card:hover {
+  background: #faf8f6;
+}
+
+.notification-card .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.notification-card .channel {
+  color: #7d1736;
+  background: rgba(125, 23, 54, 0.08);
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.notification-card .status {
+  color: #999;
+  font-weight: 400;
+  background: #f5f2ed;
+  padding: 2px 12px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.notification-card .content {
+  margin: 4px 0 2px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+  line-height: 1.4;
+}
+
+.notification-card small {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 24px;
+  border: 1px solid rgba(199, 161, 90, 0.15);
+}
+
+.empty ion-icon {
+  font-size: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.empty h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #222;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 15px;
+  color: #999;
+}

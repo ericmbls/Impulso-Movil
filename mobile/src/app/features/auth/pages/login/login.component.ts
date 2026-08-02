@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-
 import {
   IonContent,
   IonButton,
@@ -13,11 +12,9 @@ import {
   ToastController,
   AlertController
 } from '@ionic/angular/standalone';
-
 import { AuthService } from '@core/auth/services/auth.service';
 import { StorageService } from '@core/http/services/storage.service';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
-
 import { addIcons } from 'ionicons';
 import {
   mailOutline,
@@ -60,16 +57,7 @@ export class LoginComponent {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController
   ) {
-    addIcons({
-      mailOutline,
-      lockClosedOutline,
-      eyeOutline,
-      eyeOffOutline,
-      logInOutline,
-      schoolOutline,
-      desktopOutline,
-      refreshOutline
-    });
+    addIcons({ mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, logInOutline, schoolOutline, desktopOutline, refreshOutline });
     this.loadSavedEmail();
   }
 
@@ -98,31 +86,22 @@ export class LoginComponent {
       await this.showToast('Ingresa tu correo y contraseña.', 'warning');
       return;
     }
-
     if (!this.isValidEmail(this.email)) {
       await this.showToast('El correo no tiene un formato válido.', 'danger');
       return;
     }
-
     if (this.rememberMe) {
       localStorage.setItem('saved_email', this.email);
     } else {
       localStorage.removeItem('saved_email');
     }
-
     this.isLoading = true;
-
     try {
-      const response: any = await firstValueFrom(
-        this.authService.login(this.email, this.password)
-      );
-
+      const response: any = await firstValueFrom(this.authService.login(this.email, this.password));
       await this.storageService.saveToken(response.accessToken);
-
       const profile = await firstValueFrom(this.authService.getProfile());
       await this.storageService.saveUser(profile);
       this.authState.setUser(profile);
-
       await this.router.navigateByUrl('/app/dashboard', { replaceUrl: true });
     } catch (error: any) {
       let message = 'Usuario o contraseña incorrectos.';
@@ -141,10 +120,7 @@ export class LoginComponent {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  private async showToast(
-    message: string,
-    color: 'success' | 'danger' | 'warning' = 'danger'
-  ): Promise<void> {
+  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'danger'): Promise<void> {
     const toast = await this.toastCtrl.create({
       message,
       duration: 3000,

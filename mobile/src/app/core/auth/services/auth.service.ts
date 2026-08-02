@@ -18,7 +18,6 @@ export class AuthService {
       );
   }
 
-  // Profile: envía el token en el header
   getProfile() {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

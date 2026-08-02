@@ -14,7 +14,11 @@ import {
   schoolOutline,
   bookOutline,
   megaphoneOutline,
-  peopleOutline
+  peopleOutline,
+  mailOutline,
+  chatbubbleOutline,
+  logoWhatsapp,
+  phonePortraitOutline
 } from 'ionicons/icons';
 
 import { StudentCardComponent } from '@shared/components/dashboard/student-card/student-card.component';
@@ -64,7 +68,11 @@ export class HomeComponent implements OnInit {
       schoolOutline,
       bookOutline,
       megaphoneOutline,
-      peopleOutline
+      peopleOutline,
+      mailOutline,
+      chatbubbleOutline,
+      logoWhatsapp,
+      phonePortraitOutline
     });
   }
 
@@ -80,17 +88,8 @@ export class HomeComponent implements OnInit {
     this.dashboardService.getGrades(studentId).subscribe({
       next: grades => {
         if (grades.length) {
-          const total = grades.reduce((sum: number, grade: any) => sum + (grade.finalGrade ?? 0), 0);
+          const total = grades.reduce((sum, grade) => sum + (grade.finalGrade ?? 0), 0);
           this.average = (total / grades.length).toFixed(1);
-          this.recentActivities = grades
-            .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-            .slice(0, 5)
-            .map((grade: any) => ({
-              id: grade.id,
-              icon: 'checkmark-circle-outline',
-              text: `Calificación actualizada en ${grade.subject.name}`,
-              time: new Date(grade.updatedAt).toLocaleDateString()
-            }));
         }
       }
     });
@@ -112,6 +111,22 @@ export class HomeComponent implements OnInit {
           remaining: '',
           color: '#7d1736'
         }));
+      }
+    });
+
+    this.dashboardService.getNotifications().subscribe({
+      next: (notifications: any[]) => {
+        this.recentActivities = notifications
+          .slice(0, 5)
+          .map(notification => ({
+            id: notification.id,
+            icon: this.getNotificationIcon(notification.channel),
+            text: notification.content,
+            time: this.formatDate(notification.createdAt)
+          }));
+      },
+      error: () => {
+        this.recentActivities = [];
       }
     });
   }
@@ -171,5 +186,25 @@ export class HomeComponent implements OnInit {
 
   goToNotifications(): void {
     this.router.navigateByUrl('/app/notifications');
+  }
+
+  private getNotificationIcon(channel: string): string {
+    switch (channel) {
+      case 'EMAIL':      return 'mail-outline';
+      case 'SMS':        return 'chatbubble-outline';
+      case 'WHATSAPP':   return 'logo-whatsapp';
+      case 'PUSH':       return 'phone-portrait-outline';
+      case 'IN_APP':     return 'notifications-outline';
+      default:           return 'notifications-outline';
+    }
+  }
+
+  private formatDate(date: string): string {
+    return new Date(date).toLocaleString('es-MX', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 }

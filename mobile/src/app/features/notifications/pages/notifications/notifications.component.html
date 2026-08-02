@@ -1,3 +1,60 @@
-<p>
-  notifications works!
-</p>
+<ion-content>
+
+  <div class="notifications-container">
+
+    <div class="hero">
+      <div class="hero-content">
+        <h1>
+          Notificaciones
+          <ion-icon name="notifications-outline"></ion-icon>
+        </h1>
+
+        <p>{{ notifications.length }} notificaciones</p>
+      </div>
+    </div>
+
+    @if (notifications.length) {
+
+      @for (notification of notifications; track notification.id) {
+
+        <div class="notification-card">
+
+          <div class="header">
+            <span class="channel">
+              {{ notification.channel }}
+            </span>
+
+            <span class="status">
+              {{ notification.status }}
+            </span>
+          </div>
+
+          <p class="content">
+            {{ notification.content }}
+          </p>
+
+          <small>
+            {{ notification.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </small>
+
+        </div>
+
+      }
+
+    } @else {
+
+      <div class="empty">
+
+        <ion-icon name="notifications-outline"></ion-icon>
+
+        <h3>No hay notificaciones</h3>
+
+        <p>No tienes notificaciones disponibles.</p>
+
+      </div>
+
+    }
+
+  </div>
+
+</ion-content>
