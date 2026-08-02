@@ -210,6 +210,14 @@ Generar la aplicación web:
 npm run build
 ```
 
+El comando anterior usa la configuración de producción y, por lo tanto, el backend definido en [mobile/src/environments/environment.ts](mobile/src/environments/environment.ts). Para generar una build con el entorno de desarrollo o para dispositivos específicos, usa:
+
+```bash
+npm run build:dev
+npm run build:android
+npm run build:device
+```
+
 Sincronizar archivos con Android:
 
 ```bash
