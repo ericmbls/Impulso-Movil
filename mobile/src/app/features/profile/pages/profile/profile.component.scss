@@ -4,10 +4,11 @@ ion-content {
 
 .profile-container {
   padding: 20px;
-  padding-bottom: 40px;
+  padding-bottom: 100px;
   background: #f5f2ed;
 }
 
+// Hero exactamente igual que en grades
 .hero {
   background: linear-gradient(135deg, #7d1736, #5d1028);
   border-radius: 24px;
@@ -31,122 +32,144 @@ ion-content {
 
 .hero .hero-content p {
   margin-top: 8px;
-  opacity: .9;
+  opacity: 0.9;
 }
 
+// Selector de secciones (igual que parciales)
+.seccion-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.seccion-btn {
+  background: white;
+  border: 1px solid rgba(199, 161, 90, 0.4);
+  border-radius: 16px;
+  padding: 12px 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #666;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.seccion-btn.active {
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  color: white;
+  border-color: #7d1736;
+  box-shadow: 0 4px 12px rgba(125, 23, 54, 0.3);
+}
+
+.seccion-btn:hover:not(.active) {
+  background: rgba(125, 23, 54, 0.05);
+}
+
+// Tarjeta de perfil (igual que la average-card pero adaptada)
 .profile-card {
   background: white;
-  border-radius: 24px;
-  padding: 32px 24px 28px;
-  border: 1px solid rgba(199, 161, 90, 0.4);
+  border-radius: 20px;
+  padding: 24px 20px 20px;
   text-align: center;
-  margin-bottom: 24px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(125, 23, 54, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
+  border: 1px solid rgba(199, 161, 90, 0.2);
 }
 
-.profile-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #7d1736, #c7a15a);
+.avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.avatar-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #7d1736, #c7a15a);
+  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.2);
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background: linear-gradient(135deg, #7d1736, #5d1028);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 38px;
   font-weight: 700;
   color: white;
-  margin: 0 auto 16px;
-  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.25);
-  border: 3px solid rgba(199, 161, 90, 0.2);
+  border: 3px solid white;
 }
 
 .user-name {
-  margin: 0;
+  margin: 0 0 8px;
   font-size: 22px;
   font-weight: 700;
-  color: #222;
+  color: #1a1a1a;
 }
 
 .user-badges {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 8px;
+  flex-wrap: wrap;
 }
 
-.user-badges .badge {
+.badge {
   display: inline-block;
-  padding: 4px 16px;
-  border-radius: 20px;
-  background: rgba(125, 23, 54, 0.06);
-  color: #7d1736;
-  font-size: 13px;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 12px;
   font-weight: 600;
-  border: 1px solid rgba(199, 161, 90, 0.2);
   letter-spacing: 0.3px;
   text-transform: uppercase;
 }
 
-.user-id {
-  margin: 12px 0 0;
-  font-size: 14px;
-  color: #999;
-  letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+.role-badge {
+  background: #7d1736;
+  color: white;
+  box-shadow: 0 2px 8px rgba(125, 23, 54, 0.2);
 }
 
-.user-id ion-icon {
-  font-size: 18px;
+.group-badge {
+  background: rgba(199, 161, 90, 0.15);
   color: #7d1736;
+  border: 1px solid rgba(199, 161, 90, 0.4);
 }
 
+.career-badge,
+.specialty-badge,
+.position-badge {
+  background: rgba(125, 23, 54, 0.06);
+  color: #5d1028;
+  border: 1px solid rgba(125, 23, 54, 0.15);
+}
+
+// Sección de información (igual que la lista de materias)
 .section {
-  margin-bottom: 24px;
-}
-
-.section h3 {
-  color: #7d1736;
-  margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section h3 ion-icon {
-  font-size: 22px;
+  margin-bottom: 20px;
 }
 
 .info-card {
   background: white;
   border-radius: 20px;
-  border: 1px solid rgba(199, 161, 90, 0.4);
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(199, 161, 90, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .info-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(199, 161, 90, 0.1);
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(199, 161, 90, 0.08);
 }
 
 .info-item:last-child {
@@ -154,8 +177,8 @@ ion-content {
 }
 
 .info-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 12px;
   background: rgba(125, 23, 54, 0.06);
   display: flex;
@@ -165,7 +188,7 @@ ion-content {
 }
 
 .info-icon ion-icon {
-  font-size: 22px;
+  font-size: 20px;
   color: #7d1736;
 }
 
@@ -189,6 +212,7 @@ ion-content {
   color: #222;
 }
 
+// Botón de logout (igual que en grades, pero con estilo propio)
 .logout-btn {
   display: flex;
   align-items: center;
@@ -240,4 +264,11 @@ ion-content {
   margin-top: 4px;
   font-size: 12px;
   color: #999;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+  font-size: 16px;
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "245840445888",
+    "project_id": "cbtis61-impulso",
+    "storage_bucket": "cbtis61-impulso.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245840445888:android:5a8de058d07ed4208e4825",
+        "android_client_info": {
+          "package_name": "com.cbtis61.impulso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmppafdS8OKRHQsKicNzA-sIhdTIO8EFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

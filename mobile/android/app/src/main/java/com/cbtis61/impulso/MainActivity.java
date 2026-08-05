@@ -1,4 +1,4 @@
-package com.example.app;
+package com.cbtis61.impulso;
 
 import com.getcapacitor.BridgeActivity;
 

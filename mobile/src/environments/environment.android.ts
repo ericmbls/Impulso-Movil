@@ -1,4 +1,5 @@
+// environment.android.ts
 export const environment = {
-  production: true,
-  apiUrl: 'https://impulso-api.onrender.com/api'
+  production: false,
+  apiUrl: 'https://impulso-api.onrender.com'
 };

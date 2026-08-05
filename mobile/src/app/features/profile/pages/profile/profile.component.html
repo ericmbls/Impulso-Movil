@@ -4,60 +4,200 @@
     <div class="hero">
       <div class="hero-content">
         <h1>
-          Perfil
           <ion-icon name="person-outline"></ion-icon>
+          Perfil
         </h1>
-        <p>Información personal</p>
+        <p>{{ getSubtitulo() }}</p>
       </div>
     </div>
 
-    <div class="profile-card">
-      <div class="avatar">
-        {{ user().photo }}
-      </div>
-      <h2 class="user-name">{{ user().name }}</h2>
-      <div class="user-badges">
-        <span class="badge">{{ user().group }}</span>
-        <span class="badge">{{ user().career }}</span>
-      </div>
-      <p class="user-id">
-        <ion-icon name="id-card-outline"></ion-icon>
-        {{ user().controlNumber }}
-      </p>
+    <!-- Selector de secciones (igual que parciales) -->
+    <div class="seccion-selector">
+      <button
+        class="seccion-btn"
+        [class.active]="seccionActiva() === 'info'"
+        (click)="cambiarSeccion('info')">
+        Información
+      </button>
+      <button
+        class="seccion-btn"
+        [class.active]="seccionActiva() === 'academico'"
+        (click)="cambiarSeccion('academico')"
+        *ngIf="mostrarSeccionAcademica()">
+        Académico
+      </button>
+      <button
+        class="seccion-btn"
+        [class.active]="seccionActiva() === 'contacto'"
+        (click)="cambiarSeccion('contacto')">
+        Contacto
+      </button>
     </div>
 
-    <div class="section">
-      <h3>
-        <ion-icon name="person-outline"></ion-icon>
-        Información de contacto
-      </h3>
-
-      <div class="info-card">
-        <div class="info-item">
-          <div class="info-icon">
-            <ion-icon name="mail-outline"></ion-icon>
+    @if (user(); as u) {
+      <!-- Sección: Información personal -->
+      @if (seccionActiva() === 'info') {
+        <div class="profile-card">
+          <div class="avatar-wrapper">
+            <div class="avatar-ring">
+              <div class="avatar">{{ u.photo }}</div>
+            </div>
           </div>
-          <div class="info-content">
-            <p class="info-label">Correo electrónico</p>
-            <p class="info-value">{{ user().email }}</p>
+          <h2 class="user-name">{{ u.fullName }}</h2>
+          <div class="user-badges">
+            <span class="badge role-badge">{{ u.roleLabel }}</span>
+            @if (u.studentProfile?.groupName) {
+              <span class="badge group-badge">{{ u.studentProfile?.groupName }}</span>
+            }
+            @if (u.studentProfile?.careerName) {
+              <span class="badge career-badge">{{ u.studentProfile?.careerName }}</span>
+            }
+            @if (u.teacherProfile?.specialty) {
+              <span class="badge specialty-badge">{{ u.teacherProfile?.specialty }}</span>
+            }
+            @if (u.adminProfile?.position) {
+              <span class="badge position-badge">{{ u.adminProfile?.position }}</span>
+            }
           </div>
         </div>
-        <div class="info-item">
-          <div class="info-icon">
-            <ion-icon name="call-outline"></ion-icon>
-          </div>
-          <div class="info-content">
-            <p class="info-label">Teléfono</p>
-            <p class="info-value">{{ user().phone }}</p>
+      }
+
+      <!-- Sección: Académico / Profesional -->
+      @if (seccionActiva() === 'academico') {
+        <div class="section">
+          @if (u.role === 'STUDENT' && u.studentProfile) {
+            <div class="info-card">
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="id-card-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Número de control</p>
+                  <p class="info-value">{{ u.studentProfile.controlNumber }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="people-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Grupo</p>
+                  <p class="info-value">{{ u.studentProfile.groupName || 'No asignado' }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="briefcase-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Carrera</p>
+                  <p class="info-value">{{ u.studentProfile.careerName || 'No especificada' }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="flag-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Semáforo</p>
+                  <p class="info-value" [style.color]="u.studentProfile.semaphore === 'RED' ? '#d32f2f' : u.studentProfile.semaphore === 'YELLOW' ? '#f57c00' : '#388e3c'">
+                    {{ u.studentProfile.semaphore }}
+                  </p>
+                </div>
+              </div>
+              @if (u.studentProfile.gradeLevel) {
+                <div class="info-item">
+                  <div class="info-icon"><ion-icon name="star-outline"></ion-icon></div>
+                  <div class="info-content">
+                    <p class="info-label">Grado</p>
+                    <p class="info-value">{{ u.studentProfile.gradeLevel }}°</p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (u.role === 'TEACHER' && u.teacherProfile) {
+            <div class="info-card">
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="id-card-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Número de empleado</p>
+                  <p class="info-value">{{ u.teacherProfile.employeeId }}</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="school-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Especialidad</p>
+                  <p class="info-value">{{ u.teacherProfile.specialty }}</p>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (u.role === 'ADMIN' && u.adminProfile) {
+            <div class="info-card">
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="briefcase-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Cargo</p>
+                  <p class="info-value">{{ u.adminProfile.position }}</p>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (u.role === 'PARENT' && u.parentProfile) {
+            <div class="info-card">
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="location-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Dirección</p>
+                  <p class="info-value">{{ u.parentProfile.address || 'No registrada' }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Sección: Contacto -->
+      @if (seccionActiva() === 'contacto') {
+        <div class="section">
+          <div class="info-card">
+            <div class="info-item">
+              <div class="info-icon"><ion-icon name="mail-outline"></ion-icon></div>
+              <div class="info-content">
+                <p class="info-label">Correo electrónico</p>
+                <p class="info-value">{{ u.email }}</p>
+              </div>
+            </div>
+            @if (u.studentProfile?.phone || u.teacherProfile?.phone || u.adminProfile?.phone || u.parentProfile?.phone) {
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="call-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Teléfono</p>
+                  <p class="info-value">
+                    {{ u.studentProfile?.phone ?? u.teacherProfile?.phone ?? u.adminProfile?.phone ?? u.parentProfile?.phone }}
+                  </p>
+                </div>
+              </div>
+            }
+            @if (u.parentProfile?.address) {
+              <div class="info-item">
+                <div class="info-icon"><ion-icon name="location-outline"></ion-icon></div>
+                <div class="info-content">
+                  <p class="info-label">Dirección</p>
+                  <p class="info-value">{{ u.parentProfile?.address }}</p>
+                </div>
+              </div>
+            }
           </div>
         </div>
-      </div>
-    </div>
+      }
 
-    <button class="logout-btn" (click)="logout()">
-      <ion-icon name="log-out-outline"></ion-icon>
-      Cerrar sesión
-    </button>
+      <!-- Botón de cerrar sesión -->
+      <button class="logout-btn" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Cerrar sesión
+      </button>
+
+    } @else {
+      <div class="loading">Cargando perfil...</div>
+    }
 
     <div class="footer">
       <p>Versión 1.0.0</p>

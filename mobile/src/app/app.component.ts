@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
+import { PushNotificationService } from '@core/auth/services/push-notification.service';
 
 @Component({
   selector: 'app-root',
@@ -8,12 +9,14 @@ import { AuthStateService } from '@core/auth/services/auth-state.service';
   imports: [IonApp, IonRouterOutlet],
   templateUrl: 'app.component.html'
 })
-export class AppComponent {
-  constructor(private authState: AuthStateService) {
-    this.initializeApp();
-  }
+export class AppComponent implements OnInit {
+  constructor(
+    private authState: AuthStateService,
+    private pushService: PushNotificationService
+  ) {}
 
-  async initializeApp() {
+  async ngOnInit() {
     await this.authState.loadUser();
+    await this.pushService.initialize();
   }
 }
