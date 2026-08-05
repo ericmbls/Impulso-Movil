@@ -17,6 +17,8 @@ pids
 *.seed
 *.pid.lock
 
+.www
+
 # Coverage
 coverage/
 *.lcov

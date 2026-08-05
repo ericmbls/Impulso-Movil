@@ -1,8 +1,19 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonIcon,
+  ViewWillEnter,
+  ViewWillLeave,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { qrCodeOutline, refreshOutline, timeOutline, scanOutline, personOutline } from 'ionicons/icons';
+import {
+  qrCodeOutline,
+  refreshOutline,
+  timeOutline,
+  scanOutline,
+  personOutline,
+} from 'ionicons/icons';
 import { interval, Subscription } from 'rxjs';
 
 import { QrService, StudentQr } from '@features/qr-check/services/qr.service';
@@ -23,13 +34,14 @@ import { LastScanCardComponent } from '@shared/components/qr/last-scan-card/last
   templateUrl: './qr-check.component.html',
   styleUrl: './qr-check.component.scss',
 })
-export class QrCheckComponent implements OnInit, OnDestroy {
+export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   private qrService = inject(QrService);
   private authState = inject(AuthStateService);
 
   qr: StudentQr | null = null;
   loading = true;
   secondsRemaining = 0;
+
   private timer?: Subscription;
 
   userRole = this.authState.user()?.role;
@@ -48,24 +60,27 @@ export class QrCheckComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
+  ionViewWillEnter(): void {
     if (!this.isTeacher) {
       this.loadQr();
     }
   }
 
-  ngOnDestroy(): void {
+  ionViewWillLeave(): void {
     this.timer?.unsubscribe();
   }
 
   loadQr(): void {
+    this.timer?.unsubscribe();
     this.loading = true;
+
     this.qrService.getMyQr().subscribe({
       next: (qr) => {
         if (!qr.isValid) {
           this.refresh();
           return;
         }
+
         this.qr = qr;
         this.loading = false;
         this.startCountdown();
@@ -80,7 +95,6 @@ export class QrCheckComponent implements OnInit, OnDestroy {
     this.qrService.refreshQr().subscribe({
       next: (qr) => {
         this.qr = qr;
-        this.secondsRemaining = 30;
         this.loading = false;
         this.startCountdown();
       },
@@ -92,9 +106,12 @@ export class QrCheckComponent implements OnInit, OnDestroy {
 
   private startCountdown(): void {
     this.timer?.unsubscribe();
+
     this.secondsRemaining = 30;
+
     this.timer = interval(1000).subscribe(() => {
       this.secondsRemaining--;
+
       if (this.secondsRemaining <= 0) {
         this.refresh();
       }
@@ -104,15 +121,17 @@ export class QrCheckComponent implements OnInit, OnDestroy {
   get countdown(): string {
     const minutes = Math.floor(this.secondsRemaining / 60);
     const seconds = this.secondsRemaining % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    return `${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`;
   }
 
-  onScanSuccess(result: string) {
+  onScanSuccess(result: string): void {
     console.log('QR escaneado:', result);
-    // Aquí se procesa el escaneo (registrar asistencia)
   }
 
-  onScanClose() {
+  onScanClose(): void {
     console.log('Escáner cerrado');
   }
 }
