@@ -26,18 +26,21 @@ export class StudentCardComponent {
         career: ''
       };
     }
+    const student = u.studentProfile;
+    const teacher = u.teacherProfile;
+    const parent = u.parentProfile;
     return {
       name: `${u.firstName} ${u.lastName}`,
       email: u.email,
-      phone: u.studentProfile?.phone ?? u.teacherProfile?.phone ?? u.parentProfile?.phone ?? '',
+      phone: student?.phone ?? teacher?.phone ?? parent?.phone ?? '',
       avatar: u.firstName.charAt(0).toUpperCase(),
-      active: u.isActive,
-      group: u.studentProfile?.group?.name ?? '',
-      career: u.studentProfile?.group?.career ?? ''
+      active: u.isActive ?? true,
+      group: student?.group?.name ?? '',
+      career: student?.group?.career?.name ?? ''
     };
   });
 
-  constructor(public authState: AuthStateService) {
+  constructor(private authState: AuthStateService) {
     addIcons({ mailOutline, callOutline, ellipse });
   }
 }

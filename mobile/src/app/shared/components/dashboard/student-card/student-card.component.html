@@ -1,38 +1,42 @@
-<div class="student-card" [class.inactive-card]="!user().active">
-
-  <div class="badge-wrapper">
-    <span class="status-badge" [class.inactive]="!user().active">
-      <ion-icon name="ellipse"></ion-icon>
-      {{ user().active ? 'Activo' : 'Inactivo' }}
-    </span>
-  </div>
-
-  <div class="main-info">
-    <div class="avatar">
-      {{ user().avatar }}
+@if (user(); as u) {
+  <div class="student-card" [class.inactive-card]="!u.active">
+    <div class="badge-wrapper">
+      <span class="status-badge" [class.inactive]="!u.active">
+        <ion-icon name="ellipse"></ion-icon>
+        {{ u.active ? 'Activo' : 'Inactivo' }}
+      </span>
     </div>
-    <div class="name-group">
-      <h2>{{ user().name }}</h2>
-      @if (user().group) {
-        <p class="group">{{ user().group }}</p>
-      }
-      @if (user().career) {
-        <small class="career">{{ user().career }}</small>
-      }
-    </div>
-  </div>
 
-  <div class="contact-info">
-    <p>
-      <ion-icon name="mail-outline"></ion-icon>
-      {{ user().email }}
-    </p>
-    @if (user().phone) {
+    <div class="main-info">
+      <div class="avatar">
+        {{ u.avatar }}
+      </div>
+      <div class="name-group">
+        <h2>{{ u.name }}</h2>
+        @if (u.group) {
+          <p class="group">{{ u.group }}</p>
+        }
+        @if (u.career) {
+          <small class="career">{{ u.career }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="contact-info">
       <p>
-        <ion-icon name="call-outline"></ion-icon>
-        {{ user().phone }}
+        <ion-icon name="mail-outline"></ion-icon>
+        {{ u.email }}
       </p>
-    }
+      @if (u.phone) {
+        <p>
+          <ion-icon name="call-outline"></ion-icon>
+          {{ u.phone }}
+        </p>
+      }
+    </div>
   </div>
-
-</div>
+} @else {
+  <div class="student-card loading-card">
+    <div class="loading-text">Cargando...</div>
+  </div>
+}

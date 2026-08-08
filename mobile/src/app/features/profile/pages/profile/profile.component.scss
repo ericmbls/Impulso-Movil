@@ -1,14 +1,21 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 ion-content {
-  --background: #f5f2ed;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 .profile-container {
   padding: 20px;
-  padding-bottom: 100px;
+  min-height: 100%;
   background: #f5f2ed;
 }
 
-// Hero exactamente igual que en grades
 .hero {
   background: linear-gradient(135deg, #7d1736, #5d1028);
   border-radius: 24px;
@@ -35,7 +42,6 @@ ion-content {
   opacity: 0.9;
 }
 
-// Selector de secciones (igual que parciales)
 .seccion-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -51,7 +57,6 @@ ion-content {
   font-weight: 600;
   font-size: 13px;
   color: #666;
-  transition: all 0.2s ease;
   cursor: pointer;
   text-align: center;
 }
@@ -67,7 +72,6 @@ ion-content {
   background: rgba(125, 23, 54, 0.05);
 }
 
-// Tarjeta de perfil (igual que la average-card pero adaptada)
 .profile-card {
   background: white;
   border-radius: 20px;
@@ -151,7 +155,6 @@ ion-content {
   border: 1px solid rgba(125, 23, 54, 0.15);
 }
 
-// Sección de información (igual que la lista de materias)
 .section {
   margin-bottom: 20px;
 }
@@ -212,7 +215,6 @@ ion-content {
   color: #222;
 }
 
-// Botón de logout (igual que en grades, pero con estilo propio)
 .logout-btn {
   display: flex;
   align-items: center;
@@ -227,18 +229,8 @@ ion-content {
   font-weight: 600;
   color: white;
   cursor: pointer;
-  transition: all 0.2s ease;
   margin-bottom: 20px;
   box-shadow: 0 4px 16px rgba(125, 23, 54, 0.2);
-}
-
-.logout-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(125, 23, 54, 0.3);
-}
-
-.logout-btn:active {
-  transform: scale(0.98);
 }
 
 .logout-btn ion-icon {
@@ -271,4 +263,37 @@ ion-content {
   padding: 40px 0;
   color: #999;
   font-size: 16px;
+}
+
+@media (max-width: 420px) {
+  .seccion-selector {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .seccion-btn {
+    font-size: 11px;
+    padding: 10px 6px;
+  }
+
+  .hero h1 {
+    font-size: 22px;
+  }
+
+  .profile-card {
+    padding: 20px 16px;
+  }
+
+  .avatar-ring {
+    width: 80px;
+    height: 80px;
+  }
+
+  .avatar {
+    font-size: 30px;
+  }
+
+  .user-name {
+    font-size: 18px;
+  }
 }

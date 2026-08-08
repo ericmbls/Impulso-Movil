@@ -1,18 +1,18 @@
 ion-content {
-  --background: #f5f2ed;
+  --background: #f7f4ef;
 }
 
 .qr-container {
   padding: 20px;
   padding-bottom: 40px;
-  background: #f5f2ed;
+  background: #f7f4ef;
   min-height: 100%;
 }
 
 .hero {
   background: linear-gradient(135deg, #7d1736, #5d1028);
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: 18px;
+  padding: 20px;
   margin-bottom: 20px;
   color: white;
 }
@@ -22,27 +22,27 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
 }
 
 .hero-content h1 ion-icon {
-  font-size: 30px;
+  font-size: 24px;
 }
 
 .hero-content p {
   margin: 10px 0 0;
-  opacity: .9;
+  opacity: 0.9;
   font-size: 15px;
 }
 
 .qr-card {
   background: white;
-  border-radius: 22px;
-  border: 1px solid rgba(199, 161, 90, .35);
+  border-radius: 18px;
+  border: 1px solid rgba(199, 161, 90, 0.35);
   padding: 28px 24px;
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .qr-image {

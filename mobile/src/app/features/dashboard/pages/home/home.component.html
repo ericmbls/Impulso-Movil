@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content fullscreen="true">
   <div class="dashboard-container">
     <div class="hero">
       <div class="hero-content">
@@ -41,39 +41,6 @@
     <div class="section">
       <div class="section-header">
         <h3>
-          <ion-icon name="calendar-outline"></ion-icon>
-          Próximas clases
-        </h3>
-        <span class="see-all" (click)="goToSchedule()">Ver horario</span>
-      </div>
-      <div class="next-classes">
-        @for (classItem of nextClasses; track $index) {
-          <div class="class-item">
-            <div class="class-color" [style.background]="classItem.color"></div>
-            <div class="class-info">
-              <p class="class-name">{{ classItem.name }}</p>
-              <p class="class-time">
-                <ion-icon name="time-outline"></ion-icon>
-                {{ classItem.time }}
-              </p>
-            </div>
-            <span class="class-room">
-              <ion-icon name="school-outline"></ion-icon>
-              {{ classItem.room }}
-            </span>
-            @if (classItem.remaining) {
-              <span class="class-remaining">{{ classItem.remaining }}</span>
-            }
-          </div>
-        } @empty {
-          <div class="empty-state">No hay clases programadas.</div>
-        }
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <h3>
           <ion-icon name="notifications-outline"></ion-icon>
           Actividad reciente
         </h3>
@@ -82,7 +49,9 @@
       <div class="activity-list">
         @for (activity of recentActivities; track activity.id) {
           <div class="activity-item">
-            <ion-icon [name]="activity.icon" class="activity-icon"></ion-icon>
+            <div class="activity-icon-wrapper">
+              <ion-icon [name]="activity.icon" class="activity-icon"></ion-icon>
+            </div>
             <div class="activity-content">
               <p class="activity-text">{{ activity.text }}</p>
               <span class="activity-time">{{ activity.time }}</span>

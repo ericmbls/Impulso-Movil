@@ -1,3 +1,4 @@
+// tabs-layout.component.ts
 import { Component } from '@angular/core';
 import {
   IonTabs,

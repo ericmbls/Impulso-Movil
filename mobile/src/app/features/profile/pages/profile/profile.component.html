@@ -1,6 +1,5 @@
-<ion-content>
+<ion-content fullscreen>
   <div class="profile-container">
-
     <div class="hero">
       <div class="hero-content">
         <h1>
@@ -11,7 +10,6 @@
       </div>
     </div>
 
-    <!-- Selector de secciones (igual que parciales) -->
     <div class="seccion-selector">
       <button
         class="seccion-btn"
@@ -35,17 +33,16 @@
     </div>
 
     @if (user(); as u) {
-      <!-- Sección: Información personal -->
       @if (seccionActiva() === 'info') {
         <div class="profile-card">
           <div class="avatar-wrapper">
             <div class="avatar-ring">
-              <div class="avatar">{{ u.photo }}</div>
+              <div class="avatar">{{ u.photo || 'U' }}</div>
             </div>
           </div>
           <h2 class="user-name">{{ u.fullName }}</h2>
           <div class="user-badges">
-            <span class="badge role-badge">{{ u.roleLabel }}</span>
+            <span class="badge role-badge">{{ u.roleLabel || u.role }}</span>
             @if (u.studentProfile?.groupName) {
               <span class="badge group-badge">{{ u.studentProfile?.groupName }}</span>
             }
@@ -62,7 +59,6 @@
         </div>
       }
 
-      <!-- Sección: Académico / Profesional -->
       @if (seccionActiva() === 'academico') {
         <div class="section">
           @if (u.role === 'STUDENT' && u.studentProfile) {
@@ -93,7 +89,7 @@
                 <div class="info-content">
                   <p class="info-label">Semáforo</p>
                   <p class="info-value" [style.color]="u.studentProfile.semaphore === 'RED' ? '#d32f2f' : u.studentProfile.semaphore === 'YELLOW' ? '#f57c00' : '#388e3c'">
-                    {{ u.studentProfile.semaphore }}
+                    {{ u.studentProfile.semaphore || 'No definido' }}
                   </p>
                 </div>
               </div>
@@ -154,7 +150,6 @@
         </div>
       }
 
-      <!-- Sección: Contacto -->
       @if (seccionActiva() === 'contacto') {
         <div class="section">
           <div class="info-card">
@@ -189,7 +184,6 @@
         </div>
       }
 
-      <!-- Botón de cerrar sesión -->
       <button class="logout-btn" (click)="logout()">
         <ion-icon name="log-out-outline"></ion-icon>
         Cerrar sesión
@@ -203,6 +197,5 @@
       <p>Versión 1.0.0</p>
       <small>CBTIS 61 • IMPULSO</small>
     </div>
-
   </div>
 </ion-content>

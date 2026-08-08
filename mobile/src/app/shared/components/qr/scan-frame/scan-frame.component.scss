@@ -208,3 +208,74 @@
 .scan-btn ion-icon {
   font-size: 22px;
 }
+
+.scan-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: white;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.scan-status ion-icon {
+  font-size: 48px;
+  opacity: 0.8;
+}
+
+.scan-status p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.scan-status-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 5;
+  border-radius: 16px;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.scan-status-overlay .status-icon {
+  font-size: 56px;
+}
+
+.scan-status-overlay .status-icon.success {
+  color: #4caf50;
+}
+
+.scan-status-overlay .status-icon.error {
+  color: #f44336;
+}
+
+.scan-status-overlay .status-text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

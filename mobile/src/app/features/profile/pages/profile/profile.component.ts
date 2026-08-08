@@ -29,7 +29,6 @@ import { AuthStateService } from '@core/auth/services/auth-state.service';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-  // Señal para la sección activa (tipo pestañas)
   seccionActiva = signal<'info' | 'academico' | 'contacto'>('info');
 
   constructor(
@@ -125,7 +124,6 @@ export class ProfileComponent {
     await this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
-  // Método para obtener el subtítulo según la sección activa
   getSubtitulo(): string {
     const map = {
       info: 'Información personal',
@@ -135,7 +133,6 @@ export class ProfileComponent {
     return map[this.seccionActiva()];
   }
 
-  // Método para determinar si mostrar secciones específicas (según rol)
   mostrarSeccionAcademica(): boolean {
     const u = this.user();
     if (!u) return false;

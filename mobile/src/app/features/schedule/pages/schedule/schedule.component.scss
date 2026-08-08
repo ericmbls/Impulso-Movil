@@ -1,24 +1,24 @@
 ion-content {
-  --background: #f5f2ed;
+  --background: #f7f4ef;
 }
 
 .schedule-container {
   padding: 20px;
   padding-bottom: 100px;
-  background: #f5f2ed;
+  background: #f7f4ef;
 }
 
 .hero {
   background: linear-gradient(135deg, #7d1736, #5d1028);
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: 18px;
+  padding: 20px;
   margin-bottom: 20px;
   color: white;
 }
 
 .hero .hero-content h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -26,103 +26,12 @@ ion-content {
 }
 
 .hero .hero-content h1 ion-icon {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .hero .hero-content p {
   margin-top: 8px;
-  opacity: .9;
-}
-
-.days {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 24px;
-}
-
-.day-btn {
-  background: white;
-  border: 1px solid rgba(199, 161, 90, 0.4);
-  border-radius: 16px;
-  padding: 12px 0;
-  font-weight: 600;
-  font-size: 15px;
-  color: #666;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.day-btn.active {
-  background: linear-gradient(135deg, #7d1736, #5d1028);
-  color: white;
-  border-color: #7d1736;
-  box-shadow: 0 4px 12px rgba(125, 23, 54, 0.3);
-}
-
-.day-btn:hover:not(.active) {
-  background: rgba(125, 23, 54, 0.05);
-}
-
-.section {
-  margin-bottom: 24px;
-}
-
-.section h3 {
-  color: #7d1736;
-  margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section h3 ion-icon {
-  font-size: 20px;
-}
-
-app-schedule-card {
-  display: block;
-  margin-bottom: 12px;
-}
-
-app-schedule-card:last-child {
-  margin-bottom: 0;
-}ion-content {
-  --background: #f5f2ed;
-}
-
-.schedule-container {
-  padding: 20px;
-  padding-bottom: 100px;
-  background: #f5f2ed;
-}
-
-.hero {
-  background: linear-gradient(135deg, #7d1736, #5d1028);
-  border-radius: 24px;
-  padding: 24px;
-  margin-bottom: 20px;
-  color: white;
-}
-
-.hero .hero-content h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hero .hero-content h1 ion-icon {
-  font-size: 28px;
-}
-
-.hero .hero-content p {
-  margin-top: 8px;
-  opacity: .9;
+  opacity: 0.9;
 }
 
 .days {
