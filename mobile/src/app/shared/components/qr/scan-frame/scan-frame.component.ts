@@ -27,7 +27,6 @@ export class ScanFrameComponent {
   @Output() close = new EventEmitter<void>();
 
   scanStatus: ScanStatus = 'idle';
-
   private statusTimeout?: ReturnType<typeof setTimeout>;
 
   constructor() {
@@ -69,28 +68,55 @@ export class ScanFrameComponent {
         }
       }
 
+      let moduleStatus =
+        await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+
+      if (!moduleStatus.available) {
+        console.log('Instalando Google Barcode Scanner Module...');
+
+        await BarcodeScanner.installGoogleBarcodeScannerModule();
+
+        console.log('Solicitud de instalación enviada');
+
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        moduleStatus =
+          await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+
+        console.log('Estado del módulo:', moduleStatus);
+
+        if (!moduleStatus.available) {
+          console.error(
+            'El Google Barcode Scanner Module todavía no está disponible',
+          );
+          this.setStatus('error');
+          return;
+        }
+      }
+
+      console.log('Google Barcode Scanner Module disponible');
+
       this.setStatus('scanning');
 
       const result = await BarcodeScanner.scan({
         formats: [BarcodeFormat.QrCode],
       });
 
-      if (!result.barcodes.length) {
-        this.setStatus('idle');
-        return;
+      console.log('Resultado del scanner:', result);
+
+      if (result.barcodes.length > 0) {
+        const qrToken = result.barcodes[0].rawValue;
+
+        if (qrToken) {
+          console.log('QR detectado:', qrToken);
+          this.scan.emit(qrToken);
+          this.setStatus('success');
+          return;
+        }
       }
 
-      const qrToken = result.barcodes[0].rawValue;
-
-      if (!qrToken) {
-        this.setStatus('error');
-        return;
-      }
-
-      console.log('QR detectado:', qrToken);
-
-      this.setStatus('success');
-      this.scan.emit(qrToken);
+      console.log('No se detectó ningún QR');
+      this.setStatus('idle');
     } catch (error) {
       console.error('Error al escanear QR:', error);
       this.setStatus('error');
