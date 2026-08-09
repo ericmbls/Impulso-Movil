@@ -12,6 +12,8 @@ export interface AttendanceScanResponse {
   id?: number;
   status?: string;
   message?: string;
+  studentId?: number;
+  classScheduleId?: number;
   [key: string]: unknown;
 }
 
@@ -25,14 +27,16 @@ export class AttendanceService {
 
   scanQr(
     qrToken: string,
-    classScheduleId: number
+    classScheduleId: number,
   ): Observable<AttendanceScanResponse> {
+    const body: QrScanRequest = {
+      qrToken,
+      classScheduleId,
+    };
+
     return this.http.post<AttendanceScanResponse>(
       `${this.apiUrl}/scan-qr`,
-      {
-        qrToken,
-        classScheduleId,
-      }
+      body,
     );
   }
 }

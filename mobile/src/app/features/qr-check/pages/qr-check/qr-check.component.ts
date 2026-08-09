@@ -16,10 +16,26 @@ import {
 } from 'ionicons/icons';
 import { interval, Subscription } from 'rxjs';
 
-import { QrService, StudentQr } from '@features/qr-check/services/qr.service';
-import { AuthStateService } from '@core/auth/services/auth-state.service';
-import { ScanFrameComponent } from '@shared/components/qr/scan-frame/scan-frame.component';
-import { LastScanCardComponent } from '@shared/components/qr/last-scan-card/last-scan-card.component';
+import {
+  QrService,
+  StudentQr,
+} from '@features/qr-check/services/qr.service';
+
+import {
+  AttendanceService,
+} from '@features/attendance/services/attendance.service';
+
+import {
+  AuthStateService,
+} from '@core/auth/services/auth-state.service';
+
+import {
+  ScanFrameComponent,
+} from '@shared/components/qr/scan-frame/scan-frame.component';
+
+import {
+  LastScanCardComponent,
+} from '@shared/components/qr/last-scan-card/last-scan-card.component';
 
 @Component({
   selector: 'app-qr-check',
@@ -35,12 +51,15 @@ import { LastScanCardComponent } from '@shared/components/qr/last-scan-card/last
   styleUrl: './qr-check.component.scss',
 })
 export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
-  private qrService = inject(QrService);
-  private authState = inject(AuthStateService);
+  private readonly qrService = inject(QrService);
+  private readonly authState = inject(AuthStateService);
+  private readonly attendanceService = inject(AttendanceService);
 
   qr: StudentQr | null = null;
+
   loading = true;
   secondsRemaining = 0;
+  scanningAttendance = false;
 
   private timer?: Subscription;
 
@@ -85,7 +104,8 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
         this.loading = false;
         this.startCountdown();
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error cargando QR:', error);
         this.loading = false;
       },
     });
@@ -98,7 +118,8 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
         this.loading = false;
         this.startCountdown();
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error actualizando QR:', error);
         this.loading = false;
       },
     });
@@ -127,11 +148,31 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
       .padStart(2, '0')}`;
   }
 
-  onScanSuccess(result: string): void {
-    console.log('QR escaneado:', result);
+  onScanSuccess(qrToken: string): void {
+    console.log('QR escaneado:', qrToken);
+
+    const classScheduleId = 1;
+
+    this.scanningAttendance = true;
+
+    this.attendanceService
+      .scanQr(qrToken, classScheduleId)
+      .subscribe({
+        next: (response) => {
+          console.log('Asistencia registrada:', response);
+
+          this.scanningAttendance = false;
+        },
+        error: (error) => {
+          console.error('Error registrando asistencia:', error);
+
+          this.scanningAttendance = false;
+        },
+      });
   }
 
   onScanClose(): void {
     console.log('Escáner cerrado');
+    this.scanningAttendance = false;
   }
 }

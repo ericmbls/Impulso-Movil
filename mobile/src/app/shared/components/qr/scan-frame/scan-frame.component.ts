@@ -2,7 +2,12 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { scanOutline, closeOutline, checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
+import {
+  scanOutline,
+  closeOutline,
+  checkmarkCircleOutline,
+  closeCircleOutline,
+} from 'ionicons/icons';
 import {
   BarcodeScanner,
   BarcodeFormat,
@@ -22,7 +27,8 @@ export class ScanFrameComponent {
   @Output() close = new EventEmitter<void>();
 
   scanStatus: ScanStatus = 'idle';
-  private statusTimeout: any;
+
+  private statusTimeout?: ReturnType<typeof setTimeout>;
 
   constructor() {
     addIcons({
@@ -69,18 +75,22 @@ export class ScanFrameComponent {
         formats: [BarcodeFormat.QrCode],
       });
 
-      if (result.barcodes.length > 0) {
-        const qrToken = result.barcodes[0].rawValue;
-
-        if (qrToken) {
-          console.log('QR detectado:', qrToken);
-          this.scan.emit(qrToken);
-          this.setStatus('success');
-          return;
-        }
+      if (!result.barcodes.length) {
+        this.setStatus('idle');
+        return;
       }
 
-      this.setStatus('idle');
+      const qrToken = result.barcodes[0].rawValue;
+
+      if (!qrToken) {
+        this.setStatus('error');
+        return;
+      }
+
+      console.log('QR detectado:', qrToken);
+
+      this.setStatus('success');
+      this.scan.emit(qrToken);
     } catch (error) {
       console.error('Error al escanear QR:', error);
       this.setStatus('error');
@@ -92,13 +102,13 @@ export class ScanFrameComponent {
 
     if (this.statusTimeout) {
       clearTimeout(this.statusTimeout);
-      this.statusTimeout = null;
+      this.statusTimeout = undefined;
     }
 
     if (status === 'success' || status === 'error') {
       this.statusTimeout = setTimeout(() => {
         this.scanStatus = 'idle';
-        this.statusTimeout = null;
+        this.statusTimeout = undefined;
       }, 3000);
     }
   }
@@ -112,7 +122,7 @@ export class ScanFrameComponent {
 
     if (this.statusTimeout) {
       clearTimeout(this.statusTimeout);
-      this.statusTimeout = null;
+      this.statusTimeout = undefined;
     }
 
     this.scanStatus = 'idle';

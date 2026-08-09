@@ -1,10 +1,11 @@
 ion-content {
   --background: #f7f4ef;
+  --padding-top: env(safe-area-inset-top, 20px);
+  --padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .qr-container {
-  padding: 20px;
-  padding-bottom: 40px;
+  padding: 0 20px 40px;
   background: #f7f4ef;
   min-height: 100%;
 }
