@@ -1,8 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonIcon,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cameraOutline, qrCodeOutline } from 'ionicons/icons';
+import {
+  scanOutline,
+  qrCodeOutline,
+} from 'ionicons/icons';
+
+import {
+  ScanFrameComponent,
+} from '@shared/components/qr/scan-frame/scan-frame.component';
 
 @Component({
   selector: 'app-scanner',
@@ -10,14 +20,25 @@ import { cameraOutline, qrCodeOutline } from 'ionicons/icons';
   imports: [
     CommonModule,
     IonContent,
-    IonButton,
-    IonIcon
+    IonIcon,
+    ScanFrameComponent,
   ],
   templateUrl: './scanner.component.html',
-  styleUrl: './scanner.component.scss'
+  styleUrl: './scanner.component.scss',
 })
 export class ScannerComponent {
   constructor() {
-    addIcons({ cameraOutline, qrCodeOutline });
+    addIcons({
+      scanOutline,
+      qrCodeOutline,
+    });
+  }
+
+  onScanSuccess(qrToken: string): void {
+    console.log('QR escaneado:', qrToken);
+  }
+
+  onScanClose(): void {
+    console.log('Scanner cerrado');
   }
 }

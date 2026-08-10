@@ -1,157 +1,315 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
+import { Capacitor } from '@capacitor/core';
 import { addIcons } from 'ionicons';
 import {
-  scanOutline,
-  closeOutline,
+  cameraOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
+  refreshOutline,
+  scanOutline,
 } from 'ionicons/icons';
 import {
-  BarcodeScanner,
   BarcodeFormat,
+  BarcodeScanner,
 } from '@capacitor-mlkit/barcode-scanning';
 
-type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
+type ScanStatus =
+  | 'idle'
+  | 'scanning'
+  | 'success'
+  | 'error';
 
 @Component({
   selector: 'app-scan-frame',
   standalone: true,
-  imports: [CommonModule, IonIcon],
+  imports: [
+    CommonModule,
+    IonIcon,
+  ],
   templateUrl: './scan-frame.component.html',
   styleUrl: './scan-frame.component.scss',
 })
 export class ScanFrameComponent {
-  @Output() scan = new EventEmitter<string>();
-  @Output() close = new EventEmitter<void>();
+  @Input()
+  disabled = false;
 
-  scanStatus: ScanStatus = 'idle';
-  private statusTimeout?: ReturnType<typeof setTimeout>;
+  @Output()
+  scan =
+    new EventEmitter<string>();
+
+  @Output()
+  close =
+    new EventEmitter<void>();
+
+  scanStatus: ScanStatus =
+    'idle';
+
+  private scanInProgress =
+    false;
+
+  private lastScanAt =
+    0;
+
+  private readonly scanCooldown =
+    1500;
+
+  private statusTimeout?:
+    ReturnType<
+      typeof setTimeout
+    >;
 
   constructor() {
     addIcons({
-      scanOutline,
-      closeOutline,
+      cameraOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
+      refreshOutline,
+      scanOutline,
     });
   }
 
   get isScanning(): boolean {
-    return this.scanStatus === 'scanning';
+    return (
+      this.scanStatus ===
+      'scanning'
+    );
   }
 
-  get showSuccess(): boolean {
-    return this.scanStatus === 'success';
-  }
-
-  get showError(): boolean {
-    return this.scanStatus === 'error';
+  get canScan(): boolean {
+    return (
+      !this.disabled &&
+      !this.scanInProgress
+    );
   }
 
   async startScan(): Promise<void> {
-    if (this.scanStatus !== 'idle') {
+    const now =
+      Date.now();
+
+    if (this.disabled) {
       return;
     }
 
+    if (this.scanInProgress) {
+      return;
+    }
+
+    if (
+      now -
+        this.lastScanAt <
+      this.scanCooldown
+    ) {
+      return;
+    }
+
+    this.scanInProgress =
+      true;
+
+    this.lastScanAt =
+      now;
+
+    this.clearStatusTimeout();
+
     try {
-      const permissions = await BarcodeScanner.checkPermissions();
+      const permissions =
+        await BarcodeScanner
+          .checkPermissions();
 
-      if (permissions.camera !== 'granted') {
-        const requested = await BarcodeScanner.requestPermissions();
+      if (
+        permissions.camera !==
+        'granted'
+      ) {
+        const requested =
+          await BarcodeScanner
+            .requestPermissions();
 
-        if (requested.camera !== 'granted') {
-          console.error('Permiso de cámara denegado');
-          this.setStatus('error');
-          return;
-        }
-      }
-
-      let moduleStatus =
-        await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
-
-      if (!moduleStatus.available) {
-        console.log('Instalando Google Barcode Scanner Module...');
-
-        await BarcodeScanner.installGoogleBarcodeScannerModule();
-
-        console.log('Solicitud de instalación enviada');
-
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-
-        moduleStatus =
-          await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
-
-        console.log('Estado del módulo:', moduleStatus);
-
-        if (!moduleStatus.available) {
-          console.error(
-            'El Google Barcode Scanner Module todavía no está disponible',
+        if (
+          requested.camera !==
+          'granted'
+        ) {
+          this.setStatus(
+            'error',
           );
-          this.setStatus('error');
+
           return;
         }
       }
 
-      console.log('Google Barcode Scanner Module disponible');
+      if (
+        Capacitor.getPlatform() ===
+        'android'
+      ) {
+        let moduleStatus =
+          await BarcodeScanner
+            .isGoogleBarcodeScannerModuleAvailable();
 
-      this.setStatus('scanning');
+        if (
+          !moduleStatus.available
+        ) {
+          await BarcodeScanner
+            .installGoogleBarcodeScannerModule();
 
-      const result = await BarcodeScanner.scan({
-        formats: [BarcodeFormat.QrCode],
-      });
+          await this.wait(
+            3000,
+          );
 
-      console.log('Resultado del scanner:', result);
+          moduleStatus =
+            await BarcodeScanner
+              .isGoogleBarcodeScannerModuleAvailable();
 
-      if (result.barcodes.length > 0) {
-        const qrToken = result.barcodes[0].rawValue;
+          if (
+            !moduleStatus.available
+          ) {
+            this.setStatus(
+              'error',
+            );
 
-        if (qrToken) {
-          console.log('QR detectado:', qrToken);
-          this.scan.emit(qrToken);
-          this.setStatus('success');
-          return;
+            return;
+          }
         }
       }
 
-      console.log('No se detectó ningún QR');
-      this.setStatus('idle');
-    } catch (error) {
-      console.error('Error al escanear QR:', error);
-      this.setStatus('error');
+      this.scanStatus =
+        'scanning';
+
+      const result =
+        await BarcodeScanner.scan({
+          formats: [
+            BarcodeFormat.QrCode,
+          ],
+        });
+
+      if (
+        !result.barcodes ||
+        result.barcodes.length ===
+          0
+      ) {
+        this.scanStatus =
+          'idle';
+
+        return;
+      }
+
+      const qrToken =
+        result.barcodes[0]
+          ?.rawValue
+          ?.trim();
+
+      if (!qrToken) {
+        this.setStatus(
+          'error',
+        );
+
+        return;
+      }
+
+      this.setStatus(
+        'success',
+      );
+
+      this.scan.emit(
+        qrToken,
+      );
+    } catch (
+      error: any
+    ) {
+      const message =
+        error?.message ??
+        String(error);
+
+      if (
+        message
+          .toLowerCase()
+          .includes(
+            'scan canceled',
+          )
+      ) {
+        this.scanStatus =
+          'idle';
+
+        return;
+      }
+
+      this.setStatus(
+        'error',
+      );
+    } finally {
+      this.scanInProgress =
+        false;
     }
   }
 
-  private setStatus(status: ScanStatus): void {
-    this.scanStatus = status;
-
-    if (this.statusTimeout) {
-      clearTimeout(this.statusTimeout);
-      this.statusTimeout = undefined;
+  cancelScan(): void {
+    if (this.scanInProgress) {
+      return;
     }
 
-    if (status === 'success' || status === 'error') {
-      this.statusTimeout = setTimeout(() => {
-        this.scanStatus = 'idle';
-        this.statusTimeout = undefined;
-      }, 3000);
-    }
-  }
+    this.clearStatusTimeout();
 
-  async cancelScan(): Promise<void> {
-    try {
-      await BarcodeScanner.stopScan();
-    } catch (error) {
-      console.error('Error al detener scanner:', error);
-    }
+    this.scanStatus =
+      'idle';
 
-    if (this.statusTimeout) {
-      clearTimeout(this.statusTimeout);
-      this.statusTimeout = undefined;
-    }
-
-    this.scanStatus = 'idle';
     this.close.emit();
+  }
+
+  private setStatus(
+    status: ScanStatus,
+  ): void {
+    this.clearStatusTimeout();
+
+    this.scanStatus =
+      status;
+
+    if (
+      status === 'success' ||
+      status === 'error'
+    ) {
+      this.statusTimeout =
+        setTimeout(
+          () => {
+            this.scanStatus =
+              'idle';
+
+            this.statusTimeout =
+              undefined;
+          },
+          2500,
+        );
+    }
+  }
+
+  private clearStatusTimeout(): void {
+    if (!this.statusTimeout) {
+      return;
+    }
+
+    clearTimeout(
+      this.statusTimeout,
+    );
+
+    this.statusTimeout =
+      undefined;
+  }
+
+  private wait(
+    milliseconds: number,
+  ): Promise<void> {
+    return new Promise(
+      (
+        resolve,
+      ) => {
+        setTimeout(
+          resolve,
+          milliseconds,
+        );
+      },
+    );
   }
 }

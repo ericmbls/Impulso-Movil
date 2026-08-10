@@ -1,5 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpParams,
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
@@ -8,13 +11,58 @@ export interface QrScanRequest {
   classScheduleId: number;
 }
 
-export interface AttendanceScanResponse {
+export interface AttendanceStudent {
+  id: number;
+  enrollmentId?: string;
+
+  user?: {
+    firstName?: string;
+    lastName?: string;
+  };
+
+  group?: {
+    id?: number;
+    name?: string;
+  };
+}
+
+export interface AttendanceClass {
   id?: number;
-  status?: string;
-  message?: string;
-  studentId?: number;
-  classScheduleId?: number;
-  [key: string]: unknown;
+
+  subject?: {
+    id?: number;
+    name?: string;
+  };
+
+  teacher?: {
+    id?: number;
+
+    user?: {
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+
+  group?: {
+    id?: number;
+    name?: string;
+  };
+}
+
+export interface AttendanceScanResponse {
+  id: number;
+  studentId: number;
+  classId: number;
+  classScheduleId: number;
+  date: string;
+  status: string;
+  qrToken?: string | null;
+  notes?: string | null;
+  createdAt?: string;
+
+  student?: AttendanceStudent;
+
+  classes?: AttendanceClass;
 }
 
 @Injectable({
@@ -23,7 +71,8 @@ export interface AttendanceScanResponse {
 export class AttendanceService {
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = `${environment.apiUrl}/attendance`;
+  private readonly apiUrl =
+    `${environment.apiUrl}/attendance`;
 
   scanQr(
     qrToken: string,
@@ -37,6 +86,22 @@ export class AttendanceService {
     return this.http.post<AttendanceScanResponse>(
       `${this.apiUrl}/scan-qr`,
       body,
+    );
+  }
+
+  getByClassSchedule(
+    classScheduleId: number,
+  ): Observable<AttendanceScanResponse[]> {
+    const params = new HttpParams().set(
+      'classScheduleId',
+      classScheduleId.toString(),
+    );
+
+    return this.http.get<AttendanceScanResponse[]>(
+      this.apiUrl,
+      {
+        params,
+      },
     );
   }
 }

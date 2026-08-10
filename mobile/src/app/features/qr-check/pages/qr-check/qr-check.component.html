@@ -4,11 +4,19 @@
     <div class="hero">
       <div class="hero-content">
         <h1>
-          <ion-icon [name]="isTeacher ? 'scan-outline' : 'qr-code-outline'"></ion-icon>
+          <ion-icon
+            [name]="isTeacher ? 'scan-outline' : 'qr-code-outline'"
+          ></ion-icon>
+
           {{ isTeacher ? 'Escanear QR' : 'Mi código QR' }}
         </h1>
+
         <p>
-          {{ isTeacher ? 'Escanea el código QR del estudiante' : 'Muéstralo al docente para registrar tu asistencia.' }}
+          {{
+            isTeacher
+              ? 'Escanea el código QR del estudiante para registrar su asistencia.'
+              : 'Muéstralo al docente para registrar tu asistencia.'
+          }}
         </p>
       </div>
     </div>
@@ -17,53 +25,253 @@
       <div class="qr-card">
         @if (loading) {
           <div class="loading">
-            <ion-icon name="refresh-outline" class="loading-icon"></ion-icon>
-            <p>Cargando código QR...</p>
+            <ion-icon
+              name="refresh-outline"
+              class="loading-icon"
+            ></ion-icon>
+
+            <p>
+              Cargando código QR...
+            </p>
           </div>
         } @else {
-          @if (qr?.isValid) {
-            <img [src]="qr?.qrImage" alt="Código QR de asistencia" class="qr-image" />
+          @if (
+            qr?.isValid &&
+            qr?.qrImage
+          ) {
+            <img
+              [src]="qr?.qrImage"
+              alt="Código QR de asistencia"
+              class="qr-image"
+            />
+
             <p class="expires">
-              <ion-icon name="time-outline"></ion-icon>
+              <ion-icon
+                name="time-outline"
+              ></ion-icon>
+
               Expira en
-              <strong>{{ countdown }}</strong>
+
+              <strong>
+                {{ countdown }}
+              </strong>
             </p>
           } @else {
             <div class="expired">
-              <ion-icon name="time-outline"></ion-icon>
-              <p>El código QR ha expirado.</p>
+              <ion-icon
+                name="time-outline"
+              ></ion-icon>
+
+              <p>
+                El código QR ha expirado.
+              </p>
+
+              <button
+                type="button"
+                class="refresh-button"
+                (click)="refresh()"
+              >
+                <ion-icon
+                  name="refresh-outline"
+                ></ion-icon>
+
+                Generar nuevo QR
+              </button>
             </div>
           }
         }
       </div>
+
+      @if (scanError) {
+        <div class="error-message">
+          <ion-icon
+            name="close-circle-outline"
+          ></ion-icon>
+
+          <span>
+            {{ scanError }}
+          </span>
+        </div>
+      }
     }
 
     @if (isTeacher) {
-      <app-scan-frame
-        (scan)="onScanSuccess($event)"
-        (close)="onScanClose()"
-      ></app-scan-frame>
+      <div class="teacher-scan">
 
-      <div class="section">
-        <h3>
-          <ion-icon name="time-outline"></ion-icon>
-          Últimos registros
-        </h3>
-        <app-last-scan-card
-          subject="Programación Web"
-          studentName="Eric Hernández"
-          date="Hoy, 19 de junio"
-          time="08:01 AM"
-          status="success"
-        ></app-last-scan-card>
-        <app-last-scan-card
-          subject="Base de Datos"
-          studentName="María García"
-          date="Hoy, 19 de junio"
-          time="10:00 AM"
-          status="pending"
-        ></app-last-scan-card>
+        @if (loadingSchedules) {
+          <div class="processing">
+            <ion-icon
+              name="refresh-outline"
+              class="processing-icon"
+            ></ion-icon>
+
+            <span>
+              Cargando clase actual...
+            </span>
+          </div>
+        }
+
+        @if (currentSchedule) {
+          <div class="current-class">
+            <div class="current-class-icon">
+              <ion-icon
+                name="time-outline"
+              ></ion-icon>
+            </div>
+
+            <div class="current-class-info">
+              <span
+                class="current-class-label"
+              >
+                Clase actual
+              </span>
+
+              <strong>
+                {{ currentSubject }}
+              </strong>
+
+              @if (currentGroup) {
+                <span>
+                  {{ currentGroup }}
+                </span>
+              }
+
+              <span>
+                {{ currentScheduleTime }}
+              </span>
+
+              @if (currentClassroom) {
+                <span>
+                  {{ currentClassroom }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (
+          !loadingSchedules &&
+          !currentSchedule
+        ) {
+          <div class="no-class">
+            <ion-icon
+              name="time-outline"
+            ></ion-icon>
+
+            <div>
+              <strong>
+                No hay clase actualmente
+              </strong>
+
+              <p>
+                El escaneo estará disponible durante el horario asignado.
+              </p>
+            </div>
+          </div>
+        }
+
+        <app-scan-frame
+          [disabled]="
+            !currentSchedule ||
+            scanningAttendance
+          "
+          (scan)="onScanSuccess($event)"
+          (close)="onScanClose()"
+        ></app-scan-frame>
+
+        @if (scanningAttendance) {
+          <div class="processing">
+            <ion-icon
+              name="refresh-outline"
+              class="processing-icon"
+            ></ion-icon>
+
+            <span>
+              Registrando asistencia...
+            </span>
+          </div>
+        }
+
+        @if (scanMessage) {
+          <div class="success-message">
+            <ion-icon
+              name="checkmark-circle-outline"
+            ></ion-icon>
+
+            <span>
+              {{ scanMessage }}
+            </span>
+          </div>
+        }
+
+        @if (scanError) {
+          <div class="error-message">
+            <ion-icon
+              name="close-circle-outline"
+            ></ion-icon>
+
+            <span>
+              {{ scanError }}
+            </span>
+          </div>
+        }
       </div>
+
+      @if (currentSchedule) {
+        <div class="section">
+          <h3>
+            <ion-icon
+              name="time-outline"
+            ></ion-icon>
+
+            Últimos registros
+          </h3>
+
+          @if (loadingScans) {
+            <div class="records-loading">
+              <ion-icon
+                name="refresh-outline"
+                class="processing-icon"
+              ></ion-icon>
+
+              <span>
+                Cargando registros...
+              </span>
+            </div>
+          } @else {
+            @if (
+              lastScans.length >
+              0
+            ) {
+              @for (
+                record of lastScans;
+                track record.id
+              ) {
+                <app-last-scan-card
+                  [subject]="
+                    record.classes?.subject?.name ??
+                    currentSubject
+                  "
+                  [studentName]="getStudentName(record)"
+                  [date]="formatAttendanceDate(record.date)"
+                  [time]="formatAttendanceTime(record.date)"
+                  status="success"
+                ></app-last-scan-card>
+              }
+            } @else {
+              <div class="empty-records">
+                <ion-icon
+                  name="qr-code-outline"
+                ></ion-icon>
+
+                <p>
+                  Aún no hay asistencias registradas en esta clase.
+                </p>
+              </div>
+            }
+          }
+        </div>
+      }
     }
 
   </div>
