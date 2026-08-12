@@ -1,115 +1,376 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
 
-import { StorageService } from '@core/http/services/storage.service';
-import { GradesService } from '@features/grades/services/grades.service';
+import { AuthStateService } from '@core/auth/services/auth-state.service';
+
+import {
+  GradeItem,
+  GradesService,
+} from '@features/grades/services/grades.service';
+
 import { AverageCardComponent } from '@shared/components/grades/average-card/average-card.component';
 import { GradeCardComponent } from '@shared/components/grades/grade-card/grade-card.component';
-
-interface Grade {
-  subject: string;
-  teacher: string;
-  grade: string;
-  status: string;
-}
 
 @Component({
   selector: 'app-grades',
   standalone: true,
   imports: [
     CommonModule,
-    IonContent,
+    IonicModule,
     AverageCardComponent,
-    GradeCardComponent
+    GradeCardComponent,
   ],
   templateUrl: './grades.component.html',
-  styleUrl: './grades.component.scss'
+  styleUrl: './grades.component.scss',
 })
 export class GradesComponent implements OnInit {
+  private readonly authState = inject(AuthStateService);
+  private readonly gradesService = inject(GradesService);
 
-  parcialActual = 2;
-  grades: any[] = [];
+  user: any = null;
+  children: any[] = [];
 
-  constructor(
-    private storageService: StorageService,
-    private gradesService: GradesService
-  ) {}
+  selectedStudent: any = null;
+  selectedStudentId: number | null = null;
 
-  async ngOnInit(): Promise<void> {
-    const user: any = await this.storageService.getUser();
-    const studentId = user?.studentProfile?.id;
+  grades: GradeItem[] = [];
 
-    if (!studentId) {
-      return;
-    }
+  parcialActual = 1;
 
-    this.gradesService.getStudentGrades(studentId).subscribe({
-      next: (grades: any[]) => {
-        this.grades = grades;
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+  loading = false;
+  errorMessage = '';
+
+  ngOnInit(): void {
+    this.initializeGrades();
+  }
+
+  get isParent(): boolean {
+    return this.user?.role === 'PARENT';
+  }
+
+  get isStudent(): boolean {
+    return this.user?.role === 'STUDENT';
   }
 
   cambiarParcial(parcial: number): void {
     this.parcialActual = parcial;
   }
 
+  onStudentChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const studentId = Number(target.value);
+
+    const child = this.children.find(
+      item => item.id === studentId
+    );
+
+    if (!child) {
+      return;
+    }
+
+    this.selectedStudent = child;
+    this.selectedStudentId = child.id;
+
+    this.loadGrades(child.id);
+  }
+
+  loadGrades(studentId: number): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.grades = [];
+
+    this.gradesService
+      .getByStudent(studentId)
+      .subscribe({
+        next: response => {
+          this.grades = response ?? [];
+          this.loading = false;
+        },
+
+        error: error => {
+          this.loading = false;
+          this.grades = [];
+
+          if (error?.status === 403) {
+            this.errorMessage =
+              'No tienes permiso para consultar las calificaciones de este alumno.';
+
+            return;
+          }
+
+          if (error?.status === 404) {
+            this.errorMessage =
+              'No se encontró información de calificaciones para este alumno.';
+
+            return;
+          }
+
+          this.errorMessage =
+            error?.error?.message ??
+            'No fue posible cargar las calificaciones.';
+        },
+      });
+  }
+
+  getGrades(): {
+    subject: string;
+    teacher: string;
+    grade: string;
+    status: string;
+  }[] {
+    return this.grades.map(grade => {
+      const value = this.getPartialGrade(grade);
+
+      const normalized =
+        value !== null
+          ? this.normalizeGrade(value)
+          : null;
+
+      return {
+        subject:
+          grade.subject?.name ??
+          'Materia',
+
+        teacher:
+          this.getTeacherName(grade),
+
+        grade:
+          normalized !== null
+            ? normalized.toFixed(1)
+            : '-',
+
+        status:
+          this.getGradeStatus(normalized),
+      };
+    });
+  }
+
+  getAverage(): string {
+    const values = this.grades
+      .map(grade => {
+        const value = this.getPartialGrade(grade);
+
+        return value !== null
+          ? this.normalizeGrade(value)
+          : null;
+      })
+      .filter(
+        (value): value is number =>
+          value !== null
+      );
+
+    if (values.length === 0) {
+      return '-';
+    }
+
+    const total = values.reduce(
+      (sum, value) => sum + value,
+      0
+    );
+
+    return (
+      total / values.length
+    ).toFixed(1);
+  }
+
   getParcialLabel(): string {
     switch (this.parcialActual) {
       case 1:
         return 'Primer Parcial';
+
       case 2:
         return 'Segundo Parcial';
+
       case 3:
         return 'Tercer Parcial';
+
       default:
-        return '';
+        return 'Calificaciones';
     }
   }
 
-  getAverage(): string {
-    if (!this.grades.length) {
-      return '0.0';
+  getSelectedStudentName(): string {
+    if (!this.selectedStudent) {
+      return '';
     }
 
-    let total = 0;
+    if (this.isParent) {
+      const firstName =
+        this.selectedStudent
+          ?.user
+          ?.firstName ?? '';
 
-    this.grades.forEach(g => {
-      switch (this.parcialActual) {
-        case 1:
-          total += g.partial1 ?? 0;
-          break;
-        case 2:
-          total += g.partial2 ?? 0;
-          break;
-        case 3:
-          total += g.partial3 ?? 0;
-          break;
-      }
-    });
+      const lastName =
+        this.selectedStudent
+          ?.user
+          ?.lastName ?? '';
 
-    return (total / this.grades.length).toFixed(1);
+      return `${firstName} ${lastName}`.trim();
+    }
+
+    return `${this.user?.firstName ?? ''} ${this.user?.lastName ?? ''}`.trim();
   }
 
-  getGrades(): Grade[] {
-    return this.grades.map(g => ({
-      subject: g.subject.name,
-      teacher: g.subject.teacher
-        ? `${g.subject.teacher.user.firstName} ${g.subject.teacher.user.lastName}`
-        : 'Sin asignar',
-      grade: String(
-        this.parcialActual === 1
-          ? (g.partial1 ?? '-')
-          : this.parcialActual === 2
-            ? (g.partial2 ?? '-')
-            : (g.partial3 ?? '-')
-      ),
-      status: g.status
-    }));
+  getStudentGroup(): string {
+    if (this.isParent) {
+      return (
+        this.selectedStudent
+          ?.group
+          ?.name ??
+        'Sin grupo'
+      );
+    }
+
+    return (
+      this.user
+        ?.studentProfile
+        ?.group
+        ?.name ??
+      'Sin grupo'
+    );
   }
 
+  private initializeGrades(): void {
+    this.user = this.authState.user();
+
+    if (!this.user) {
+      this.errorMessage =
+        'No se encontró información del usuario.';
+
+      return;
+    }
+
+    if (this.isStudent) {
+      this.initializeStudent();
+      return;
+    }
+
+    if (this.isParent) {
+      this.initializeParent();
+      return;
+    }
+
+    this.errorMessage =
+      'Este usuario no tiene acceso a las calificaciones.';
+  }
+
+  private initializeStudent(): void {
+    const studentProfile =
+      this.user?.studentProfile;
+
+    const studentId =
+      studentProfile?.id;
+
+    if (!studentId) {
+      this.errorMessage =
+        'No se encontró el perfil del alumno.';
+
+      return;
+    }
+
+    this.selectedStudent =
+      studentProfile;
+
+    this.selectedStudentId =
+      studentId;
+
+    this.loadGrades(studentId);
+  }
+
+  private initializeParent(): void {
+    this.children =
+      this.user
+        ?.parentProfile
+        ?.children ?? [];
+
+    if (this.children.length === 0) {
+      this.errorMessage =
+        'No hay alumnos asociados a este tutor.';
+
+      return;
+    }
+
+    const firstChild =
+      this.children[0];
+
+    this.selectedStudent =
+      firstChild;
+
+    this.selectedStudentId =
+      firstChild.id;
+
+    this.loadGrades(firstChild.id);
+  }
+
+  private getPartialGrade(
+    grade: GradeItem
+  ): number | null {
+    switch (this.parcialActual) {
+      case 1:
+        return grade.partial1 ?? null;
+
+      case 2:
+        return grade.partial2 ?? null;
+
+      case 3:
+        return grade.partial3 ?? null;
+
+      default:
+        return null;
+    }
+  }
+
+  private getTeacherName(
+    grade: GradeItem
+  ): string {
+    const firstName =
+      grade
+        .subject
+        ?.teacher
+        ?.user
+        ?.firstName ?? '';
+
+    const lastName =
+      grade
+        .subject
+        ?.teacher
+        ?.user
+        ?.lastName ?? '';
+
+    return (
+      `${firstName} ${lastName}`.trim() ||
+      'Docente'
+    );
+  }
+
+  private getGradeStatus(
+    grade: number | null
+  ): string {
+    if (grade === null) {
+      return 'Sin calificación';
+    }
+
+    if (grade >= 9) {
+      return 'Excelente';
+    }
+
+    if (grade >= 7) {
+      return 'Aprobado';
+    }
+
+    return 'En riesgo';
+  }
+
+  private normalizeGrade(
+    grade: number
+  ): number {
+    if (grade > 10) {
+      return Number(
+        (grade / 10).toFixed(1)
+      );
+    }
+
+    return grade;
+  }
 }

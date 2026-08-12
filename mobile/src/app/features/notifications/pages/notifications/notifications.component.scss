@@ -1,131 +1,318 @@
+:host {
+  display: block;
+}
+
 ion-content {
-  --background: #f5f2ed;
+  --background: #f7f4ef;
   --padding-top: env(safe-area-inset-top, 20px);
   --padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-.notifications-container {
-  padding: 0 20px 100px;
-  background: #f5f2ed;
+.notifications-page {
+  min-height: 100%;
+  padding: 0 18px calc(100px + env(safe-area-inset-bottom));
 }
 
 .hero {
-  background: linear-gradient(135deg, #7d1736, #5d1028);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
   border-radius: 24px;
-  padding: 28px 24px;
-  margin-bottom: 24px;
-  color: white;
-  position: relative;
-  overflow: hidden;
-  min-height: 120px;
-  display: flex;
-  align-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #7d1736, #591027);
+  box-shadow: 0 14px 34px rgba(125, 23, 54, 0.18);
 }
 
-.hero-content {
-  position: relative;
-  z-index: 2;
-  flex: 1;
+.hero-icon {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.14);
+
+  ion-icon {
+    font-size: 27px;
+  }
 }
 
-.hero-content h1 {
+.eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  opacity: 0.75;
+}
+
+.hero h1 {
   margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  font-size: 25px;
+  font-weight: 800;
 }
 
-.hero-content h1 ion-icon {
-  font-size: 28px;
+.hero p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.82;
 }
 
-.hero-content p {
-  margin: 6px 0 0;
-  font-size: 15px;
-  opacity: 0.8;
-}
-
-.notification-card {
-  background: white;
-  border-radius: 16px;
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(199, 161, 90, 0.2);
-  transition: background 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.notification-card:hover {
-  background: #faf8f6;
-}
-
-.notification-card .header {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 26px 4px 12px;
+
+  h2 {
+    margin: 0;
+    color: #2f2a2a;
+    font-size: 18px;
+    font-weight: 800;
+  }
 }
 
-.notification-card .channel {
+.unread-label {
+  display: inline-block;
+  margin-top: 3px;
   color: #7d1736;
-  background: rgba(125, 23, 54, 0.08);
-  padding: 2px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.notification-card .status {
-  color: #999;
-  font-weight: 400;
-  background: #f5f2ed;
-  padding: 2px 12px;
-  border-radius: 20px;
-  text-transform: capitalize;
-}
-
-.notification-card .content {
-  margin: 4px 0 2px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #222;
-  line-height: 1.4;
-}
-
-.notification-card small {
   font-size: 12px;
-  color: #999;
-  margin-top: 4px;
+  font-weight: 700;
 }
 
-.empty {
-  text-align: center;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 24px;
-  border: 1px solid rgba(199, 161, 90, 0.15);
+.notification-list {
+  display: grid;
+  gap: 11px;
 }
 
-.empty ion-icon {
-  font-size: 64px;
-  color: #ccc;
-  margin-bottom: 16px;
+.notification-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 20px;
+  gap: 13px;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid rgba(47, 42, 42, 0.06);
+  border-radius: 20px;
+  text-align: left;
+  background: #fff;
+  box-shadow: 0 7px 22px rgba(61, 45, 49, 0.055);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.empty h3 {
-  margin: 0 0 8px;
-  font-size: 20px;
-  color: #222;
+.notification-card:active {
+  transform: scale(0.985);
 }
 
-.empty p {
+.notification-card.unread {
+  border-color: rgba(125, 23, 54, 0.14);
+  background: linear-gradient(
+    90deg,
+    rgba(125, 23, 54, 0.045),
+    #fff 38%
+  );
+}
+
+.notification-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  color: #7d1736;
+  background: rgba(125, 23, 54, 0.1);
+
+  ion-icon {
+    font-size: 22px;
+  }
+}
+
+.notification-icon.low {
+  color: #5f6c65;
+  background: rgba(95, 108, 101, 0.1);
+}
+
+.notification-icon.medium {
+  color: #7d1736;
+  background: rgba(125, 23, 54, 0.1);
+}
+
+.notification-icon.high {
+  color: #9a6213;
+  background: rgba(199, 161, 90, 0.17);
+}
+
+.notification-icon.critical {
+  color: #a32929;
+  background: rgba(163, 41, 41, 0.1);
+}
+
+.notification-content {
+  min-width: 0;
+}
+
+.notification-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.notification-type {
+  color: #2f2a2a;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.unread-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #7d1736;
+}
+
+.notification-message {
   margin: 0;
-  font-size: 15px;
-  color: #999;
+  color: #51494b;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.student-name {
+  display: block;
+  margin-top: 6px;
+  color: #7d1736;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.notification-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  color: #928a8c;
+  font-size: 11px;
+
+  ion-icon {
+    font-size: 13px;
+  }
+}
+
+.chevron {
+  align-self: center;
+  color: #c4babc;
+  font-size: 17px;
+}
+
+.state-card {
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  border-radius: 22px;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 7px 22px rgba(61, 45, 49, 0.055);
+
+  ion-icon {
+    margin-bottom: 12px;
+    color: #7d1736;
+    font-size: 34px;
+  }
+
+  strong {
+    color: #2f2a2a;
+    font-size: 16px;
+  }
+
+  p {
+    max-width: 260px;
+    margin: 7px 0 0;
+    color: #837b7d;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  button {
+    margin-top: 16px;
+    padding: 11px 17px;
+    border: 0;
+    border-radius: 13px;
+    color: #fff;
+    background: #7d1736;
+    font-size: 13px;
+    font-weight: 700;
+  }
+}
+
+.state-card.error {
+  ion-icon {
+    color: #a32929;
+  }
+}
+
+.state-card.empty {
+  ion-icon {
+    color: #2e7d32;
+  }
+}
+
+.loading-icon {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 380px) {
+  .notifications-page {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero {
+    gap: 13px;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .hero-icon {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+    border-radius: 15px;
+
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+
+  .hero h1 {
+    font-size: 22px;
+  }
+
+  .notification-card {
+    grid-template-columns: 42px minmax(0, 1fr) 16px;
+    gap: 11px;
+    padding: 14px;
+  }
+
+  .notification-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
 }
