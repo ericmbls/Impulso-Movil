@@ -2,47 +2,80 @@
   <div class="login-container">
     <div class="hero">
       <div class="hero-content">
-        <ion-icon name="school-outline" class="brand-icon"></ion-icon>
+        <ion-icon
+          name="school-outline"
+          class="brand-icon"
+        ></ion-icon>
+
         <h1>IMPULSO</h1>
-        <p>Sistema Escolar Inteligente</p>
-        <span class="badge">CBTIS No. 61</span>
+
+        <p>
+          Sistema Escolar Inteligente
+        </p>
+
+        <span class="badge">
+          CBTIS No. 61
+        </span>
       </div>
     </div>
 
     <div class="login-card">
-      <h2>Bienvenido de vuelta</h2>
-      <p class="subtitle">Ingresa tus credenciales para continuar</p>
+      <h2>
+        Bienvenido de vuelta
+      </h2>
+
+      <p class="subtitle">
+        Ingresa tus credenciales para continuar
+      </p>
 
       <div class="form-group">
         <label>
-          <ion-icon name="mail-outline"></ion-icon>
+          <ion-icon
+            name="mail-outline"
+          ></ion-icon>
+
           Correo institucional
         </label>
+
         <ion-item class="custom-input">
           <ion-input
             [(ngModel)]="email"
             type="email"
-            placeholder="ej. usuario@institucion.edu">
+            placeholder="ej. usuario@institucion.edu"
+            autocomplete="email"
+            inputmode="email"
+            [disabled]="isLoading"
+          >
           </ion-input>
         </ion-item>
       </div>
 
       <div class="form-group">
         <label>
-          <ion-icon name="lock-closed-outline"></ion-icon>
+          <ion-icon
+            name="lock-closed-outline"
+          ></ion-icon>
+
           Contraseña
         </label>
+
         <ion-item class="custom-input">
           <ion-input
             [(ngModel)]="password"
             [type]="showPassword ? 'text' : 'password'"
-            placeholder="••••••••">
+            placeholder="••••••••"
+            autocomplete="current-password"
+            [disabled]="isLoading"
+          >
           </ion-input>
+
           <ion-icon
             slot="end"
             [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-            (click)="togglePassword()"
-            class="toggle-password">
+            [class.disabled]="isLoading"
+            (click)="!isLoading && togglePassword()"
+            class="toggle-password"
+          >
           </ion-icon>
         </ion-item>
       </div>
@@ -53,9 +86,17 @@
             [(ngModel)]="rememberMe"
             (ionChange)="onRememberChange()"
             name="rememberMe"
-            id="rememberCheckbox">
+            id="rememberCheckbox"
+            [disabled]="isLoading"
+          >
           </ion-checkbox>
-          <label for="rememberCheckbox" class="remember-label">Recordar mi sesión</label>
+
+          <label
+            for="rememberCheckbox"
+            class="remember-label"
+          >
+            Recordar mi sesión
+          </label>
         </div>
       </div>
 
@@ -63,32 +104,71 @@
         expand="block"
         class="login-btn"
         [disabled]="isLoading"
-        (click)="login()">
-        <ion-icon slot="start" [name]="isLoading ? 'refresh-outline' : 'log-in-outline'" [class.spinning]="isLoading"></ion-icon>
-        {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
+        (click)="login()"
+      >
+        <ion-icon
+          slot="start"
+          [name]="isLoading ? 'refresh-outline' : 'log-in-outline'"
+          [class.spinning]="isLoading"
+        >
+        </ion-icon>
+
+        {{
+          isLoading
+            ? 'Ingresando...'
+            : 'Ingresar'
+        }}
       </ion-button>
     </div>
 
     <div class="support-card">
-      <ion-icon name="desktop-outline" class="support-icon"></ion-icon>
+      <ion-icon
+        name="desktop-outline"
+        class="support-icon"
+      >
+      </ion-icon>
+
       <div class="support-content">
         <p>
           ¿Problemas con el acceso?
-          <a class="support-email">soporte@cbtis61.edu.mx</a>
+
+          <a class="support-email">
+            soporte@cbtis61.edu.mx
+          </a>
         </p>
       </div>
     </div>
 
     <div class="footer">
       <div class="footer-links">
-        <a>Aviso de Privacidad</a>
-        <span class="separator">•</span>
-        <a>Términos de Uso</a>
-        <span class="separator">•</span>
-        <a>Ayuda</a>
+        <a>
+          Aviso de Privacidad
+        </a>
+
+        <span class="separator">
+          •
+        </span>
+
+        <a>
+          Términos de Uso
+        </a>
+
+        <span class="separator">
+          •
+        </span>
+
+        <a>
+          Ayuda
+        </a>
       </div>
-      <p class="footer-version">Versión 1.0.0</p>
-      <p class="footer-copy">© 2026 CBTIS No. 61</p>
+
+      <p class="footer-version">
+        Versión 1.0.0
+      </p>
+
+      <p class="footer-copy">
+        © 2026 CBTIS No. 61
+      </p>
     </div>
   </div>
 </ion-content>

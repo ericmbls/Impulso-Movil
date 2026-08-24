@@ -3,6 +3,7 @@
     <div class="hero">
       <div class="hero-content">
         <h1>Calificaciones ⭐</h1>
+
         <p>
           {{ getParcialLabel() }}
           •
@@ -15,12 +16,21 @@
       <div class="student-selector">
         <div class="student-selector-header">
           <span>Alumno</span>
-          <strong>{{ getSelectedStudentName() }}</strong>
+
+          <strong>
+            {{ getSelectedStudentName() }}
+          </strong>
         </div>
-        <select [value]="selectedStudentId" (change)="onStudentChange($event)">
+
+        <select
+          [value]="selectedStudentId"
+          [disabled]="loading"
+          (change)="onStudentChange($event)"
+        >
           @for (child of children; track child.id) {
             <option [value]="child.id">
-              {{ child.user?.firstName }} {{ child.user?.lastName }}
+              {{ child.user?.firstName }}
+              {{ child.user?.lastName }}
             </option>
           }
         </select>
@@ -29,43 +39,88 @@
 
     <div class="parcial-selector">
       <button
+        type="button"
         class="parcial-btn"
         [class.active]="parcialActual === 1"
+        [disabled]="loading"
         (click)="cambiarParcial(1)"
       >
         Primer Parcial
       </button>
+
       <button
+        type="button"
         class="parcial-btn"
         [class.active]="parcialActual === 2"
+        [disabled]="loading"
         (click)="cambiarParcial(2)"
       >
         Segundo Parcial
       </button>
+
       <button
+        type="button"
         class="parcial-btn"
         [class.active]="parcialActual === 3"
+        [disabled]="loading"
         (click)="cambiarParcial(3)"
       >
         Tercer Parcial
       </button>
     </div>
 
-    <app-average-card [average]="getAverage()"></app-average-card>
+    @if (!loading && !errorMessage) {
+      <app-average-card
+        [average]="getAverage()"
+      ></app-average-card>
+    }
 
     <div class="section">
       <h3>📚 Materias</h3>
 
       @if (loading) {
-        <p>Cargando calificaciones...</p>
-      }
+        <div class="grades-state loading">
+          <ion-spinner
+            name="crescent"
+          ></ion-spinner>
 
-      @if (!loading && errorMessage) {
-        <p>{{ errorMessage }}</p>
-      }
+          <strong>
+            Cargando calificaciones
+          </strong>
 
-      @if (!loading && !errorMessage) {
-        @for (item of getGrades(); track item.subject) {
+          <p>
+            Espera un momento mientras obtenemos la información académica.
+          </p>
+        </div>
+      } @else if (errorMessage) {
+        <div class="grades-state error">
+          <ion-icon
+            name="alert-circle-outline"
+          ></ion-icon>
+
+          <strong>
+            No se pudieron cargar las calificaciones
+          </strong>
+
+          <p>
+            {{ errorMessage }}
+          </p>
+
+          @if (selectedStudentId) {
+            <button
+              type="button"
+              class="retry-button"
+              (click)="retry()"
+            >
+              Reintentar
+            </button>
+          }
+        </div>
+      } @else if (getGrades().length > 0) {
+        @for (
+          item of getGrades();
+          track item.subject
+        ) {
           <app-grade-card
             [subject]="item.subject"
             [teacher]="item.teacher"
@@ -73,10 +128,21 @@
             [status]="item.status"
           ></app-grade-card>
         }
+      } @else {
+        <div class="grades-state empty">
+          <ion-icon
+            name="school-outline"
+          ></ion-icon>
 
-        @if (getGrades().length === 0) {
-          <p>No hay calificaciones registradas para este parcial.</p>
-        }
+          <strong>
+            Sin calificaciones
+          </strong>
+
+          <p>
+            No hay calificaciones registradas para
+            {{ getParcialLabel().toLowerCase() }}.
+          </p>
+        </div>
       }
     </div>
   </div>

@@ -8,6 +8,7 @@ import { QrService, StudentQr } from '@features/qr-check/services/qr.service';
 import { AttendanceService, AttendanceScanResponse } from '@features/attendance/services/attendance.service';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
 import { ScheduleItem, ScheduleService } from '@features/schedule/services/schedule.service';
+import { FeedbackService } from '@core/shared/services/feedback.service';
 import { ScanFrameComponent } from '@shared/components/qr/scan-frame/scan-frame.component';
 import { LastScanCardComponent } from '@shared/components/qr/last-scan-card/last-scan-card.component';
 
@@ -23,16 +24,19 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   private readonly authState = inject(AuthStateService);
   private readonly attendanceService = inject(AttendanceService);
   private readonly scheduleService = inject(ScheduleService);
+  private readonly feedback = inject(FeedbackService);
 
   qr: StudentQr | null = null;
   schedules: ScheduleItem[] = [];
   currentSchedule: ScheduleItem | null = null;
   lastScans: AttendanceScanResponse[] = [];
   lastSuccessfulScan: AttendanceScanResponse | null = null;
+
   loading = false;
   loadingSchedules = false;
   loadingScans = false;
   scanningAttendance = false;
+
   secondsRemaining = 0;
   scanMessage = '';
   scanError = '';
@@ -90,6 +94,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
 
   ionViewWillLeave(): void {
     this.timer?.unsubscribe();
+    this.timer = undefined;
     if (this.feedbackTimer) {
       clearTimeout(this.feedbackTimer);
       this.feedbackTimer = undefined;
@@ -99,6 +104,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
 
   loadQr(): void {
     this.timer?.unsubscribe();
+    this.timer = undefined;
     this.loading = true;
     this.scanError = '';
     this.qrService.getMyQr().subscribe({
@@ -111,11 +117,13 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
         }
         this.secondsRemaining = 0;
       },
-      error: (error: any) => {
+      error: async (error: any) => {
         this.loading = false;
         this.qr = null;
         this.secondsRemaining = 0;
-        this.scanError = error?.error?.message ?? 'No se pudo cargar el código QR.';
+        const message = error?.error?.message ?? 'No se pudo cargar el código QR.';
+        this.scanError = message;
+        await this.feedback.error(message);
       },
     });
   }
@@ -123,20 +131,27 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   refresh(): void {
     if (this.loading) return;
     this.timer?.unsubscribe();
+    this.timer = undefined;
     this.loading = true;
     this.scanError = '';
     this.secondsRemaining = 0;
     this.qrService.refreshQr().subscribe({
-      next: (qr: StudentQr) => {
+      next: async (qr: StudentQr) => {
         this.qr = qr;
         this.loading = false;
         if (qr.isValid && qr.expiresAt) {
           this.startCountdown();
+          await this.feedback.success('Nuevo código QR generado correctamente.');
+          return;
         }
+        this.secondsRemaining = 0;
+        await this.feedback.warning('El código QR generado no se encuentra disponible.');
       },
-      error: (error: any) => {
+      error: async (error: any) => {
         this.loading = false;
-        this.scanError = error?.error?.message ?? 'No se pudo generar un nuevo código QR.';
+        const message = error?.error?.message ?? 'No se pudo generar un nuevo código QR.';
+        this.scanError = message;
+        await this.feedback.error(message);
       },
     });
   }
@@ -147,7 +162,9 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     if (!teacherId) {
       this.currentSchedule = null;
       this.lastScans = [];
-      this.scanError = 'No se encontró el perfil del docente.';
+      const message = 'No se encontró el perfil del docente.';
+      this.scanError = message;
+      void this.feedback.error(message);
       return;
     }
     this.loadingSchedules = true;
@@ -156,23 +173,26 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.lastSuccessfulScan = null;
     this.currentSchedule = null;
     this.scheduleService.getTeacherSchedule(teacherId).subscribe({
-      next: (schedules: ScheduleItem[]) => {
+      next: async (schedules: ScheduleItem[]) => {
         this.loadingSchedules = false;
         this.schedules = schedules ?? [];
         this.currentSchedule = this.findCurrentSchedule(this.schedules);
         if (!this.currentSchedule) {
           this.lastScans = [];
           this.scanError = 'No hay una clase asignada para este momento.';
+          await this.feedback.info('No tienes una clase activa en este momento.');
           return;
         }
         this.scanError = '';
         this.loadLastScans();
       },
-      error: (error: any) => {
+      error: async (error: any) => {
         this.loadingSchedules = false;
         this.currentSchedule = null;
         this.lastScans = [];
-        this.scanError = error?.error?.message ?? 'No se pudieron cargar los horarios del docente.';
+        const message = error?.error?.message ?? 'No se pudieron cargar los horarios del docente.';
+        this.scanError = message;
+        await this.feedback.error(message);
       },
     });
   }
@@ -240,33 +260,14 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
 
   formatAttendanceDate(date: string): string {
     const value = new Date(date);
-    const recordDate = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/Mexico_City',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(value);
-    const today = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/Mexico_City',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(new Date());
+    const recordDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' }).format(value);
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     if (recordDate === today) return 'Hoy';
-    return new Intl.DateTimeFormat('es-MX', {
-      timeZone: 'America/Mexico_City',
-      day: '2-digit',
-      month: 'long',
-    }).format(value);
+    return new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', day: '2-digit', month: 'long' }).format(value);
   }
 
   formatAttendanceTime(date: string): string {
-    return new Intl.DateTimeFormat('es-MX', {
-      timeZone: 'America/Mexico_City',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    }).format(new Date(date));
+    return new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(date));
   }
 
   getStudentName(record: AttendanceScanResponse): string {
@@ -288,13 +289,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   private getMexicoCityTime(): { day: string; minutes: number } {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Mexico_City',
-      weekday: 'long',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+    const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', weekday: 'long', hour: '2-digit', minute: '2-digit', hour12: false });
     const parts = formatter.formatToParts(new Date());
     const weekday = parts.find(part => part.type === 'weekday')?.value ?? '';
     const hour = Number(parts.find(part => part.type === 'hour')?.value ?? 0);
@@ -344,12 +339,8 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   private scheduleFeedbackClear(duration: number): void {
-    if (this.feedbackTimer) {
-      clearTimeout(this.feedbackTimer);
-    }
-    this.feedbackTimer = setTimeout(() => {
-      this.clearFeedback();
-    }, duration);
+    if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
+    this.feedbackTimer = setTimeout(() => this.clearFeedback(), duration);
   }
 
   private clearFeedback(): void {

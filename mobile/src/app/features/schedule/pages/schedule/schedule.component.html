@@ -1,33 +1,18 @@
 <ion-content fullscreen>
   <div class="schedule-container">
-
     <div class="hero">
       <div class="hero-content">
         <h1>
-          {{
-            isTeacher
-              ? 'Horario de hoy'
-              : 'Horario'
-          }}
-
-          <ion-icon
-            name="calendar-outline"
-          ></ion-icon>
+          {{ isTeacher ? 'Horario de hoy' : 'Horario' }}
+          <ion-icon name="calendar-outline"></ion-icon>
         </h1>
-
-        <p>
-          {{ getSubtitle() }}
-        </p>
+        <p>{{ getSubtitle() }}</p>
       </div>
     </div>
 
     @if (!isTeacher) {
       <div class="days">
-        @for (
-          day of days;
-          track day.day;
-          let i = $index
-        ) {
+        @for (day of days; track day.day; let i = $index) {
           <button
             type="button"
             class="day-btn"
@@ -42,79 +27,44 @@
 
     <div class="section">
       <h3>
-        <ion-icon
-          name="time-outline"
-        ></ion-icon>
-
-        {{
-          isTeacher
-            ? 'Clases de hoy'
-            : 'Clases'
-        }}
+        <ion-icon name="time-outline"></ion-icon>
+        {{ isTeacher ? 'Clases de hoy' : 'Clases' }}
       </h3>
 
       @if (loading) {
         <div class="schedule-state">
-          <ion-icon
-            name="time-outline"
-          ></ion-icon>
-
-          <p>
-            Cargando horario...
-          </p>
+          <ion-icon name="time-outline"></ion-icon>
+          <strong>Cargando horario</strong>
+          <p>Espera un momento mientras obtenemos tus clases.</p>
         </div>
       } @else if (errorMessage) {
         <div class="schedule-state error">
-          <ion-icon
-            name="time-outline"
-          ></ion-icon>
-
-          <p>
-            {{ errorMessage }}
-          </p>
+          <ion-icon name="time-outline"></ion-icon>
+          <strong>No se pudo cargar el horario</strong>
+          <p>{{ errorMessage }}</p>
+          <button type="button" class="retry-button" (click)="retry()">Reintentar</button>
         </div>
       } @else if (getClasses().length > 0) {
-        @for (
-          item of getClasses();
-          track item.id
-        ) {
+        @for (item of getClasses(); track item.id) {
           <app-schedule-card
             [subject]="item.subject"
-            [teacher]="
-              isTeacher
-                ? item.group
-                : item.teacher
-            "
+            [teacher]="isTeacher ? item.group : item.teacher"
             [classroom]="item.classroom"
             [time]="item.time"
             [color]="item.color"
-          >
-          </app-schedule-card>
+          ></app-schedule-card>
         }
       } @else {
         <div class="schedule-state empty">
-          <ion-icon
-            name="calendar-outline"
-          ></ion-icon>
-
+          <ion-icon name="calendar-outline"></ion-icon>
           <strong>
-            {{
-              isTeacher
-                ? 'No tienes clases programadas para hoy'
-                : 'No hay clases para este día'
-            }}
+            {{ isTeacher ? 'No tienes clases programadas para hoy' : 'No hay clases para este día' }}
           </strong>
-
           <p>
-            {{
-              isTeacher
-                ? 'Tu horario está libre durante el día de hoy.'
-                : 'Selecciona otro día para consultar tu horario.'
-            }}
+            {{ isTeacher ? 'Tu horario está libre durante el día de hoy.' : 'Selecciona otro día para consultar tu horario.' }}
           </p>
         </div>
       }
     </div>
-
   </div>
 </ion-content>
