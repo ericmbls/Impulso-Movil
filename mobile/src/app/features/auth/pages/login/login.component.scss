@@ -5,54 +5,54 @@ ion-content {
 }
 
 .login-container {
-  padding: 0 20px 30px;
-  min-height: 100%;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(ellipse at 50% 0%, rgba(125,23,54,0.03) 0%, transparent 70%);
+  min-height: 100%;
+  padding: 0 20px 30px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(125, 23, 54, 0.03) 0%, transparent 70%);
   animation: fadeInPage 0.6s ease-out both;
 }
 
 .hero {
-  background: linear-gradient(135deg, #7d1736, #5d1028);
-  border-radius: 28px;
-  padding: 32px 24px;
-  margin-bottom: 24px;
-  color: #fff;
   position: relative;
-  overflow: hidden;
-  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 120px;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  color: #fff;
   text-align: center;
+  background: linear-gradient(135deg, #7d1736, #5d1028);
+  border-radius: 28px;
   box-shadow: 0 8px 30px rgba(125, 23, 54, 0.20);
   animation: heroEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   animation-delay: 0.1s;
-}
 
-.hero::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -30%;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
-  pointer-events: none;
-}
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: -20%;
+    width: 150px;
+    height: 150px;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 50%;
+  }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  bottom: -40%;
-  left: -20%;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.02);
-  pointer-events: none;
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 50%;
+  }
 }
 
 .hero-content {
@@ -61,10 +61,10 @@ ion-content {
 }
 
 .brand-icon {
-  font-size: 48px;
   display: block;
   margin: 0 auto 4px;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.10));
+  font-size: 48px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.10));
 }
 
 .hero h1 {
@@ -72,38 +72,38 @@ ion-content {
   font-size: 30px;
   font-weight: 800;
   letter-spacing: 6px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.10);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.10);
 }
 
 .hero p {
   margin: 2px 0 0;
   font-size: 13px;
   font-weight: 400;
-  opacity: 0.85;
   letter-spacing: 2px;
+  opacity: 0.85;
 }
 
 .hero .badge {
   display: inline-block;
-  margin-top: 10px;
   padding: 4px 18px;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.10);
+  margin-top: 10px;
   font-size: 12px;
   font-weight: 500;
+  background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 30px;
   backdrop-filter: blur(4px);
 }
 
 .login-card {
+  padding: 28px 24px;
+  margin-bottom: 16px;
   background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 28px;
+  box-shadow: 0 16px 48px rgba(125, 23, 54, 0.06);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 28px;
-  padding: 28px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 16px 48px rgba(125, 23, 54, 0.06);
-  margin-bottom: 16px;
   animation: cardEntrance 0.8s ease-out both;
   animation-delay: 0.2s;
 }
@@ -131,10 +131,10 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 6px;
   font-size: 13px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 6px;
   letter-spacing: 0.3px;
 }
 
@@ -152,14 +152,14 @@ ion-content {
   --padding-end: 4px;
   --min-height: 52px;
   transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 
-.custom-input:focus-within {
-  --border-color: #7d1736;
-  --border-width: 2px;
-  --background: #ffffff;
-  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.06);
+  &:focus-within {
+    --border-color: #7d1736;
+    --border-width: 2px;
+    --background: #ffffff;
+    box-shadow: 0 4px 16px rgba(125, 23, 54, 0.06);
+  }
 }
 
 .custom-input ion-input {
@@ -167,45 +167,44 @@ ion-content {
   --placeholder-color: #aaa;
   --placeholder-font-weight: 400;
   font-size: 15px;
-}
 
-.custom-input ion-input input {
-  background: transparent !important;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-}
+  input {
+    background: transparent !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
 
-.custom-input ion-input input:-webkit-autofill,
-.custom-input ion-input input:-webkit-autofill:hover,
-.custom-input ion-input input:-webkit-autofill:focus,
-.custom-input ion-input input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.9) inset !important;
-  box-shadow: 0 0 0 1000px rgba(255,255,255,0.9) inset !important;
-  -webkit-text-fill-color: #222 !important;
-  caret-color: #222 !important;
-  background-color: transparent !important;
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    background-color: transparent !important;
+    -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.9) inset !important;
+    box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.9) inset !important;
+    -webkit-text-fill-color: #222 !important;
+    caret-color: #222 !important;
+  }
 }
 
 .toggle-password {
+  flex-shrink: 0;
+  padding: 8px 8px 8px 4px;
+  margin-right: 0;
   font-size: 22px;
   color: #aaa;
   cursor: pointer;
-  padding: 8px 8px 8px 4px;
-  margin-right: 0;
   transition: color 0.2s ease;
-  flex-shrink: 0;
-}
 
-.toggle-password:hover {
-  color: #7d1736;
+  &:hover {
+    color: #7d1736;
+  }
 }
 
 .form-options {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-  margin: 8px 0 24px;
   gap: 8px;
+  margin: 8px 0 24px;
 }
 
 .remember-wrapper {
@@ -222,8 +221,8 @@ ion-content {
   --background: #fff;
   --background-checked: #7d1736;
   --checkmark-color: #fff;
-  margin: 0;
   flex-shrink: 0;
+  margin: 0;
 }
 
 .remember-label {
@@ -234,47 +233,47 @@ ion-content {
 }
 
 .login-btn {
+  position: relative;
   --background: linear-gradient(135deg, #7d1736, #4d0d1f);
   --border-radius: 16px;
   --box-shadow: 0 8px 28px rgba(125, 23, 54, 0.25);
   --padding-top: 16px;
   --padding-bottom: 16px;
   --color: #fff;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.5px;
   margin-top: 4px;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
   overflow: hidden;
-}
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-.login-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-  transition: left 0.6s ease;
-}
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    transition: left 0.6s ease;
+  }
 
-.login-btn:hover:not([disabled]) {
-  --box-shadow: 0 12px 36px rgba(125, 23, 54, 0.30);
-  transform: translateY(-3px) scale(1.01);
-}
+  &:hover:not([disabled]) {
+    --box-shadow: 0 12px 36px rgba(125, 23, 54, 0.30);
+    transform: translateY(-3px) scale(1.01);
 
-.login-btn:hover:not([disabled])::before {
-  left: 100%;
-}
+    &::before {
+      left: 100%;
+    }
+  }
 
-.login-btn:active:not([disabled]) {
-  transform: scale(0.97);
-}
+  &:active:not([disabled]) {
+    transform: scale(0.97);
+  }
 
-.login-btn[disabled] {
-  opacity: 0.6;
+  &[disabled] {
+    opacity: 0.6;
+  }
 }
 
 .spinning {
@@ -282,25 +281,25 @@ ion-content {
 }
 
 .support-card {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 20px;
-  padding: 14px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
   gap: 14px;
+  padding: 14px 20px;
   margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   animation: cardEntrance 0.8s ease-out both;
   animation-delay: 0.3s;
 }
 
 .support-icon {
+  flex-shrink: 0;
   font-size: 28px;
   color: #7d1736;
-  flex-shrink: 0;
   opacity: 0.8;
 }
 
@@ -313,43 +312,43 @@ ion-content {
 .support-email {
   font-weight: 600;
   color: #7d1736;
-  cursor: pointer;
   text-decoration: none;
+  cursor: pointer;
   transition: opacity 0.2s ease;
-}
 
-.support-email:hover {
-  opacity: 0.7;
-  text-decoration: underline;
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.7;
+  }
 }
 
 .footer {
-  text-align: center;
   margin-top: auto;
   padding-top: 4px;
+  text-align: center;
   animation: footerEntrance 0.8s ease-out both;
   animation-delay: 0.4s;
 }
 
 .footer-links {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 6px;
 }
 
 .footer-links a {
   font-size: 12px;
   color: #aaa;
-  cursor: pointer;
   text-decoration: none;
+  cursor: pointer;
   transition: color 0.2s ease;
-}
 
-.footer-links a:hover {
-  color: #7d1736;
+  &:hover {
+    color: #7d1736;
+  }
 }
 
 .footer-links .separator {
@@ -392,26 +391,54 @@ ion-content {
 }
 
 @keyframes fadeInPage {
-  0% { opacity: 0; transform: translateY(12px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes heroEntrance {
-  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes cardEntrance {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes footerEntrance {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -3,35 +3,116 @@
 
     <div class="hero">
       <div class="hero-content">
-        <h1>Horario <ion-icon name="calendar-outline"></ion-icon></h1>
-        <p>{{ getSelectedDay() }} • 6° A • Programación</p>
+        <h1>
+          {{
+            isTeacher
+              ? 'Horario de hoy'
+              : 'Horario'
+          }}
+
+          <ion-icon
+            name="calendar-outline"
+          ></ion-icon>
+        </h1>
+
+        <p>
+          {{ getSubtitle() }}
+        </p>
       </div>
     </div>
 
-    <div class="days">
-      @for (day of days; track day.label; let i = $index) {
-        <button 
-          class="day-btn" 
-          [class.active]="diaActual === i"
-          (click)="cambiarDia(i)">
-          {{ day.label }}
-        </button>
-      }
-    </div>
+    @if (!isTeacher) {
+      <div class="days">
+        @for (
+          day of days;
+          track day.day;
+          let i = $index
+        ) {
+          <button
+            type="button"
+            class="day-btn"
+            [class.active]="diaActual === i"
+            (click)="cambiarDia(i)"
+          >
+            {{ day.label }}
+          </button>
+        }
+      </div>
+    }
 
     <div class="section">
       <h3>
-        <ion-icon name="time-outline"></ion-icon>
-        Clases
+        <ion-icon
+          name="time-outline"
+        ></ion-icon>
+
+        {{
+          isTeacher
+            ? 'Clases de hoy'
+            : 'Clases'
+        }}
       </h3>
-      @for (item of getClasses(); track item.subject) {
-        <app-schedule-card
-          [subject]="item.subject"
-          [teacher]="item.teacher"
-          [classroom]="item.classroom"
-          [time]="item.time"
-          [color]="item.color">
-        </app-schedule-card>
+
+      @if (loading) {
+        <div class="schedule-state">
+          <ion-icon
+            name="time-outline"
+          ></ion-icon>
+
+          <p>
+            Cargando horario...
+          </p>
+        </div>
+      } @else if (errorMessage) {
+        <div class="schedule-state error">
+          <ion-icon
+            name="time-outline"
+          ></ion-icon>
+
+          <p>
+            {{ errorMessage }}
+          </p>
+        </div>
+      } @else if (getClasses().length > 0) {
+        @for (
+          item of getClasses();
+          track item.id
+        ) {
+          <app-schedule-card
+            [subject]="item.subject"
+            [teacher]="
+              isTeacher
+                ? item.group
+                : item.teacher
+            "
+            [classroom]="item.classroom"
+            [time]="item.time"
+            [color]="item.color"
+          >
+          </app-schedule-card>
+        }
+      } @else {
+        <div class="schedule-state empty">
+          <ion-icon
+            name="calendar-outline"
+          ></ion-icon>
+
+          <strong>
+            {{
+              isTeacher
+                ? 'No tienes clases programadas para hoy'
+                : 'No hay clases para este día'
+            }}
+          </strong>
+
+          <p>
+            {{
+              isTeacher
+                ? 'Tu horario está libre durante el día de hoy.'
+                : 'Selecciona otro día para consultar tu horario.'
+            }}
+          </p>
+        </div>
       }
     </div>
 
