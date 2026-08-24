@@ -1,4 +1,5 @@
-<ion-content fullscreen>
+<!-- profile.component.html -->
+<ion-content fullscreen="true">
   <div class="profile-container">
     <div class="hero">
       <div class="hero-content">
@@ -7,6 +8,10 @@
           Perfil
         </h1>
         <p>{{ getSubtitulo() }}</p>
+      </div>
+      <div class="hero-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
       </div>
     </div>
 
@@ -17,13 +22,14 @@
         (click)="cambiarSeccion('info')">
         Información
       </button>
-      <button
-        class="seccion-btn"
-        [class.active]="seccionActiva() === 'academico'"
-        (click)="cambiarSeccion('academico')"
-        *ngIf="mostrarSeccionAcademica()">
-        Académico
-      </button>
+      @if (mostrarSeccionAcademica()) {
+        <button
+          class="seccion-btn"
+          [class.active]="seccionActiva() === 'academico'"
+          (click)="cambiarSeccion('academico')">
+          Académico
+        </button>
+      }
       <button
         class="seccion-btn"
         [class.active]="seccionActiva() === 'contacto'"
@@ -37,12 +43,12 @@
         <div class="profile-card">
           <div class="avatar-wrapper">
             <div class="avatar-ring">
-              <div class="avatar">{{ u.photo || 'U' }}</div>
+              <div class="avatar">{{ u.photo }}</div>
             </div>
           </div>
           <h2 class="user-name">{{ u.fullName }}</h2>
           <div class="user-badges">
-            <span class="badge role-badge">{{ u.roleLabel || u.role }}</span>
+            <span class="badge role-badge">{{ u.roleLabel }}</span>
             @if (u.studentProfile?.groupName) {
               <span class="badge group-badge">{{ u.studentProfile?.groupName }}</span>
             }
@@ -64,7 +70,7 @@
           @if (u.role === 'STUDENT' && u.studentProfile) {
             <div class="info-card">
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="id-card-outline"></ion-icon></div>
+                <div class="info-icon"><ion-icon name="card-outline"></ion-icon></div>
                 <div class="info-content">
                   <p class="info-label">Número de control</p>
                   <p class="info-value">{{ u.studentProfile.controlNumber }}</p>
@@ -78,7 +84,7 @@
                 </div>
               </div>
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="briefcase-outline"></ion-icon></div>
+                <div class="info-icon"><ion-icon name="school-outline"></ion-icon></div>
                 <div class="info-content">
                   <p class="info-label">Carrera</p>
                   <p class="info-value">{{ u.studentProfile.careerName || 'No especificada' }}</p>
@@ -108,7 +114,7 @@
           @if (u.role === 'TEACHER' && u.teacherProfile) {
             <div class="info-card">
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="id-card-outline"></ion-icon></div>
+                <div class="info-icon"><ion-icon name="card-outline"></ion-icon></div>
                 <div class="info-content">
                   <p class="info-label">Número de empleado</p>
                   <p class="info-value">{{ u.teacherProfile.employeeId }}</p>

@@ -1,3 +1,4 @@
+// profile.component.ts
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -7,16 +8,14 @@ import {
   personOutline,
   mailOutline,
   callOutline,
-  idCardOutline,
+  cardOutline,
   logOutOutline,
   locationOutline,
   schoolOutline,
   briefcaseOutline,
   peopleOutline,
-  businessOutline,
   flagOutline,
-  starOutline,
-  informationCircleOutline
+  starOutline
 } from 'ionicons/icons';
 import { StorageService } from '@core/http/services/storage.service';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
@@ -40,16 +39,14 @@ export class ProfileComponent {
       personOutline,
       mailOutline,
       callOutline,
-      idCardOutline,
+      cardOutline,
       logOutOutline,
       locationOutline,
       schoolOutline,
       briefcaseOutline,
       peopleOutline,
-      businessOutline,
       flagOutline,
-      starOutline,
-      informationCircleOutline
+      starOutline
     });
   }
 

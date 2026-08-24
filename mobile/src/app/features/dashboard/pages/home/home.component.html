@@ -1,22 +1,25 @@
+<!-- home.component.html -->
 <ion-content fullscreen="true">
   <div class="dashboard-container">
     <div class="hero">
       <div class="hero-content">
-        <div class="greeting">
-          <span class="wave">👋</span>
-          <h1>Hola, {{ fullName || 'Usuario' }}</h1>
-        </div>
-        <div class="user-badge">
-          <span class="badge">{{ role }}</span>
-          @if (authState.user()?.studentProfile?.group) {
-            <span class="badge">{{ authState.user()?.studentProfile?.group?.name }}</span>
-          }
-          @if (authState.user()?.teacherProfile?.specialty) {
-            <span class="badge">{{ authState.user()?.teacherProfile?.specialty }}</span>
-          }
-          @if (authState.user()?.adminProfile?.position) {
-            <span class="badge">{{ authState.user()?.adminProfile?.position }}</span>
-          }
+        <div class="hero-text">
+          <div class="greeting">
+            <span class="wave">👋</span>
+            <h1>Hola, {{ fullName || 'Usuario' }}</h1>
+          </div>
+          <div class="user-badge">
+            <span class="badge">{{ role }}</span>
+            @if (authState.user()?.studentProfile?.group) {
+              <span class="badge">{{ authState.user()?.studentProfile?.group?.name }}</span>
+            }
+            @if (authState.user()?.teacherProfile?.specialty) {
+              <span class="badge">{{ authState.user()?.teacherProfile?.specialty }}</span>
+            }
+            @if (authState.user()?.adminProfile?.position) {
+              <span class="badge">{{ authState.user()?.adminProfile?.position }}</span>
+            }
+          </div>
         </div>
       </div>
       <div class="hero-decoration">
@@ -39,27 +42,29 @@
     </div>
 
     <div class="section">
-      <div class="section-header">
-        <h3>
-          <ion-icon name="notifications-outline"></ion-icon>
-          Actividad reciente
-        </h3>
-        <span class="see-all" (click)="goToNotifications()">Ver todas</span>
-      </div>
-      <div class="activity-list">
-        @for (activity of recentActivities; track activity.id) {
-          <div class="activity-item">
-            <div class="activity-icon-wrapper">
-              <ion-icon [name]="activity.icon" class="activity-icon"></ion-icon>
+      <div class="activity-card">
+        <div class="activity-card-header">
+          <h3>
+            <ion-icon name="notifications-outline"></ion-icon>
+            Actividad reciente
+          </h3>
+          <span class="see-all" (click)="goToNotifications()">Ver todas</span>
+        </div>
+        <div class="activity-list">
+          @for (activity of recentActivities; track activity.id) {
+            <div class="activity-item">
+              <div class="activity-icon-wrapper">
+                <ion-icon [name]="activity.icon" class="activity-icon"></ion-icon>
+              </div>
+              <div class="activity-content">
+                <p class="activity-text">{{ activity.text }}</p>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
             </div>
-            <div class="activity-content">
-              <p class="activity-text">{{ activity.text }}</p>
-              <span class="activity-time">{{ activity.time }}</span>
-            </div>
-          </div>
-        } @empty {
-          <div class="empty-state">No hay actividad reciente.</div>
-        }
+          } @empty {
+            <div class="empty-state">No hay actividad reciente.</div>
+          }
+        </div>
       </div>
     </div>
 

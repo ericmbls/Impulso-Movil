@@ -2,26 +2,29 @@
   <div class="grades-container">
     <div class="hero">
       <div class="hero-content">
-        <h1>Calificaciones ⭐</h1>
-
+        <h1>
+          <ion-icon name="star-outline"></ion-icon>
+          Calificaciones
+        </h1>
         <p>
           {{ getParcialLabel() }}
           •
           {{ getStudentGroup() }}
         </p>
       </div>
+      <div class="hero-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
     </div>
 
     @if (isParent && children.length > 0) {
-      <div class="student-selector">
+      <div class="student-selector-card">
         <div class="student-selector-header">
+          <ion-icon name="person-outline"></ion-icon>
           <span>Alumno</span>
-
-          <strong>
-            {{ getSelectedStudentName() }}
-          </strong>
+          <strong>{{ getSelectedStudentName() }}</strong>
         </div>
-
         <select
           [value]="selectedStudentId"
           [disabled]="loading"
@@ -29,8 +32,7 @@
         >
           @for (child of children; track child.id) {
             <option [value]="child.id">
-              {{ child.user?.firstName }}
-              {{ child.user?.lastName }}
+              {{ child.user?.firstName }} {{ child.user?.lastName }}
             </option>
           }
         </select>
@@ -47,7 +49,6 @@
       >
         Primer Parcial
       </button>
-
       <button
         type="button"
         class="parcial-btn"
@@ -57,7 +58,6 @@
       >
         Segundo Parcial
       </button>
-
       <button
         type="button"
         class="parcial-btn"
@@ -70,57 +70,34 @@
     </div>
 
     @if (!loading && !errorMessage) {
-      <app-average-card
-        [average]="getAverage()"
-      ></app-average-card>
+      <app-average-card [average]="getAverage()"></app-average-card>
     }
 
     <div class="section">
-      <h3>📚 Materias</h3>
+      <h3>
+        <ion-icon name="book-outline"></ion-icon>
+        Materias
+      </h3>
 
       @if (loading) {
         <div class="grades-state loading">
-          <ion-spinner
-            name="crescent"
-          ></ion-spinner>
-
-          <strong>
-            Cargando calificaciones
-          </strong>
-
-          <p>
-            Espera un momento mientras obtenemos la información académica.
-          </p>
+          <ion-spinner name="crescent"></ion-spinner>
+          <strong>Cargando calificaciones</strong>
+          <p>Espera un momento mientras obtenemos la información académica.</p>
         </div>
       } @else if (errorMessage) {
         <div class="grades-state error">
-          <ion-icon
-            name="alert-circle-outline"
-          ></ion-icon>
-
-          <strong>
-            No se pudieron cargar las calificaciones
-          </strong>
-
-          <p>
-            {{ errorMessage }}
-          </p>
-
+          <ion-icon name="notifications-outline"></ion-icon>
+          <strong>No se pudieron cargar las calificaciones</strong>
+          <p>{{ errorMessage }}</p>
           @if (selectedStudentId) {
-            <button
-              type="button"
-              class="retry-button"
-              (click)="retry()"
-            >
+            <button type="button" class="retry-button" (click)="retry()">
               Reintentar
             </button>
           }
         </div>
       } @else if (getGrades().length > 0) {
-        @for (
-          item of getGrades();
-          track item.subject
-        ) {
+        @for (item of getGrades(); track item.subject) {
           <app-grade-card
             [subject]="item.subject"
             [teacher]="item.teacher"
@@ -130,14 +107,8 @@
         }
       } @else {
         <div class="grades-state empty">
-          <ion-icon
-            name="school-outline"
-          ></ion-icon>
-
-          <strong>
-            Sin calificaciones
-          </strong>
-
+          <ion-icon name="school-outline"></ion-icon>
+          <strong>Sin calificaciones</strong>
           <p>
             No hay calificaciones registradas para
             {{ getParcialLabel().toLowerCase() }}.

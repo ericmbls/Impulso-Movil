@@ -1,17 +1,21 @@
-<ion-content fullscreen>
+<ion-content fullscreen="true">
   <div class="schedule-container">
     <div class="hero">
       <div class="hero-content">
         <h1>
-          {{ isTeacher ? 'Horario de hoy' : 'Horario' }}
           <ion-icon name="calendar-outline"></ion-icon>
+          {{ isTeacher ? 'Horario de hoy' : 'Horario' }}
         </h1>
         <p>{{ getSubtitle() }}</p>
+      </div>
+      <div class="hero-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
       </div>
     </div>
 
     @if (!isTeacher) {
-      <div class="days">
+      <div class="days-selector">
         @for (day of days; track day.day; let i = $index) {
           <button
             type="button"
@@ -33,13 +37,13 @@
 
       @if (loading) {
         <div class="schedule-state">
-          <ion-icon name="time-outline"></ion-icon>
+          <ion-spinner name="crescent"></ion-spinner>
           <strong>Cargando horario</strong>
           <p>Espera un momento mientras obtenemos tus clases.</p>
         </div>
       } @else if (errorMessage) {
         <div class="schedule-state error">
-          <ion-icon name="time-outline"></ion-icon>
+          <ion-icon name="alert-circle-outline"></ion-icon>
           <strong>No se pudo cargar el horario</strong>
           <p>{{ errorMessage }}</p>
           <button type="button" class="retry-button" (click)="retry()">Reintentar</button>

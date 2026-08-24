@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { calendarOutline, timeOutline } from 'ionicons/icons';
+import { calendarOutline, timeOutline, alertCircleOutline } from 'ionicons/icons';
 import { StorageService } from '@core/http/services/storage.service';
 import { FeedbackService } from '@core/shared/services/feedback.service';
 import { ScheduleService } from '@features/schedule/services/schedule.service';
@@ -29,7 +29,7 @@ interface DayData {
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [CommonModule, IonContent, IonIcon, ScheduleCardComponent],
+  imports: [CommonModule, IonContent, IonIcon, IonSpinner, ScheduleCardComponent],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss',
 })
@@ -53,7 +53,7 @@ export class ScheduleComponent implements OnInit {
   ];
 
   constructor() {
-    addIcons({ calendarOutline, timeOutline });
+    addIcons({ calendarOutline, timeOutline, alertCircleOutline });
   }
 
   get isTeacher(): boolean {
