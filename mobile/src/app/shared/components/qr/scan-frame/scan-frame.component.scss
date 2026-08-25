@@ -1,302 +1,397 @@
 :host {
   display: block;
+
   width: 100%;
 }
 
 .scan-frame {
   width: 100%;
-  overflow: hidden;
-  background: #ffffff;
-  border: 1px solid rgba(199, 161, 90, 0.35);
-  border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
 
-.scan-frame.disabled {
-  opacity: 0.65;
-}
+  background: transparent;
 
-.scanner-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 20px;
-  border-bottom: 1px solid rgba(199, 161, 90, 0.15);
-}
+  border: 0;
 
-.scanner-header > div {
-  min-width: 0;
-}
-
-.eyebrow {
-  display: block;
-  margin-bottom: 4px;
-  color: #c7a15a;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.scanner-header h2 {
-  margin: 0;
-  color: #7d1736;
-  font-size: 19px;
-  font-weight: 700;
-}
-
-.scanner-header > ion-icon {
-  flex: 0 0 auto;
-  color: #7d1736;
-  font-size: 28px;
+  box-shadow: none;
 }
 
 .scanner-area {
-  padding: 24px;
-  background: #f8f6f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 20px 0;
+
+  background: transparent;
 }
 
 .scanner {
   position: relative;
-  width: 100%;
-  max-width: 320px;
+
+  width: min(72vw, 310px);
   aspect-ratio: 1;
-  margin: 0 auto;
+
   overflow: hidden;
-  background: #101010;
-  border-radius: 20px;
+
+  background: transparent;
+
+  border-radius: 22px;
+}
+
+.scan-frame.disabled .scanner {
+  background:
+    rgba(15, 15, 15, 0.82);
 }
 
 .corner {
   position: absolute;
-  z-index: 3;
-  width: 38px;
-  height: 38px;
+  z-index: 8;
+
+  width: 48px;
+  height: 48px;
+
   border-color: #c7a15a;
   border-style: solid;
+
+  filter:
+    drop-shadow(
+      0 2px 5px
+      rgba(0, 0, 0, 0.45)
+    );
 }
 
 .tl {
-  top: 18px;
-  left: 18px;
-  border-width: 4px 0 0 4px;
-  border-radius: 5px 0 0 0;
+  top: 6px;
+  left: 6px;
+
+  border-width: 5px 0 0 5px;
+
+  border-radius:
+    8px 0 0 0;
 }
 
 .tr {
-  top: 18px;
-  right: 18px;
-  border-width: 4px 4px 0 0;
-  border-radius: 0 5px 0 0;
+  top: 6px;
+  right: 6px;
+
+  border-width:
+    5px 5px 0 0;
+
+  border-radius:
+    0 8px 0 0;
 }
 
 .bl {
-  bottom: 18px;
-  left: 18px;
-  border-width: 0 0 4px 4px;
-  border-radius: 0 0 0 5px;
+  bottom: 6px;
+  left: 6px;
+
+  border-width:
+    0 0 5px 5px;
+
+  border-radius:
+    0 0 0 8px;
 }
 
 .br {
-  right: 18px;
-  bottom: 18px;
-  border-width: 0 4px 4px 0;
-  border-radius: 0 0 5px 0;
+  right: 6px;
+  bottom: 6px;
+
+  border-width:
+    0 5px 5px 0;
+
+  border-radius:
+    0 0 8px 0;
 }
 
 .scan-line {
   position: absolute;
-  z-index: 4;
-  top: 35px;
+  z-index: 7;
+
+  top: 40px;
   right: 30px;
   left: 30px;
+
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #c7a15a,
-    transparent
-  );
-  box-shadow: 0 0 18px rgba(199, 161, 90, 0.8);
-  animation: scanLine 2s ease-in-out infinite;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #c7a15a,
+      transparent
+    );
+
+  box-shadow:
+    0 0 16px
+    rgba(199, 161, 90, 0.9);
+
+  animation:
+    scanLine
+    2s
+    ease-in-out
+    infinite;
 }
 
-.scan-icon {
+.scanner-guide {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 1;
-  color: rgba(255, 255, 255, 0.08);
-  font-size: 78px;
-  transform: translate(-50%, -50%);
-}
+  z-index: 9;
 
-.scan-placeholder {
-  position: absolute;
-  right: 24px;
-  bottom: 28px;
-  left: 24px;
-  z-index: 2;
+  right: 20px;
+  bottom: 18px;
+  left: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 3px;
+
+  padding: 9px 12px;
+
+  color: #ffffff;
+
+  background:
+    rgba(10, 10, 10, 0.52);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  border-radius: 12px;
+
+  backdrop-filter:
+    blur(8px);
+
   text-align: center;
+
+  strong {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  span {
+    color:
+      rgba(255, 255, 255, 0.63);
+
+    font-size: 9px;
+  }
 }
 
-.scan-placeholder p {
-  margin: 0 0 6px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 14px;
-  font-weight: 600;
+.scanner-live {
+  position: absolute;
+  z-index: 9;
+
+  top: 16px;
+  left: 50%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  color: #ffffff;
+
+  background:
+    rgba(10, 10, 10, 0.5);
+
+  border-radius: 999px;
+
+  backdrop-filter:
+    blur(8px);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  transform:
+    translateX(-50%);
+
+  span {
+    width: 6px;
+    height: 6px;
+
+    background: #58dd6d;
+
+    border-radius: 50%;
+
+    box-shadow:
+      0 0 0 3px
+      rgba(88, 221, 109, 0.16);
+  }
 }
 
-.scan-placeholder span {
-  display: block;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 12px;
-  line-height: 1.4;
+.scanner-center-message {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 24px;
+
+  color: #ffffff;
+
+  background:
+    rgba(12, 12, 12, 0.58);
+
+  text-align: center;
+
+  ion-icon {
+    margin-bottom: 4px;
+
+    color: #c7a15a;
+
+    font-size: 36px;
+  }
+
+  strong {
+    font-size: 13px;
+  }
+
+  span {
+    color:
+      rgba(255, 255, 255, 0.65);
+
+    font-size: 10px;
+  }
 }
 
 .scan-status-overlay {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 15;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+
+  gap: 7px;
+
   padding: 24px;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(5px);
+
+  color: #ffffff;
+
+  backdrop-filter:
+    blur(6px);
+
   text-align: center;
+
+  > ion-icon {
+    margin-bottom: 5px;
+
+    font-size: 58px;
+  }
+
+  strong {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  span {
+    color:
+      rgba(255, 255, 255, 0.7);
+
+    font-size: 10px;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-top: 10px;
+    padding: 10px 15px;
+
+    color: #ffffff;
+
+    background:
+      rgba(255, 255, 255, 0.14);
+
+    border:
+      1px solid
+      rgba(255, 255, 255, 0.2);
+
+    border-radius: 11px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    ion-icon {
+      font-size: 17px;
+    }
+  }
 }
 
-.status-icon {
-  font-size: 64px;
+.success-overlay {
+  background:
+    rgba(24, 87, 38, 0.8);
+
+  > ion-icon {
+    color: #7cea8d;
+  }
 }
 
-.status-icon.success {
-  color: #4caf50;
-}
+.error-overlay {
+  background:
+    rgba(98, 25, 31, 0.85);
 
-.status-icon.error {
-  color: #f44336;
-}
-
-.status-text {
-  margin: 0;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.scanner-info {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 16px 20px;
-  background: #ffffff;
-  border-top: 1px solid rgba(199, 161, 90, 0.12);
-}
-
-.scanner-info ion-icon {
-  flex: 0 0 auto;
-  margin-top: 1px;
-  color: #7d1736;
-  font-size: 20px;
-}
-
-.scanner-info p {
-  margin: 0;
-  color: #665f5f;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.scan-button,
-.cancel-button,
-.retry-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  width: calc(100% - 40px);
-  margin: 0 20px 20px;
-  padding: 14px 18px;
-  border: 0;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.scan-button {
-  color: #ffffff;
-  background: linear-gradient(
-    135deg,
-    #7d1736,
-    #5d1028
-  );
-  box-shadow: 0 6px 16px rgba(125, 23, 54, 0.2);
-}
-
-.cancel-button {
-  color: #7d1736;
-  background: #f1eeee;
-}
-
-.retry-button {
-  color: #ffffff;
-  background: #7d1736;
-}
-
-.scan-button:disabled,
-.retry-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.scan-button ion-icon,
-.cancel-button ion-icon,
-.retry-button ion-icon {
-  font-size: 21px;
+  > ion-icon {
+    color: #ff8585;
+  }
 }
 
 @keyframes scanLine {
   0% {
-    top: 35px;
+    top: 40px;
   }
 
   50% {
-    top: calc(100% - 35px);
+    top:
+      calc(
+        100% - 40px
+      );
   }
 
   100% {
-    top: 35px;
+    top: 40px;
   }
 }
 
-@media (max-width: 480px) {
+@media (
+  prefers-reduced-motion: reduce
+) {
+  .scan-line {
+    animation: none;
+  }
+}
+
+@media (
+  max-width: 480px
+) {
   .scanner-area {
-    padding: 18px;
+    padding: 12px 0;
   }
 
   .scanner {
-    max-width: 290px;
+    width:
+      min(
+        74vw,
+        285px
+      );
   }
 
-  .scanner-header {
-    padding: 16px;
-  }
-
-  .scanner-info {
-    padding: 14px 16px;
-  }
-
-  .scan-button,
-  .cancel-button,
-  .retry-button {
-    width: calc(100% - 32px);
-    margin-right: 16px;
-    margin-left: 16px;
+  .corner {
+    width: 43px;
+    height: 43px;
   }
 }

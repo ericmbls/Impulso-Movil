@@ -10,12 +10,11 @@ import { AuthStateService } from '@core/auth/services/auth-state.service';
 import { ScheduleItem, ScheduleService } from '@features/schedule/services/schedule.service';
 import { FeedbackService } from '@core/shared/services/feedback.service';
 import { ScanFrameComponent } from '@shared/components/qr/scan-frame/scan-frame.component';
-import { LastScanCardComponent } from '@shared/components/qr/last-scan-card/last-scan-card.component';
 
 @Component({
   selector: 'app-qr-check',
   standalone: true,
-  imports: [CommonModule, IonContent, IonIcon, ScanFrameComponent, LastScanCardComponent],
+  imports: [CommonModule, IonContent, IonIcon, ScanFrameComponent],
   templateUrl: './qr-check.component.html',
   styleUrl: './qr-check.component.scss',
 })

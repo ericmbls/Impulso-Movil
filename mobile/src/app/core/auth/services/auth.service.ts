@@ -8,7 +8,6 @@ export class AuthService {
   private http = inject(HttpClient);
   private readonly api = `${environment.apiUrl}/auth`;
 
-  // Login: guarda el token en localStorage
   login(email: string, password: string) {
     return this.http.post<{ accessToken: string, user: any }>(`${this.api}/login`, { email, password })
       .pipe(

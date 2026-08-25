@@ -8,7 +8,7 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.system.css";
 
 body {
   background: #f7f4ef;
@@ -19,22 +19,22 @@ body {
 }
 
 .page-title {
+  margin-bottom: 8px;
+  color: #7d1736;
   font-size: 24px;
   font-weight: 700;
-  color: #7d1736;
-  margin-bottom: 8px;
 }
 
 .page-subtitle {
-  color: #666;
   margin-bottom: 24px;
+  color: #666;
 }
 
 .card-modern {
-  background: white;
-  border-radius: 18px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 ion-content {
@@ -42,13 +42,27 @@ ion-content {
 }
 
 .scanner-fullscreen {
-  --padding-bottom: 0 !important;
   --padding-top: 0 !important;
-  --padding-start: 0 !important;
   --padding-end: 0 !important;
+  --padding-bottom: 0 !important;
+  --padding-start: 0 !important;
   height: 100%;
 }
 
-ion-content[fullscreen="true"] {
-  --padding-bottom: calc(68px + env(safe-area-inset-bottom));
+body.barcode-scanner-active,
+body.barcode-scanner-active ion-app,
+body.barcode-scanner-active ion-router-outlet,
+body.barcode-scanner-active ion-content.teacher-content,
+body.barcode-scanner-active .teacher-scanner-page,
+body.barcode-scanner-active .barcode-scanner-modal {
+  background: transparent !important;
+  --background: transparent !important;
+}
+
+body.barcode-scanner-active {
+  --ion-background-color: transparent !important;
+}
+
+body.barcode-scanner-active .barcode-scanner-modal {
+  visibility: visible !important;
 }

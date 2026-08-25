@@ -1,23 +1,4 @@
-<div
-  class="scan-frame"
-  [class.disabled]="disabled"
->
-  <div class="scanner-header">
-    <div>
-      <span class="eyebrow">
-        Asistencia
-      </span>
-
-      <h2>
-        Escanear código QR
-      </h2>
-    </div>
-
-    <ion-icon
-      name="scan-outline"
-    ></ion-icon>
-  </div>
-
+<div class="scan-frame barcode-scanner-modal" [class.disabled]="disabled">
   <div class="scanner-area">
     <div class="scanner">
       <span class="corner tl"></span>
@@ -29,128 +10,44 @@
         <div class="scan-line"></div>
       }
 
-      @if (
-        scanStatus === 'idle'
-      ) {
-        <ion-icon
-          name="scan-outline"
-          class="scan-icon"
-        ></ion-icon>
-
-        <div class="scan-placeholder">
-          <p>
-            Apunta la cámara al código QR
-          </p>
-
-          <span>
-            El código debe pertenecer a un alumno
-          </span>
+      @if (scanStatus === 'idle') {
+        <div class="scanner-center-message">
+          <ion-icon name="camera-outline"></ion-icon>
+          <strong>Preparando cámara</strong>
+          <span>El escáner iniciará automáticamente</span>
         </div>
       }
 
-      @if (
-        scanStatus ===
-        'scanning'
-      ) {
-        <div class="scan-placeholder">
-          <p>
-            Buscando código QR...
-          </p>
-
-          <span>
-            Mantén el código dentro del marco
-          </span>
+      @if (scanStatus === 'scanning') {
+        <div class="scanner-guide">
+          <strong>Coloca el QR dentro del marco</strong>
+          <span>La lectura es automática</span>
+        </div>
+        <div class="scanner-live">
+          <span></span>
+          Escaneando
         </div>
       }
 
-      @if (
-        scanStatus ===
-        'success'
-      ) {
-        <div class="scan-status-overlay">
-          <ion-icon
-            name="checkmark-circle-outline"
-            class="status-icon success"
-          ></ion-icon>
-
-          <p class="status-text">
-            ¡Código escaneado!
-          </p>
+      @if (scanStatus === 'success') {
+        <div class="scan-status-overlay success-overlay">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <strong>Código detectado</strong>
+          <span>Validando asistencia...</span>
         </div>
       }
 
-      @if (
-        scanStatus ===
-        'error'
-      ) {
-        <div class="scan-status-overlay">
-          <ion-icon
-            name="close-circle-outline"
-            class="status-icon error"
-          ></ion-icon>
-
-          <p class="status-text">
-            No fue posible escanear el código
-          </p>
+      @if (scanStatus === 'error') {
+        <div class="scan-status-overlay error-overlay">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          <strong>Cámara no disponible</strong>
+          <span>No fue posible iniciar el escáner</span>
+          <button type="button" [disabled]="disabled" (click)="retryScan()">
+            <ion-icon name="refresh-outline"></ion-icon>
+            Reintentar
+          </button>
         </div>
       }
     </div>
   </div>
-
-  @if (
-    scanStatus === 'idle'
-  ) {
-    <div class="scanner-info">
-      <ion-icon
-        name="camera-outline"
-      ></ion-icon>
-
-      <p>
-        Solicita al alumno que muestre su credencial digital y apunta la cámara hacia su código QR.
-      </p>
-    </div>
-
-    <button
-      type="button"
-      class="scan-button"
-      [disabled]="!canScan"
-      (click)="startScan()"
-    >
-      <ion-icon
-        name="scan-outline"
-      ></ion-icon>
-
-      Escanear QR
-    </button>
-  }
-
-  @if (
-    scanStatus ===
-    'scanning'
-  ) {
-    <button
-      type="button"
-      class="cancel-button"
-      disabled
-    >
-      Escaneando...
-    </button>
-  }
-
-  @if (
-    scanStatus === 'error'
-  ) {
-    <button
-      type="button"
-      class="retry-button"
-      [disabled]="!canScan"
-      (click)="startScan()"
-    >
-      <ion-icon
-        name="refresh-outline"
-      ></ion-icon>
-
-      Intentar nuevamente
-    </button>
-  }
 </div>
