@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { Capacitor, PluginListenerHandle } from '@capacitor/core';
@@ -17,13 +17,15 @@ type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
 })
 export class ScanFrameComponent implements OnChanges, OnDestroy {
   @Input() disabled = false;
+  @Input() active = true;
   @Input() autoStart = true;
   @Output() scan = new EventEmitter<string>();
   @Output() close = new EventEmitter<void>();
 
   scanStatus: ScanStatus = 'idle';
   private scannerRunning = false;
-  private listener?: PluginListenerHandle;
+  private barcodeListener?: PluginListenerHandle;
+  private errorListener?: PluginListenerHandle;
   private lastQrToken = '';
   private lastScanAt = 0;
   private readonly scanCooldown = 1800;
@@ -38,53 +40,87 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
   }
 
   get canScan(): boolean {
-    return !this.disabled && !this.scannerRunning;
+    return this.active && !this.disabled && !this.scannerRunning;
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (!changes['disabled']) return;
-    if (this.disabled) {
-      await this.stopScanner();
-      return;
-    }
-    if (this.autoStart) {
-      await this.startScanner();
-    }
+    const activeChanged = !!changes['active'];
+    const disabledChanged = !!changes['disabled'];
+    const autoStartChanged = !!changes['autoStart'];
+    if (!activeChanged && !disabledChanged && !autoStartChanged) return;
+    console.log('[QR] estado scanner:', { active: this.active, disabled: this.disabled, autoStart: this.autoStart });
+    await this.syncScannerState();
   }
 
   async startScanner(): Promise<void> {
-    if (this.disabled || this.scannerRunning) return;
+    if (!this.active || this.disabled || this.scannerRunning) {
+      console.log('[QR] inicio omitido:', { active: this.active, disabled: this.disabled, scannerRunning: this.scannerRunning });
+      return;
+    }
     if (Capacitor.getPlatform() === 'web') {
+      console.warn('[QR] El scanner nativo no está disponible en web');
       this.setStatus('error');
       return;
     }
     this.clearStatusTimeout();
     try {
       const permissions = await BarcodeScanner.checkPermissions();
+      console.log('[QR] permiso cámara:', permissions.camera);
       if (permissions.camera !== 'granted') {
         const requested = await BarcodeScanner.requestPermissions();
+        console.log('[QR] permiso solicitado:', requested.camera);
         if (requested.camera !== 'granted') {
+          console.warn('[QR] permiso de cámara rechazado');
           this.setStatus('error');
           return;
         }
       }
+      if (!this.active || this.disabled) {
+        console.log('[QR] la vista dejó de estar activa antes de iniciar la cámara');
+        return;
+      }
+      await this.removeScannerListeners();
+      this.barcodeListener = await BarcodeScanner.addListener('barcodesScanned', event => {
+        if (!this.active || this.disabled) return;
+        console.log('[QR] barcodes detectados:', event.barcodes);
+        const barcode = event.barcodes?.[0];
+        if (!barcode) {
+          console.warn('[QR] evento recibido sin códigos');
+          return;
+        }
+        const qrToken = barcode.rawValue?.trim();
+        if (!qrToken) {
+          console.warn('[QR] código detectado sin rawValue');
+          return;
+        }
+        console.log('[QR] token leído:', qrToken);
+        this.handleQr(qrToken);
+      });
+      this.errorListener = await BarcodeScanner.addListener('scanError', event => {
+        console.error('[QR] error del scanner:', event.message);
+        this.setStatus('error');
+      });
+      if (!this.active || this.disabled) {
+        await this.removeScannerListeners();
+        return;
+      }
       this.scannerRunning = true;
       this.scanStatus = 'scanning';
       document.body.classList.add('barcode-scanner-active');
-      this.listener = await BarcodeScanner.addListener('barcodesScanned', event => {
-        const qrToken = event.barcodes?.[0]?.rawValue?.trim();
-        if (!qrToken) return;
-        this.handleQr(qrToken);
-      });
+      console.log('[QR] iniciando scanner ML Kit');
       await BarcodeScanner.startScan({ formats: [BarcodeFormat.QrCode] });
+      console.log('[QR] scanner iniciado correctamente');
     } catch (error) {
       console.error('[QR] Error al iniciar scanner:', error);
       await this.stopScanner();
-      this.setStatus('error');
+      if (this.active && !this.disabled) {
+        this.setStatus('error');
+      }
     }
   }
 
   async retryScan(): Promise<void> {
+    if (!this.active || this.disabled) return;
     await this.stopScanner();
     this.scanStatus = 'idle';
     await this.startScanner();
@@ -97,20 +133,36 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
+    console.log('[QR] ScanFrameComponent destruido');
     await this.stopScanner();
     this.clearStatusTimeout();
   }
 
+  private async syncScannerState(): Promise<void> {
+    if (!this.active || this.disabled) {
+      await this.stopScanner();
+      return;
+    }
+    if (this.autoStart) {
+      await this.startScanner();
+    }
+  }
+
   private handleQr(qrToken: string): void {
+    if (!this.active || this.disabled) return;
     const now = Date.now();
-    if (qrToken === this.lastQrToken && now - this.lastScanAt < this.scanCooldown) return;
+    if (qrToken === this.lastQrToken && now - this.lastScanAt < this.scanCooldown) {
+      console.log('[QR] lectura duplicada ignorada');
+      return;
+    }
     this.lastQrToken = qrToken;
     this.lastScanAt = now;
     this.scanStatus = 'success';
+    console.log('[QR] emitiendo QR al componente padre');
     this.scan.emit(qrToken);
     this.clearStatusTimeout();
     this.statusTimeout = setTimeout(() => {
-      if (this.scannerRunning) {
+      if (this.active && !this.disabled && this.scannerRunning) {
         this.scanStatus = 'scanning';
       }
       this.statusTimeout = undefined;
@@ -119,11 +171,9 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
 
   private async stopScanner(): Promise<void> {
     this.clearStatusTimeout();
+    const wasRunning = this.scannerRunning;
     try {
-      if (this.listener) {
-        await this.listener.remove();
-        this.listener = undefined;
-      }
+      await this.removeScannerListeners();
       if (this.scannerRunning) {
         await BarcodeScanner.stopScan();
       }
@@ -132,9 +182,31 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
     } finally {
       document.body.classList.remove('barcode-scanner-active');
       this.scannerRunning = false;
-      if (this.scanStatus === 'scanning') {
+      if (this.scanStatus === 'scanning' || this.scanStatus === 'success') {
         this.scanStatus = 'idle';
       }
+      if (wasRunning) {
+        console.log('[QR] scanner detenido');
+      }
+    }
+  }
+
+  private async removeScannerListeners(): Promise<void> {
+    if (this.barcodeListener) {
+      try {
+        await this.barcodeListener.remove();
+      } catch (error) {
+        console.warn('[QR] no fue posible eliminar barcodeListener:', error);
+      }
+      this.barcodeListener = undefined;
+    }
+    if (this.errorListener) {
+      try {
+        await this.errorListener.remove();
+      } catch (error) {
+        console.warn('[QR] no fue posible eliminar errorListener:', error);
+      }
+      this.errorListener = undefined;
     }
   }
 

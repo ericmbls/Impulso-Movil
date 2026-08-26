@@ -30,6 +30,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   currentSchedule: ScheduleItem | null = null;
   lastScans: AttendanceScanResponse[] = [];
   lastSuccessfulScan: AttendanceScanResponse | null = null;
+  viewActive = false;
 
   loading = false;
   loadingSchedules = false;
@@ -79,6 +80,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   ionViewWillEnter(): void {
+    this.viewActive = true;
     this.userRole = this.authState.user()?.role;
     this.clearFeedback();
     this.scanningAttendance = false;
@@ -92,6 +94,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   ionViewWillLeave(): void {
+    this.viewActive = false;
     this.timer?.unsubscribe();
     this.timer = undefined;
     if (this.feedbackTimer) {
@@ -99,6 +102,8 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
       this.feedbackTimer = undefined;
     }
     this.scanningAttendance = false;
+    this.lastQrToken = '';
+    this.lastQrTime = 0;
   }
 
   loadQr(): void {
@@ -172,14 +177,13 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.lastSuccessfulScan = null;
     this.currentSchedule = null;
     this.scheduleService.getTeacherSchedule(teacherId).subscribe({
-      next: async (schedules: ScheduleItem[]) => {
+      next: (schedules: ScheduleItem[]) => {
         this.loadingSchedules = false;
         this.schedules = schedules ?? [];
         this.currentSchedule = this.findCurrentSchedule(this.schedules);
         if (!this.currentSchedule) {
           this.lastScans = [];
-          this.scanError = 'No hay una clase asignada para este momento.';
-          await this.feedback.info('No tienes una clase activa en este momento.');
+          this.scanError = '';
           return;
         }
         this.scanError = '';
@@ -219,13 +223,15 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   onScanSuccess(qrToken: string): void {
+    if (!this.viewActive) return;
     const token = qrToken?.trim();
     if (!token) {
       this.showError('No se pudo leer el código QR.');
       return;
     }
     if (!this.currentSchedule) {
-      this.showError('No hay una clase activa para registrar asistencia.');
+      this.showError('QR detectado correctamente, pero no hay una clase activa en este momento.');
+      void this.feedback.warning('La asistencia solo puede registrarse durante el horario de clase.');
       return;
     }
     if (this.scanningAttendance) return;
@@ -238,16 +244,21 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.attendanceService.scanQr(token, this.currentSchedule.id).subscribe({
       next: (response: AttendanceScanResponse) => {
         this.scanningAttendance = false;
+        if (!this.viewActive) return;
         this.lastSuccessfulScan = response;
         const studentName = this.getStudentName(response);
         this.scanMessage = `Asistencia registrada para ${studentName}.`;
+        void this.feedback.success(`Asistencia registrada para ${studentName}.`);
         this.loadLastScans();
         this.scheduleFeedbackClear(5000);
       },
       error: (error: any) => {
         this.scanningAttendance = false;
+        if (!this.viewActive) return;
         this.lastSuccessfulScan = null;
-        this.scanError = error?.error?.message ?? 'No se pudo registrar la asistencia.';
+        const message = error?.error?.message ?? 'No se pudo registrar la asistencia.';
+        this.scanError = message;
+        void this.feedback.error(message);
         this.scheduleFeedbackClear(6000);
       },
     });

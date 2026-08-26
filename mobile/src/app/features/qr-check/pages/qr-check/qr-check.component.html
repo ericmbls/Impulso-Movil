@@ -3,10 +3,7 @@
     <div class="qr-container student-mode">
       <div class="hero">
         <div class="hero-content">
-          <h1>
-            <ion-icon name="qr-code-outline"></ion-icon>
-            Mi código QR
-          </h1>
+          <h1><ion-icon name="qr-code-outline"></ion-icon>Mi código QR</h1>
           <p>Muéstralo al docente para registrar tu asistencia.</p>
         </div>
       </div>
@@ -45,7 +42,7 @@
   }
 
   @if (isTeacher) {
-    <div class="teacher-scanner-page" [class.camera-ready]="!!currentSchedule">
+    <div class="teacher-scanner-page" [class.camera-ready]="viewActive">
       <div class="teacher-hero">
         <div class="teacher-hero-content">
           <div class="teacher-hero-title">
@@ -56,7 +53,7 @@
             </div>
           </div>
           @if (loadingSchedules) {
-            <p>Buscando tu clase actual...</p>
+            <p>Consultando tu horario...</p>
           } @else if (currentSchedule) {
             <div class="teacher-hero-details">
               <strong>{{ currentSubject }}</strong>
@@ -67,71 +64,79 @@
               </span>
             </div>
           } @else {
-            <p>La cámara se activará automáticamente durante una clase asignada.</p>
+            <p>El escáner está disponible en todo momento. La asistencia solo se registrará durante una clase activa.</p>
           }
         </div>
+      </div>
+
+      <div class="scanner-stage">
+        <app-scan-frame
+          [active]="viewActive"
+          [disabled]="false"
+          [autoStart]="true"
+          (scan)="onScanSuccess($event)"
+          (close)="onScanClose()">
+        </app-scan-frame>
       </div>
 
       @if (loadingSchedules) {
         <div class="teacher-loading-state">
           <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
-          <strong>Buscando clase actual</strong>
-          <p>Estamos verificando tu horario.</p>
+          <strong>Consultando horario</strong>
+          <p>Estamos verificando si tienes una clase activa.</p>
         </div>
       } @else if (!currentSchedule) {
         <div class="teacher-no-class">
           <div class="teacher-no-class-icon">
             <ion-icon name="time-outline"></ion-icon>
           </div>
-          <strong>No hay una clase activa</strong>
-          <p>El escáner se activará automáticamente cuando estés dentro del horario de una clase asignada.</p>
+          <strong>Sin clase activa</strong>
+          <p>Puedes utilizar el escáner, pero las asistencias únicamente se registrarán dentro del horario de una clase asignada.</p>
         </div>
-      } @else {
-        <div class="scanner-stage">
-          <app-scan-frame [disabled]="false" [autoStart]="true" (scan)="onScanSuccess($event)" (close)="onScanClose()"></app-scan-frame>
+      }
+
+      @if (scanningAttendance) {
+        <div class="scanner-process-card">
+          <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
+          <div>
+            <strong>Registrando asistencia</strong>
+            <span>Validando al estudiante...</span>
+          </div>
         </div>
+      }
 
-        @if (scanningAttendance) {
-          <div class="scanner-process-card">
-            <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
-            <div>
-              <strong>Registrando asistencia</strong>
-              <span>Validando al estudiante...</span>
-            </div>
+      @if (scanMessage && lastSuccessfulScan) {
+        <div class="scanner-feedback success">
+          <div class="scanner-feedback-icon">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
           </div>
-        }
-
-        @if (scanMessage && lastSuccessfulScan) {
-          <div class="scanner-feedback success">
-            <div class="scanner-feedback-icon">
-              <ion-icon name="checkmark-circle-outline"></ion-icon>
-            </div>
-            <div class="scanner-feedback-content">
-              <span>Asistencia registrada</span>
-              <strong>{{ getStudentName(lastSuccessfulScan) }}</strong>
-              <small>
-                {{ lastSuccessfulScan.classes?.subject?.name ?? currentSubject }}
-                @if (lastSuccessfulScan.student?.group?.name) {
-                  • {{ lastSuccessfulScan.student?.group?.name }}
-                }
-              </small>
-              <small>{{ formatAttendanceTime(lastSuccessfulScan.date) }}</small>
-            </div>
+          <div class="scanner-feedback-content">
+            <span>Asistencia registrada</span>
+            <strong>{{ getStudentName(lastSuccessfulScan) }}</strong>
+            <small>
+              {{ lastSuccessfulScan.classes?.subject?.name ?? currentSubject }}
+              @if (lastSuccessfulScan.student?.group?.name) {
+                • {{ lastSuccessfulScan.student?.group?.name }}
+              }
+            </small>
+            <small>{{ formatAttendanceTime(lastSuccessfulScan.date) }}</small>
           </div>
-        }
+        </div>
+      }
 
-        @if (scanError) {
-          <div class="scanner-feedback error">
-            <div class="scanner-feedback-icon">
-              <ion-icon name="close-circle-outline"></ion-icon>
-            </div>
-            <div class="scanner-feedback-content">
-              <span>No fue posible registrar</span>
-              <strong>{{ scanError }}</strong>
-            </div>
+      @if (scanError) {
+        <div class="scanner-feedback error">
+          <div class="scanner-feedback-icon">
+            <ion-icon name="close-circle-outline"></ion-icon>
           </div>
-        }
+          <div class="scanner-feedback-content">
+            <span>No fue posible registrar</span>
+            <strong>{{ scanError }}</strong>
+          </div>
+        </div>
+      }
 
+      @if (currentSchedule) {
         <div class="recent-panel">
           <div class="recent-panel-header">
             <div>
