@@ -23,8 +23,8 @@
         } @else {
           <div class="expired">
             <ion-icon name="time-outline"></ion-icon>
-            <strong>Código QR expirado</strong>
-            <p>Genera un nuevo código cuando estés listo para registrar tu asistencia.</p>
+            <strong>Código QR no disponible</strong>
+            <p>Genera un nuevo código cuando estés listo para registrar otra asistencia.</p>
             <button type="button" class="refresh-button" [disabled]="loading" (click)="refresh()">
               <ion-icon name="refresh-outline"></ion-icon>
               Generar nuevo QR
@@ -32,6 +32,34 @@
           </div>
         }
       </div>
+      @if (lastAttendance) {
+        <div class="student-attendance-card">
+          <div class="student-attendance-icon">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </div>
+          <div class="student-attendance-content">
+            <span class="student-attendance-label">Último registro</span>
+            <strong class="student-attendance-title">Asistencia registrada</strong>
+            <p class="student-attendance-subject">
+              {{ lastAttendance.classes?.subject?.name ?? 'Materia' }}
+            </p>
+            <div class="student-attendance-meta">
+              <span>{{ formatAttendanceDate(lastAttendance.date) }}</span>
+              <span class="separator">•</span>
+              <span>{{ formatAttendanceTime(lastAttendance.date) }}</span>
+            </div>
+            <div
+              class="student-attendance-status"
+              [class.present]="lastAttendance.status === 'PRESENT'"
+              [class.late]="lastAttendance.status === 'LATE'"
+              [class.justified]="lastAttendance.status === 'JUSTIFIED'"
+              [class.absent]="lastAttendance.status === 'ABSENT'">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>{{ getAttendanceStatusLabel(lastAttendance.status) }}</span>
+            </div>
+          </div>
+        </div>
+      }
       @if (scanError) {
         <div class="error-message">
           <ion-icon name="close-circle-outline"></ion-icon>

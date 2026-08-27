@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { Capacitor, PluginListenerHandle } from '@capacitor/core';
@@ -15,7 +15,7 @@ type ScanStatus = 'idle' | 'scanning' | 'success' | 'error';
   templateUrl: './scan-frame.component.html',
   styleUrl: './scan-frame.component.scss',
 })
-export class ScanFrameComponent implements OnChanges, OnDestroy {
+export class ScanFrameComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() disabled = false;
   @Input() active = true;
   @Input() autoStart = true;
@@ -24,12 +24,14 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
 
   scanStatus: ScanStatus = 'idle';
   private scannerRunning = false;
+  private scannerStarting = false;
   private barcodeListener?: PluginListenerHandle;
   private errorListener?: PluginListenerHandle;
   private lastQrToken = '';
   private lastScanAt = 0;
   private readonly scanCooldown = 1800;
   private statusTimeout?: ReturnType<typeof setTimeout>;
+  private startTimeout?: ReturnType<typeof setTimeout>;
 
   constructor() {
     addIcons({ cameraOutline, checkmarkCircleOutline, closeCircleOutline, refreshOutline, scanOutline });
@@ -40,7 +42,17 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
   }
 
   get canScan(): boolean {
-    return this.active && !this.disabled && !this.scannerRunning;
+    return this.active && !this.disabled && !this.scannerRunning && !this.scannerStarting;
+  }
+
+  ngAfterViewInit(): void {
+    console.log('[QR] ngAfterViewInit:', { active: this.active, disabled: this.disabled, autoStart: this.autoStart });
+    if (!this.active || this.disabled || !this.autoStart) return;
+    this.clearStartTimeout();
+    this.startTimeout = setTimeout(() => {
+      this.startTimeout = undefined;
+      void this.startScanner();
+    }, 100);
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
@@ -53,8 +65,8 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
   }
 
   async startScanner(): Promise<void> {
-    if (!this.active || this.disabled || this.scannerRunning) {
-      console.log('[QR] inicio omitido:', { active: this.active, disabled: this.disabled, scannerRunning: this.scannerRunning });
+    if (!this.active || this.disabled || this.scannerRunning || this.scannerStarting) {
+      console.log('[QR] inicio omitido:', { active: this.active, disabled: this.disabled, scannerRunning: this.scannerRunning, scannerStarting: this.scannerStarting });
       return;
     }
     if (Capacitor.getPlatform() === 'web') {
@@ -63,6 +75,7 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
       return;
     }
     this.clearStatusTimeout();
+    this.scannerStarting = true;
     try {
       const permissions = await BarcodeScanner.checkPermissions();
       console.log('[QR] permiso cámara:', permissions.camera);
@@ -98,7 +111,9 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
       });
       this.errorListener = await BarcodeScanner.addListener('scanError', event => {
         console.error('[QR] error del scanner:', event.message);
-        this.setStatus('error');
+        if (this.active && !this.disabled) {
+          this.setStatus('error');
+        }
       });
       if (!this.active || this.disabled) {
         await this.removeScannerListeners();
@@ -116,6 +131,8 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
       if (this.active && !this.disabled) {
         this.setStatus('error');
       }
+    } finally {
+      this.scannerStarting = false;
     }
   }
 
@@ -134,12 +151,14 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
     console.log('[QR] ScanFrameComponent destruido');
+    this.clearStartTimeout();
     await this.stopScanner();
     this.clearStatusTimeout();
   }
 
   private async syncScannerState(): Promise<void> {
     if (!this.active || this.disabled) {
+      this.clearStartTimeout();
       await this.stopScanner();
       return;
     }
@@ -171,6 +190,7 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
 
   private async stopScanner(): Promise<void> {
     this.clearStatusTimeout();
+    this.clearStartTimeout();
     const wasRunning = this.scannerRunning;
     try {
       await this.removeScannerListeners();
@@ -182,6 +202,7 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
     } finally {
       document.body.classList.remove('barcode-scanner-active');
       this.scannerRunning = false;
+      this.scannerStarting = false;
       if (this.scanStatus === 'scanning' || this.scanStatus === 'success') {
         this.scanStatus = 'idle';
       }
@@ -219,5 +240,11 @@ export class ScanFrameComponent implements OnChanges, OnDestroy {
     if (!this.statusTimeout) return;
     clearTimeout(this.statusTimeout);
     this.statusTimeout = undefined;
+  }
+
+  private clearStartTimeout(): void {
+    if (!this.startTimeout) return;
+    clearTimeout(this.startTimeout);
+    this.startTimeout = undefined;
   }
 }

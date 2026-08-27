@@ -30,6 +30,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   currentSchedule: ScheduleItem | null = null;
   lastScans: AttendanceScanResponse[] = [];
   lastSuccessfulScan: AttendanceScanResponse | null = null;
+  lastAttendance: AttendanceScanResponse | null = null;
   viewActive = false;
 
   loading = false;
@@ -43,10 +44,13 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   userRole = this.authState.user()?.role;
 
   private timer?: Subscription;
+  private qrSyncTimer?: Subscription;
   private feedbackTimer?: ReturnType<typeof setTimeout>;
   private lastQrToken = '';
   private lastQrTime = 0;
+  private lastKnownAttendanceId: number | null = null;
   private readonly qrDebounce = 3000;
+  private readonly qrSyncInterval = 4000;
 
   constructor() {
     addIcons({ checkmarkCircleOutline, closeCircleOutline, qrCodeOutline, refreshOutline, scanOutline, timeOutline });
@@ -87,16 +91,20 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.lastQrToken = '';
     this.lastQrTime = 0;
     if (this.isTeacher) {
+      this.stopQrSync();
       this.loadTeacherSchedule();
       return;
     }
     this.loadQr();
+    this.loadLatestAttendance();
+    this.startQrSync();
   }
 
   ionViewWillLeave(): void {
     this.viewActive = false;
     this.timer?.unsubscribe();
     this.timer = undefined;
+    this.stopQrSync();
     if (this.feedbackTimer) {
       clearTimeout(this.feedbackTimer);
       this.feedbackTimer = undefined;
@@ -158,6 +166,26 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
         await this.feedback.error(message);
       },
     });
+  }
+
+  getAttendanceStatusLabel(status: string): string {
+    switch (status) {
+      case 'PRESENT': return 'Presente';
+      case 'ABSENT': return 'Falta';
+      case 'LATE': return 'Retardo';
+      case 'JUSTIFIED': return 'Justificada';
+      default: return status;
+    }
+  }
+
+  getAttendanceStatusClass(status: string): string {
+    switch (status) {
+      case 'PRESENT': return 'present';
+      case 'LATE': return 'late';
+      case 'JUSTIFIED': return 'justified';
+      case 'ABSENT': return 'absent';
+      default: return '';
+    }
   }
 
   loadTeacherSchedule(): void {
@@ -270,14 +298,33 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
 
   formatAttendanceDate(date: string): string {
     const value = new Date(date);
-    const recordDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' }).format(value);
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const recordDate = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Mexico_City',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(value);
+    const today = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Mexico_City',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
     if (recordDate === today) return 'Hoy';
-    return new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', day: '2-digit', month: 'long' }).format(value);
+    return new Intl.DateTimeFormat('es-MX', {
+      timeZone: 'America/Mexico_City',
+      day: '2-digit',
+      month: 'long',
+    }).format(value);
   }
 
   formatAttendanceTime(date: string): string {
-    return new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(date));
+    return new Intl.DateTimeFormat('es-MX', {
+      timeZone: 'America/Mexico_City',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).format(new Date(date));
   }
 
   getStudentName(record: AttendanceScanResponse): string {
@@ -285,6 +332,71 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     const lastName = record.student?.user?.lastName ?? '';
     const name = `${firstName} ${lastName}`.trim();
     return name || 'Alumno';
+  }
+
+  private startQrSync(): void {
+    this.stopQrSync();
+    this.qrSyncTimer = interval(this.qrSyncInterval).subscribe(() => {
+      if (!this.viewActive || this.isTeacher) return;
+      this.checkQrStatus();
+    });
+  }
+
+  private stopQrSync(): void {
+    this.qrSyncTimer?.unsubscribe();
+    this.qrSyncTimer = undefined;
+  }
+
+  private checkQrStatus(): void {
+    this.qrService.getMyQr().subscribe({
+      next: (qr: StudentQr) => {
+        if (!this.viewActive || this.isTeacher) return;
+        const previousQr = this.qr;
+        const wasValid = previousQr?.isValid === true;
+        const isValid = qr.isValid === true;
+        const previousToken = previousQr?.qrToken ?? null;
+        const currentToken = qr.qrToken ?? null;
+        this.qr = qr;
+        if (qr.isValid && qr.expiresAt) {
+          this.updateCountdown();
+        } else {
+          this.timer?.unsubscribe();
+          this.timer = undefined;
+          this.secondsRemaining = 0;
+        }
+        const qrWasConsumed = wasValid && !isValid && !!previousToken && !currentToken;
+        if (!qrWasConsumed) return;
+        console.log('[QR] QR consumido. Verificando nueva asistencia.');
+        this.loadLatestAttendance(true);
+      },
+      error: (error: any) => {
+        console.warn('[QR] No fue posible sincronizar el estado del QR:', error);
+      },
+    });
+  }
+
+  private loadLatestAttendance(showConfirmation = false): void {
+    const user = this.authState.user();
+    const studentId = user?.studentProfile?.id ?? user?.studentProfileId ?? user?.studentId;
+    if (!studentId) {
+      console.warn('[ATTENDANCE] No se encontró el perfil del alumno.');
+      return;
+    }
+    this.attendanceService.getByStudent(studentId).subscribe({
+      next: async (records: AttendanceScanResponse[]) => {
+        if (!this.viewActive || this.isTeacher) return;
+        const latest = (records ?? []).slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] ?? null;
+        const previousAttendanceId = this.lastKnownAttendanceId;
+        this.lastAttendance = latest;
+        this.lastKnownAttendanceId = latest?.id ?? null;
+        if (!showConfirmation || !latest || latest.id === previousAttendanceId) return;
+        const subject = latest.classes?.subject?.name ?? 'la clase';
+        await this.feedback.success(`Asistencia registrada en ${subject}.`, 4000);
+      },
+      error: (error: any) => {
+        console.warn('[ATTENDANCE] No fue posible cargar la última asistencia:', error);
+      },
+    });
   }
 
   private findCurrentSchedule(schedules: ScheduleItem[]): ScheduleItem | null {
@@ -299,7 +411,13 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   private getMexicoCityTime(): { day: string; minutes: number } {
-    const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', weekday: 'long', hour: '2-digit', minute: '2-digit', hour12: false });
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Mexico_City',
+      weekday: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
     const parts = formatter.formatToParts(new Date());
     const weekday = parts.find(part => part.type === 'weekday')?.value ?? '';
     const hour = Number(parts.find(part => part.type === 'hour')?.value ?? 0);
