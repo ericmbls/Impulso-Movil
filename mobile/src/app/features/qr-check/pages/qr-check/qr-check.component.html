@@ -1,12 +1,20 @@
 <ion-content fullscreen [class.teacher-content]="isTeacher">
-  @if (!isTeacher) {
+  @if (isStudent) {
     <div class="qr-container student-mode">
       <div class="hero">
         <div class="hero-content">
-          <h1><ion-icon name="qr-code-outline"></ion-icon>Mi código QR</h1>
+          <h1>
+            <ion-icon name="qr-code-outline"></ion-icon>
+            Mi código QR
+          </h1>
           <p>Muéstralo al docente para registrar tu asistencia.</p>
         </div>
+        <div class="hero-decoration">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
       </div>
+
       <div class="qr-card">
         @if (loading) {
           <div class="loading">
@@ -32,6 +40,7 @@
           </div>
         }
       </div>
+
       @if (lastAttendance) {
         <div class="student-attendance-card">
           <div class="student-attendance-icon">
@@ -60,6 +69,107 @@
           </div>
         </div>
       }
+
+      @if (scanError) {
+        <div class="error-message">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          <span>{{ scanError }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  @if (isParent) {
+    <div class="qr-container parent-mode">
+      <div class="hero">
+        <div class="hero-content">
+          <h1>
+            <ion-icon name="people-outline"></ion-icon>
+            Asistencia
+          </h1>
+          <p>Consulta el último registro de asistencia de tu hijo.</p>
+        </div>
+        <div class="hero-decoration">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+        </div>
+      </div>
+
+      @if (parentChildren.length > 1) {
+        <div class="parent-children">
+          <span class="parent-children-label">Alumno</span>
+          <div class="parent-children-list">
+            @for (child of parentChildren; track child.id) {
+              <button
+                type="button"
+                class="parent-child-button"
+                [class.active]="selectedChild?.id === child.id"
+                (click)="selectChild(child)">
+                {{ child.user?.firstName ?? 'Alumno' }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (selectedChild) {
+        <div class="parent-student-card">
+          <div class="parent-student-avatar">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <div class="parent-student-info">
+            <span>Alumno</span>
+            <strong>{{ parentChildName }}</strong>
+            @if (selectedChild.group?.name) {
+              <small>{{ selectedChild.group?.name }}</small>
+            }
+          </div>
+        </div>
+      }
+
+      @if (loadingParentAttendance) {
+        <div class="teacher-loading-state">
+          <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
+          <strong>Consultando asistencia</strong>
+          <p>Cargando el último registro del alumno.</p>
+        </div>
+      } @else if (lastAttendance) {
+        <div class="student-attendance-card">
+          <div class="student-attendance-icon">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </div>
+          <div class="student-attendance-content">
+            <span class="student-attendance-label">Último registro</span>
+            <strong class="student-attendance-title">{{ parentChildName }}</strong>
+            <p class="student-attendance-subject">
+              {{ lastAttendance.classes?.subject?.name ?? 'Materia' }}
+            </p>
+            <div class="student-attendance-meta">
+              <span>{{ formatAttendanceDate(lastAttendance.date) }}</span>
+              <span class="separator">•</span>
+              <span>{{ formatAttendanceTime(lastAttendance.date) }}</span>
+            </div>
+            <div
+              class="student-attendance-status"
+              [class.present]="lastAttendance.status === 'PRESENT'"
+              [class.late]="lastAttendance.status === 'LATE'"
+              [class.justified]="lastAttendance.status === 'JUSTIFIED'"
+              [class.absent]="lastAttendance.status === 'ABSENT'">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>{{ getAttendanceStatusLabel(lastAttendance.status) }}</span>
+            </div>
+          </div>
+        </div>
+      } @else if (selectedChild) {
+        <div class="teacher-no-class">
+          <div class="teacher-no-class-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <strong>Sin registros</strong>
+          <p>Todavía no hay registros de asistencia disponibles para {{ parentChildName }}.</p>
+        </div>
+      }
+
       @if (scanError) {
         <div class="error-message">
           <ion-icon name="close-circle-outline"></ion-icon>
@@ -86,14 +196,22 @@
             <div class="teacher-hero-details">
               <strong>{{ currentSubject }}</strong>
               <span>
-                @if (currentGroup) { {{ currentGroup }} • }
+                @if (currentGroup) {
+                  {{ currentGroup }} •
+                }
                 {{ currentScheduleTime }}
-                @if (currentClassroom) { • {{ currentClassroom }} }
+                @if (currentClassroom) {
+                  • {{ currentClassroom }}
+                }
               </span>
             </div>
           } @else {
             <p>El escáner está disponible en todo momento. La asistencia solo se registrará durante una clase activa.</p>
           }
+        </div>
+        <div class="hero-decoration">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
         </div>
       </div>
 
