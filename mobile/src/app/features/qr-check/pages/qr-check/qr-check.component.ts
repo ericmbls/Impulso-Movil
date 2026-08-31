@@ -7,8 +7,10 @@ import { interval, Subscription } from 'rxjs';
 import { QrService, StudentQr } from '@features/qr-check/services/qr.service';
 import { AttendanceService, AttendanceScanResponse } from '@features/attendance/services/attendance.service';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
+import { StorageService } from '@core/http/services/storage.service';
 import { ScheduleItem, ScheduleService } from '@features/schedule/services/schedule.service';
 import { FeedbackService } from '@core/shared/services/feedback.service';
+import { AttendanceSyncService } from '@core/offline/services/attendance-sync.service';
 import { ScanFrameComponent } from '@shared/components/qr/scan-frame/scan-frame.component';
 
 interface ParentChild {
@@ -31,6 +33,8 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   private readonly attendanceService = inject(AttendanceService);
   private readonly scheduleService = inject(ScheduleService);
   private readonly feedback = inject(FeedbackService);
+  private readonly attendanceSyncService = inject(AttendanceSyncService);
+  private readonly storage = inject(StorageService);
 
   qr: StudentQr | null = null;
   schedules: ScheduleItem[] = [];
@@ -47,23 +51,28 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   loadingScans = false;
   loadingParentAttendance = false;
   scanningAttendance = false;
-
+  usingCachedQr = false;
   secondsRemaining = 0;
   scanMessage = '';
   scanError = '';
+  offlineMessage = '';
+  pendingAttendanceCount = 0;
   userRole = this.authState.user()?.role;
 
   private timer?: Subscription;
-  private qrSyncTimer?: Subscription;
+  private attendanceWatchTimer?: Subscription;
   private parentSyncTimer?: Subscription;
+  private queueWatchTimer?: Subscription;
   private feedbackTimer?: ReturnType<typeof setTimeout>;
   private lastQrToken = '';
   private lastQrTime = 0;
+  private readonly qrDebounce = 3000;
   private lastKnownAttendanceId: number | null = null;
   private lastKnownParentAttendanceId: number | null = null;
-  private readonly qrDebounce = 3000;
-  private readonly qrSyncInterval = 4000;
+  private studentAttendanceInitialized = false;
+  private readonly attendanceWatchInterval = 4000;
   private readonly parentSyncInterval = 4000;
+  private readonly queueWatchInterval = 3000;
 
   constructor() {
     addIcons({ checkmarkCircleOutline, closeCircleOutline, peopleOutline, qrCodeOutline, refreshOutline, scanOutline, timeOutline });
@@ -118,10 +127,16 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.scanningAttendance = false;
     this.lastQrToken = '';
     this.lastQrTime = 0;
-    this.stopQrSync();
+    this.stopAttendanceWatch();
     this.stopParentSync();
+    this.stopQueueWatch();
     if (this.isTeacher) {
       this.loadTeacherSchedule();
+      void this.refreshPendingCount();
+      void this.attendanceSyncService.syncPendingForCurrentTeacher()
+        .then(async () => { await this.refreshPendingCount(); })
+        .catch(error => { console.warn('[OFFLINE] No fue posible intentar la sincronización inicial:', error); });
+      this.startQueueWatch();
       return;
     }
     if (this.isParent) {
@@ -129,9 +144,11 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
       return;
     }
     if (this.isStudent) {
+      this.studentAttendanceInitialized = false;
+      this.usingCachedQr = false;
       this.loadQr();
       this.loadLatestAttendance();
-      this.startQrSync();
+      this.startAttendanceWatch();
     }
   }
 
@@ -139,8 +156,9 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.viewActive = false;
     this.timer?.unsubscribe();
     this.timer = undefined;
-    this.stopQrSync();
+    this.stopAttendanceWatch();
     this.stopParentSync();
+    this.stopQueueWatch();
     if (this.feedbackTimer) {
       clearTimeout(this.feedbackTimer);
       this.feedbackTimer = undefined;
@@ -148,6 +166,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.scanningAttendance = false;
     this.lastQrToken = '';
     this.lastQrTime = 0;
+    this.offlineMessage = '';
   }
 
   loadQr(): void {
@@ -156,23 +175,40 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.timer = undefined;
     this.loading = true;
     this.scanError = '';
+    this.offlineMessage = '';
+    this.usingCachedQr = false;
     this.qrService.getMyQr().subscribe({
-      next: (qr: StudentQr) => {
-        this.qr = qr;
+      next: async (qr: StudentQr) => {
+        if (!this.viewActive || !this.isStudent) return;
         this.loading = false;
-        if (qr.isValid && qr.expiresAt) {
+        if (qr.isValid && qr.qrToken && qr.qrImage && qr.expiresAt) {
+          this.qr = qr;
+          this.usingCachedQr = false;
           this.startCountdown();
+          await this.cacheCurrentStudentQr(qr);
           return;
         }
+        this.qr = qr;
         this.secondsRemaining = 0;
+        this.usingCachedQr = false;
       },
       error: async (error: any) => {
+        if (!this.viewActive || !this.isStudent) return;
+        const loadedFromCache = await this.loadCachedQr();
         this.loading = false;
+        if (loadedFromCache) return;
         this.qr = null;
         this.secondsRemaining = 0;
-        const message = error?.error?.message ?? 'No se pudo cargar el código QR.';
+        this.usingCachedQr = false;
+        const message = this.isNetworkError(error)
+          ? 'Sin conexión y no hay un código QR válido guardado para hoy.'
+          : (error?.error?.message ?? 'No se pudo cargar el código QR.');
         this.scanError = message;
-        await this.feedback.error(message);
+        if (this.isNetworkError(error)) {
+          await this.feedback.warning(message, 4000);
+        } else {
+          await this.feedback.error(message);
+        }
       },
     });
   }
@@ -183,73 +219,122 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     this.timer = undefined;
     this.loading = true;
     this.scanError = '';
+    this.offlineMessage = '';
     this.secondsRemaining = 0;
     this.qrService.refreshQr().subscribe({
       next: async (qr: StudentQr) => {
-        this.qr = qr;
+        if (!this.viewActive || !this.isStudent) return;
         this.loading = false;
-        if (qr.isValid && qr.expiresAt) {
+        if (qr.isValid && qr.qrToken && qr.qrImage && qr.expiresAt) {
+          this.qr = qr;
+          this.usingCachedQr = false;
           this.startCountdown();
-          await this.feedback.success('Nuevo código QR generado correctamente.');
+          await this.cacheCurrentStudentQr(qr);
+          await this.feedback.success('Código QR del día disponible.');
           return;
         }
+        this.qr = qr;
+        this.usingCachedQr = false;
         this.secondsRemaining = 0;
-        await this.feedback.warning('El código QR generado no se encuentra disponible.');
+        await this.feedback.warning('El código QR no se encuentra disponible.');
       },
       error: async (error: any) => {
-        this.loading = false;
-        const message = error?.error?.message ?? 'No se pudo generar un nuevo código QR.';
-        this.scanError = message;
-        await this.feedback.error(message);
-      },
-    });
-  }
-
-  private startQrSync(): void {
-    this.stopQrSync();
-    this.qrSyncTimer = interval(this.qrSyncInterval).subscribe(() => {
-      if (!this.viewActive || !this.isStudent) return;
-      this.checkQrStatus();
-    });
-  }
-
-  private stopQrSync(): void {
-    this.qrSyncTimer?.unsubscribe();
-    this.qrSyncTimer = undefined;
-  }
-
-  private checkQrStatus(): void {
-    if (!this.isStudent) return;
-    this.qrService.getMyQr().subscribe({
-      next: (qr: StudentQr) => {
         if (!this.viewActive || !this.isStudent) return;
-        const previousQr = this.qr;
-        const wasValid = previousQr?.isValid === true;
-        const isValid = qr.isValid === true;
-        const previousToken = previousQr?.qrToken ?? null;
-        const currentToken = qr.qrToken ?? null;
-        this.qr = qr;
-        if (qr.isValid && qr.expiresAt) {
-          this.updateCountdown();
-        } else {
-          this.timer?.unsubscribe();
-          this.timer = undefined;
-          this.secondsRemaining = 0;
+        const loadedFromCache = await this.loadCachedQr();
+        this.loading = false;
+        if (loadedFromCache) {
+          await this.feedback.warning('Sin conexión. Se mantiene el código QR guardado del día.', 3500);
+          return;
         }
-        const qrWasConsumed = wasValid && !isValid && !!previousToken && !currentToken;
-        if (!qrWasConsumed) return;
-        console.log('[QR] QR consumido. Verificando nueva asistencia.');
-        this.loadLatestAttendance(true);
-      },
-      error: (error: any) => {
-        console.warn('[QR] No fue posible sincronizar el estado del QR:', error);
+        const message = this.isNetworkError(error)
+          ? 'Sin conexión y no hay un código QR válido guardado para hoy.'
+          : (error?.error?.message ?? 'No se pudo obtener el código QR.');
+        this.scanError = message;
+        if (this.isNetworkError(error)) {
+          await this.feedback.warning(message);
+        } else {
+          await this.feedback.error(message);
+        }
       },
     });
+  }
+
+  private async cacheCurrentStudentQr(qr: StudentQr): Promise<void> {
+    const studentId = this.getCurrentStudentId();
+    if (!studentId || !qr.isValid || !qr.qrToken || !qr.qrImage || !qr.expiresAt) return;
+    try {
+      await this.storage.saveCachedStudentQr({ studentId, qr, cachedAt: new Date().toISOString() });
+      console.log('[QR CACHE] QR diario guardado para uso offline.');
+    } catch (error) {
+      console.warn('[QR CACHE] No fue posible guardar el QR:', error);
+    }
+  }
+
+  private async loadCachedQr(): Promise<boolean> {
+    const studentId = this.getCurrentStudentId();
+    if (!studentId) return false;
+    try {
+      const cached = await this.storage.getValidCachedStudentQr();
+      if (!cached) return false;
+      if (cached.studentId !== studentId) {
+        console.warn('[QR CACHE] El QR guardado pertenece a otro alumno.');
+        return false;
+      }
+      if (!this.isQrTokenFromToday(cached.qr.qrToken)) {
+        await this.storage.removeCachedStudentQr();
+        return false;
+      }
+      this.qr = { ...cached.qr, isValid: true };
+      this.usingCachedQr = true;
+      this.scanError = '';
+      this.offlineMessage = 'Sin conexión. Mostrando el código QR guardado del día.';
+      this.startCountdown();
+      console.log('[QR CACHE] Usando QR diario almacenado.');
+      return true;
+    } catch (error) {
+      console.warn('[QR CACHE] No fue posible recuperar el QR guardado:', error);
+      return false;
+    }
+  }
+
+  private getCurrentStudentId(): number | null {
+    const user: any = this.authState.user();
+    return user?.studentProfile?.id ?? user?.studentProfileId ?? user?.studentId ?? null;
+  }
+
+  private isQrTokenFromToday(qrToken: string | null): boolean {
+    if (!qrToken) return false;
+    const parts = qrToken.split(':');
+    if (parts.length !== 3) return false;
+    const dateInToken = parts[1];
+    const today = this.getMexicoCityDateString();
+    return dateInToken === today;
+  }
+
+  private getMexicoCityDateString(date: Date = new Date()): string {
+    const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' });
+    const parts = formatter.formatToParts(date);
+    const year = parts.find(part => part.type === 'year')?.value ?? '';
+    const month = parts.find(part => part.type === 'month')?.value ?? '';
+    const day = parts.find(part => part.type === 'day')?.value ?? '';
+    return `${year}-${month}-${day}`;
+  }
+
+  private startAttendanceWatch(): void {
+    this.stopAttendanceWatch();
+    this.attendanceWatchTimer = interval(this.attendanceWatchInterval).subscribe(() => {
+      if (!this.viewActive || !this.isStudent) return;
+      this.loadLatestAttendance(true);
+    });
+  }
+
+  private stopAttendanceWatch(): void {
+    this.attendanceWatchTimer?.unsubscribe();
+    this.attendanceWatchTimer = undefined;
   }
 
   private loadLatestAttendance(showConfirmation = false): void {
-    const user: any = this.authState.user();
-    const studentId = user?.studentProfile?.id ?? user?.studentProfileId ?? user?.studentId;
+    const studentId = this.getCurrentStudentId();
     if (!studentId) {
       console.warn('[ATTENDANCE] No se encontró el perfil del alumno.');
       return;
@@ -259,9 +344,13 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
         if (!this.viewActive || !this.isStudent) return;
         const latest = this.getLatestAttendance(records);
         const previousAttendanceId = this.lastKnownAttendanceId;
+        const wasInitialized = this.studentAttendanceInitialized;
         this.lastAttendance = latest;
         this.lastKnownAttendanceId = latest?.id ?? null;
-        if (!showConfirmation || !latest || latest.id === previousAttendanceId) return;
+        this.studentAttendanceInitialized = true;
+        if (!wasInitialized) return;
+        if (!showConfirmation || !latest) return;
+        if (latest.id === previousAttendanceId) return;
         const subject = latest.classes?.subject?.name ?? 'la clase';
         await this.feedback.success(`Asistencia registrada en ${subject}.`, 4000);
       },
@@ -396,7 +485,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     });
   }
 
-  onScanSuccess(qrToken: string): void {
+  async onScanSuccess(qrToken: string): Promise<void> {
     if (!this.viewActive) return;
     const token = qrToken?.trim();
     if (!token) {
@@ -413,33 +502,95 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     if (token === this.lastQrToken && now - this.lastQrTime < this.qrDebounce) return;
     this.lastQrToken = token;
     this.lastQrTime = now;
+    const scannedAt = new Date().toISOString();
     this.scanningAttendance = true;
     this.clearFeedback();
-    this.attendanceService.scanQr(token, this.currentSchedule.id).subscribe({
-      next: (response: AttendanceScanResponse) => {
-        this.scanningAttendance = false;
-        if (!this.viewActive) return;
+    try {
+      const result = await this.attendanceSyncService.submitOrQueue(token, this.currentSchedule.id, scannedAt);
+      this.scanningAttendance = false;
+      if (!this.viewActive) return;
+      if (result.status === 'REGISTERED' && result.attendance) {
+        const response = result.attendance;
         this.lastSuccessfulScan = response;
         const studentName = this.getStudentName(response);
         this.scanMessage = `Asistencia registrada para ${studentName}.`;
+        this.offlineMessage = '';
         void this.feedback.success(`Asistencia registrada para ${studentName}.`);
         this.loadLastScans();
+        await this.refreshPendingCount();
         this.scheduleFeedbackClear(5000);
-      },
-      error: (error: any) => {
-        this.scanningAttendance = false;
-        if (!this.viewActive) return;
+        return;
+      }
+      if (result.status === 'QUEUED') {
         this.lastSuccessfulScan = null;
-        const message = error?.error?.message ?? 'No se pudo registrar la asistencia.';
-        this.scanError = message;
-        void this.feedback.error(message);
-        this.scheduleFeedbackClear(6000);
-      },
-    });
+        this.scanMessage = '';
+        this.scanError = '';
+        this.offlineMessage = result.message ?? 'QR guardado. Pendiente de sincronización.';
+        await this.refreshPendingCount();
+        void this.feedback.warning('Sin conexión. El QR quedó pendiente de sincronización.', 4000);
+        this.scheduleOfflineMessageClear(5000);
+        return;
+      }
+      this.lastSuccessfulScan = null;
+      this.offlineMessage = '';
+      const message = result.message ?? 'No se pudo registrar la asistencia.';
+      this.scanError = message;
+      void this.feedback.error(message);
+      this.scheduleFeedbackClear(6000);
+    } catch (error: any) {
+      this.scanningAttendance = false;
+      if (!this.viewActive) return;
+      this.lastSuccessfulScan = null;
+      const message = error?.message ?? 'No se pudo procesar el código QR.';
+      this.scanError = message;
+      void this.feedback.error(message);
+      this.scheduleFeedbackClear(6000);
+    }
   }
 
   onScanClose(): void {
     this.scanningAttendance = false;
+  }
+
+  private async refreshPendingCount(): Promise<void> {
+    try {
+      this.pendingAttendanceCount = await this.attendanceSyncService.getCurrentTeacherPendingCount();
+    } catch (error) {
+      console.warn('[OFFLINE] No fue posible obtener el número de asistencias pendientes:', error);
+    }
+  }
+
+  async syncPendingAttendances(): Promise<void> {
+    if (!this.isTeacher) return;
+    try {
+      await this.attendanceSyncService.syncPendingForCurrentTeacher();
+      await this.refreshPendingCount();
+      if (this.currentSchedule) {
+        this.loadLastScans();
+      }
+      if (this.pendingAttendanceCount === 0) {
+        this.offlineMessage = '';
+        void this.feedback.success('Las asistencias pendientes fueron sincronizadas.');
+        return;
+      }
+      void this.feedback.warning(`${this.pendingAttendanceCount} asistencia(s) continúan pendientes.`);
+    } catch (error: any) {
+      const message = error?.message ?? 'No fue posible sincronizar las asistencias pendientes.';
+      void this.feedback.error(message);
+    }
+  }
+
+  private startQueueWatch(): void {
+    this.stopQueueWatch();
+    this.queueWatchTimer = interval(this.queueWatchInterval).subscribe(() => {
+      if (!this.viewActive || !this.isTeacher) return;
+      void this.refreshPendingCount();
+    });
+  }
+
+  private stopQueueWatch(): void {
+    this.queueWatchTimer?.unsubscribe();
+    this.queueWatchTimer = undefined;
   }
 
   getAttendanceStatusLabel(status: string): string {
@@ -464,33 +615,14 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
 
   formatAttendanceDate(date: string): string {
     const value = new Date(date);
-    const recordDate = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/Mexico_City',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(value);
-    const today = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/Mexico_City',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(new Date());
+    const recordDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' }).format(value);
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     if (recordDate === today) return 'Hoy';
-    return new Intl.DateTimeFormat('es-MX', {
-      timeZone: 'America/Mexico_City',
-      day: '2-digit',
-      month: 'long',
-    }).format(value);
+    return new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', day: '2-digit', month: 'long' }).format(value);
   }
 
   formatAttendanceTime(date: string): string {
-    return new Intl.DateTimeFormat('es-MX', {
-      timeZone: 'America/Mexico_City',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    }).format(new Date(date));
+    return new Intl.DateTimeFormat('es-MX', { timeZone: 'America/Mexico_City', hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(date));
   }
 
   getStudentName(record: AttendanceScanResponse): string {
@@ -516,13 +648,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
   }
 
   private getMexicoCityTime(): { day: string; minutes: number } {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Mexico_City',
-      weekday: 'long',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+    const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', weekday: 'long', hour: '2-digit', minute: '2-digit', hour12: false });
     const parts = formatter.formatToParts(new Date());
     const weekday = parts.find(part => part.type === 'weekday')?.value ?? '';
     const hour = Number(parts.find(part => part.type === 'hour')?.value ?? 0);
@@ -562,7 +688,13 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
       this.timer?.unsubscribe();
       this.timer = undefined;
       this.qr = { ...this.qr, isValid: false };
+      this.usingCachedQr = false;
+      void this.storage.removeCachedStudentQr();
     }
+  }
+
+  private isNetworkError(error: any): boolean {
+    return error?.status === 0 || error?.name === 'TimeoutError';
   }
 
   private showError(message: string): void {
@@ -573,7 +705,15 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
 
   private scheduleFeedbackClear(duration: number): void {
     if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
-    this.feedbackTimer = setTimeout(() => this.clearFeedback(), duration);
+    this.feedbackTimer = setTimeout(() => { this.clearFeedback(); }, duration);
+  }
+
+  private scheduleOfflineMessageClear(duration: number): void {
+    if (this.feedbackTimer) clearTimeout(this.feedbackTimer);
+    this.feedbackTimer = setTimeout(() => {
+      this.offlineMessage = '';
+      this.feedbackTimer = undefined;
+    }, duration);
   }
 
   private clearFeedback(): void {
@@ -583,6 +723,7 @@ export class QrCheckComponent implements ViewWillEnter, ViewWillLeave {
     }
     this.scanMessage = '';
     this.scanError = '';
+    this.offlineMessage = '';
     this.lastSuccessfulScan = null;
   }
 }

@@ -6,6 +6,7 @@ import { environment } from '@env/environment';
 export interface QrScanRequest {
   qrToken: string;
   classScheduleId: number;
+  scannedAt?: string;
 }
 
 export interface AttendanceStudent {
@@ -43,13 +44,22 @@ export interface AttendanceScanResponse {
   classes?: AttendanceClass & { schedules?: AttendanceSchedule[]; };
 }
 
+export interface StudentAttendanceStats {
+  absences: number;
+  totalClasses: number;
+  attendanceRate: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AttendanceService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/attendance`;
 
-  scanQr(qrToken: string, classScheduleId: number): Observable<AttendanceScanResponse> {
+  scanQr(qrToken: string, classScheduleId: number, scannedAt?: string): Observable<AttendanceScanResponse> {
     const body: QrScanRequest = { qrToken, classScheduleId };
+    if (scannedAt) {
+      body.scannedAt = scannedAt;
+    }
     return this.http.post<AttendanceScanResponse>(`${this.apiUrl}/scan-qr`, body);
   }
 
@@ -62,15 +72,7 @@ export class AttendanceService {
     return this.http.get<AttendanceScanResponse[]>(`${this.apiUrl}/student/${studentId}`);
   }
 
-  getStudentStats(studentId: number): Observable<{
-    absences: number;
-    totalClasses: number;
-    attendanceRate: string;
-  }> {
-    return this.http.get<{
-      absences: number;
-      totalClasses: number;
-      attendanceRate: string;
-    }>(`${this.apiUrl}/stats/student/${studentId}`);
+  getStudentStats(studentId: number): Observable<StudentAttendanceStats> {
+    return this.http.get<StudentAttendanceStats>(`${this.apiUrl}/stats/student/${studentId}`);
   }
 }

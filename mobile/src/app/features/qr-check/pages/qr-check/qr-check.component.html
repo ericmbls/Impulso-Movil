@@ -3,10 +3,7 @@
     <div class="qr-container student-mode">
       <div class="hero">
         <div class="hero-content">
-          <h1>
-            <ion-icon name="qr-code-outline"></ion-icon>
-            Mi código QR
-          </h1>
+          <h1><ion-icon name="qr-code-outline"></ion-icon>Mi código QR</h1>
           <p>Muéstralo al docente para registrar tu asistencia.</p>
         </div>
         <div class="hero-decoration">
@@ -23,23 +20,39 @@
           </div>
         } @else if (qr?.isValid && qr?.qrImage) {
           <img [src]="qr?.qrImage" alt="Código QR de asistencia" class="qr-image" />
+          @if (usingCachedQr) {
+            <div class="student-offline-badge">
+              <ion-icon name="time-outline"></ion-icon>
+              <div>
+                <strong>Modo sin conexión</strong>
+                <span>Usando el código QR guardado del día.</span>
+              </div>
+            </div>
+          }
           <p class="expires">
             <ion-icon name="time-outline"></ion-icon>
-            Expira en
+            @if (usingCachedQr) { QR guardado válido por } @else { Válido durante }
             <strong>{{ countdown }}</strong>
           </p>
         } @else {
           <div class="expired">
             <ion-icon name="time-outline"></ion-icon>
             <strong>Código QR no disponible</strong>
-            <p>Genera un nuevo código cuando estés listo para registrar otra asistencia.</p>
+            <p>Obtén el código QR correspondiente al día actual.</p>
             <button type="button" class="refresh-button" [disabled]="loading" (click)="refresh()">
               <ion-icon name="refresh-outline"></ion-icon>
-              Generar nuevo QR
+              Obtener QR del día
             </button>
           </div>
         }
       </div>
+
+      @if (offlineMessage && usingCachedQr) {
+        <div class="student-offline-message">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ offlineMessage }}</span>
+        </div>
+      }
 
       @if (lastAttendance) {
         <div class="student-attendance-card">
@@ -83,10 +96,7 @@
     <div class="qr-container parent-mode">
       <div class="hero">
         <div class="hero-content">
-          <h1>
-            <ion-icon name="people-outline"></ion-icon>
-            Asistencia
-          </h1>
+          <h1><ion-icon name="people-outline"></ion-icon>Asistencia</h1>
           <p>Consulta el último registro de asistencia de tu hijo.</p>
         </div>
         <div class="hero-decoration">
@@ -196,13 +206,9 @@
             <div class="teacher-hero-details">
               <strong>{{ currentSubject }}</strong>
               <span>
-                @if (currentGroup) {
-                  {{ currentGroup }} •
-                }
+                @if (currentGroup) { {{ currentGroup }} • }
                 {{ currentScheduleTime }}
-                @if (currentClassroom) {
-                  • {{ currentClassroom }}
-                }
+                @if (currentClassroom) { • {{ currentClassroom }} }
               </span>
             </div>
           } @else {
@@ -245,8 +251,24 @@
         <div class="scanner-process-card">
           <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
           <div>
-            <strong>Registrando asistencia</strong>
-            <span>Validando al estudiante...</span>
+            <strong>Procesando asistencia</strong>
+            <span>Validando o guardando el registro...</span>
+          </div>
+        </div>
+      }
+
+      @if (offlineMessage) {
+        <div class="scanner-feedback offline">
+          <div class="scanner-feedback-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <div class="scanner-feedback-content">
+            <span>Pendiente de sincronización</span>
+            <strong>QR guardado en el dispositivo</strong>
+            <small>{{ offlineMessage }}</small>
+            @if (pendingAttendanceCount > 0) {
+              <small>{{ pendingAttendanceCount }} asistencia(s) pendiente(s)</small>
+            }
           </div>
         </div>
       }
@@ -279,6 +301,20 @@
             <span>No fue posible registrar</span>
             <strong>{{ scanError }}</strong>
           </div>
+        </div>
+      }
+
+      @if (pendingAttendanceCount > 0) {
+        <div class="offline-queue-card">
+          <div class="offline-queue-info">
+            <span>Sincronización pendiente</span>
+            <strong>{{ pendingAttendanceCount }} asistencia(s)</strong>
+            <small>Se enviarán automáticamente cuando vuelva la conexión.</small>
+          </div>
+          <button type="button" class="offline-sync-button" (click)="syncPendingAttendances()">
+            <ion-icon name="refresh-outline"></ion-icon>
+            Sincronizar
+          </button>
         </div>
       }
 

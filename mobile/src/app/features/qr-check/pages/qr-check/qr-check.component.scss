@@ -25,7 +25,6 @@ ion-content {
   padding: 0 20px 24px;
   position: relative;
 }
-
 .qr-container::before {
   content: '';
   position: fixed;
@@ -58,7 +57,6 @@ ion-content {
   box-shadow: 0 12px 40px rgba(125, 23, 54, 0.25);
   z-index: 1;
 }
-
 .hero::after {
   content: '';
   position: absolute;
@@ -75,7 +73,6 @@ ion-content {
   z-index: 2;
   flex: 1;
 }
-
 .hero-content h1 {
   margin: 0;
   font-size: 24px;
@@ -85,11 +82,9 @@ ion-content {
   align-items: center;
   gap: 10px;
 }
-
 .hero-content h1 ion-icon {
   font-size: 28px;
 }
-
 .hero-content p {
   margin: 8px 0 0;
   opacity: 0.85;
@@ -102,20 +97,17 @@ ion-content {
   top: -30px;
   z-index: 1;
 }
-
 .hero-decoration .circle {
   position: absolute;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.04);
 }
-
 .hero-decoration .circle-1 {
   width: 160px;
   height: 160px;
   right: 0;
   top: 0;
 }
-
 .hero-decoration .circle-2 {
   width: 100px;
   height: 100px;
@@ -152,7 +144,6 @@ ion-content {
   gap: 14px;
   min-height: 280px;
 }
-
 .loading p,
 .expired p {
   margin: 0;
@@ -171,7 +162,6 @@ ion-content {
   color: #c98216;
   font-size: 54px;
 }
-
 .expired strong {
   color: #443b3d;
   font-size: 16px;
@@ -186,12 +176,10 @@ ion-content {
   color: #696262;
   font-size: 14px;
 }
-
 .expires ion-icon {
   color: var(--primary);
   font-size: 19px;
 }
-
 .expires strong {
   color: var(--primary);
   font-size: 15px;
@@ -215,15 +203,12 @@ ion-content {
   cursor: pointer;
   transition: transform 0.15s ease;
 }
-
 .refresh-button ion-icon {
   font-size: 19px;
 }
-
 .refresh-button:active:not(:disabled) {
   transform: scale(0.98);
 }
-
 .refresh-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -243,7 +228,6 @@ ion-content {
   font-weight: 600;
   line-height: 1.4;
 }
-
 .error-message ion-icon {
   flex: 0 0 auto;
   color: #c13f3f;
@@ -260,7 +244,6 @@ ion-content {
   padding: 18px 18px calc(90px + env(safe-area-inset-bottom));
   background: linear-gradient(165deg, #f7f4ef 0%, #ffffff 100%);
 }
-
 .teacher-scanner-page.camera-ready {
   background: transparent;
 }
@@ -278,7 +261,6 @@ ion-content {
   box-shadow: 0 12px 40px rgba(125, 23, 54, 0.25);
   z-index: 30;
 }
-
 .teacher-hero::after {
   content: '';
   position: absolute;
@@ -295,7 +277,6 @@ ion-content {
   z-index: 2;
   flex: 1;
 }
-
 .teacher-hero-content > p {
   margin: 10px 0 0;
   color: rgba(255, 255, 255, 0.78);
@@ -308,16 +289,13 @@ ion-content {
   align-items: center;
   gap: 12px;
 }
-
 .teacher-hero-title > ion-icon {
   flex: 0 0 auto;
   font-size: 25px;
 }
-
 .teacher-hero-title > div {
   min-width: 0;
 }
-
 .teacher-hero-title span {
   display: block;
   margin-bottom: 2px;
@@ -327,7 +305,6 @@ ion-content {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-
 .teacher-hero-title h1 {
   margin: 0;
   color: white;
@@ -343,7 +320,6 @@ ion-content {
   padding-top: 11px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
-
 .teacher-hero-details strong {
   overflow: hidden;
   color: white;
@@ -352,7 +328,6 @@ ion-content {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .teacher-hero-details span {
   color: rgba(255, 255, 255, 0.74);
   font-size: 11px;
@@ -376,18 +351,15 @@ ion-content {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
 }
-
 .teacher-loading-state ion-icon,
 .teacher-no-class ion-icon {
   color: var(--primary);
   font-size: 40px;
 }
-
 .teacher-loading-state strong,
 .teacher-no-class strong {
   font-size: 16px;
 }
-
 .teacher-loading-state p,
 .teacher-no-class p {
   max-width: 300px;
@@ -406,7 +378,6 @@ ion-content {
   background: rgba(125, 23, 54, 0.08);
   border-radius: 20px;
 }
-
 .teacher-no-class-icon ion-icon {
   font-size: 32px;
 }
@@ -447,17 +418,14 @@ app-scan-frame {
   color: #c7a15a;
   font-size: 23px;
 }
-
 .scanner-process-card div {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
 .scanner-process-card strong {
   font-size: 13px;
 }
-
 .scanner-process-card span {
   color: rgba(255, 255, 255, 0.65);
   font-size: 11px;
@@ -471,7 +439,6 @@ app-scan-frame {
   place-items: center;
   border-radius: 13px;
 }
-
 .scanner-feedback-icon ion-icon {
   font-size: 25px;
 }
@@ -479,7 +446,6 @@ app-scan-frame {
 .scanner-feedback.success {
   border-color: rgba(91, 213, 111, 0.35);
 }
-
 .scanner-feedback.success .scanner-feedback-icon {
   color: #78e188;
   background: rgba(77, 177, 91, 0.16);
@@ -488,7 +454,6 @@ app-scan-frame {
 .scanner-feedback.error {
   border-color: rgba(255, 107, 107, 0.35);
 }
-
 .scanner-feedback.error .scanner-feedback-icon {
   color: #ff7d7d;
   background: rgba(220, 74, 74, 0.16);
@@ -500,7 +465,6 @@ app-scan-frame {
   gap: 2px;
   min-width: 0;
 }
-
 .scanner-feedback-content > span {
   color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
@@ -508,7 +472,6 @@ app-scan-frame {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-
 .scanner-feedback-content strong {
   overflow: hidden;
   color: white;
@@ -516,7 +479,6 @@ app-scan-frame {
   font-weight: 800;
   text-overflow: ellipsis;
 }
-
 .scanner-feedback-content small {
   color: rgba(255, 255, 255, 0.67);
   font-size: 10px;
@@ -540,13 +502,11 @@ app-scan-frame {
   padding: 13px 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-
 .recent-panel-header > div {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
 .recent-panel-header span {
   color: rgba(255, 255, 255, 0.54);
   font-size: 9px;
@@ -554,7 +514,6 @@ app-scan-frame {
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
-
 .recent-panel-header strong {
   color: white;
   font-size: 13px;
@@ -583,7 +542,6 @@ app-scan-frame {
   padding: 11px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-
 .recent-item:last-child {
   border-bottom: 0;
 }
@@ -598,7 +556,6 @@ app-scan-frame {
   background: rgba(84, 184, 99, 0.14);
   border-radius: 11px;
 }
-
 .recent-avatar ion-icon {
   font-size: 20px;
 }
@@ -610,7 +567,6 @@ app-scan-frame {
   gap: 2px;
   min-width: 0;
 }
-
 .recent-info strong {
   overflow: hidden;
   color: white;
@@ -618,7 +574,6 @@ app-scan-frame {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .recent-info span {
   color: rgba(255, 255, 255, 0.55);
   font-size: 10px;
@@ -631,12 +586,10 @@ app-scan-frame {
   align-items: flex-end;
   gap: 2px;
 }
-
 .recent-time strong {
   color: white;
   font-size: 10px;
 }
-
 .recent-time span {
   color: rgba(255, 255, 255, 0.45);
   font-size: 9px;
@@ -653,7 +606,6 @@ app-scan-frame {
   font-size: 11px;
   text-align: center;
 }
-
 .recent-state ion-icon,
 .recent-empty ion-icon {
   flex: 0 0 auto;
@@ -697,7 +649,6 @@ app-scan-frame {
   border-radius: var(--radius-icon);
   background: rgba(45, 160, 90, 0.12);
 }
-
 .student-attendance-icon ion-icon {
   font-size: 28px;
   color: #2da05a;
@@ -740,7 +691,6 @@ app-scan-frame {
   font-size: 0.82rem;
   color: #999;
 }
-
 .student-attendance-meta .separator {
   opacity: 0.6;
 }
@@ -758,26 +708,21 @@ app-scan-frame {
   font-size: 0.78rem;
   font-weight: 700;
 }
-
 .student-attendance-status ion-icon {
   font-size: 16px;
 }
-
 .student-attendance-status.present {
   background: rgba(45, 160, 90, 0.12);
   color: #2da05a;
 }
-
 .student-attendance-status.late {
   background: rgba(245, 124, 0, 0.12);
   color: #f57c00;
 }
-
 .student-attendance-status.justified {
   background: rgba(33, 150, 243, 0.12);
   color: #2196f3;
 }
-
 .student-attendance-status.absent {
   background: rgba(211, 47, 47, 0.12);
   color: #d32f2f;
@@ -820,14 +765,12 @@ app-scan-frame {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 .parent-child-button.active {
   background: linear-gradient(135deg, #7d1736, #5d1028);
   color: white;
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(125, 23, 54, 0.2);
 }
-
 .parent-child-button:hover:not(.active) {
   background: rgba(125, 23, 54, 0.05);
 }
@@ -862,7 +805,6 @@ app-scan-frame {
   display: flex;
   flex-direction: column;
 }
-
 .parent-student-info span {
   font-size: 11px;
   font-weight: 700;
@@ -870,13 +812,11 @@ app-scan-frame {
   letter-spacing: 0.06em;
   color: #999;
 }
-
 .parent-student-info strong {
   font-size: 16px;
   font-weight: 700;
   color: #1a1a1a;
 }
-
 .parent-student-info small {
   font-size: 12px;
   color: #999;
@@ -922,4 +862,149 @@ app-scan-frame {
   .teacher-scanner-page {
     background: transparent;
   }
+}
+
+.scanner-feedback.offline {
+  border: 1px solid rgba(var(--ion-color-warning-rgb), 0.28);
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+}
+.scanner-feedback.offline .scanner-feedback-icon {
+  background: rgba(var(--ion-color-warning-rgb), 0.14);
+  color: var(--ion-color-warning);
+}
+.scanner-feedback.offline .scanner-feedback-icon ion-icon {
+  color: var(--ion-color-warning);
+}
+.scanner-feedback.offline .scanner-feedback-content span {
+  color: var(--ion-color-warning-shade);
+}
+.scanner-feedback.offline .scanner-feedback-content strong {
+  color: var(--ion-text-color);
+}
+.scanner-feedback.offline .scanner-feedback-content small {
+  color: var(--ion-color-medium);
+}
+
+.offline-queue-card {
+  width: calc(100% - 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(var(--ion-color-warning-rgb), 0.2);
+  background: var(--ion-card-background, #ffffff);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+}
+
+.offline-queue-info {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+.offline-queue-info span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ion-color-warning-shade);
+}
+.offline-queue-info strong {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--ion-text-color);
+}
+.offline-queue-info small {
+  margin-top: 2px;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  color: var(--ion-color-medium);
+}
+
+.offline-sync-button {
+  min-width: 106px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.offline-sync-button ion-icon {
+  flex-shrink: 0;
+  font-size: 17px;
+}
+.offline-sync-button:active {
+  transform: scale(0.97);
+}
+.offline-sync-button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (max-width: 390px) {
+  .offline-queue-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .offline-sync-button {
+    width: 100%;
+  }
+}
+
+.student-offline-badge {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+  border: 1px solid rgba(var(--ion-color-warning-rgb), 0.22);
+}
+.student-offline-badge ion-icon {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--ion-color-warning);
+}
+.student-offline-badge div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.student-offline-badge div strong {
+  font-size: 0.82rem;
+  color: var(--ion-text-color);
+}
+.student-offline-badge div span {
+  font-size: 0.74rem;
+  color: var(--ion-color-medium);
+}
+
+.student-offline-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 16px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(var(--ion-color-warning-rgb), 0.08);
+  color: var(--ion-color-warning-shade);
+  font-size: 0.78rem;
+}
+.student-offline-message ion-icon {
+  flex-shrink: 0;
+  font-size: 18px;
 }
