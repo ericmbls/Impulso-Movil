@@ -1,60 +1,97 @@
+// stat-card.component.scss
 :host {
   display: block;
+  min-width: 0;
+  --primary: #7d1736;
+  --text: #211d1e;
+  --text-soft: #6f686a;
+  --text-muted: #aaa3a5;
 }
 
 .stat-card {
-  background: white;
-  border-radius: 20px;
-  padding: 18px;
-  border: 1px solid rgba(199, 161, 90, 0.4);
   display: flex;
   align-items: center;
-  gap: 14px;
-  transition: all 0.2s ease;
-}
-
-.stat-card:active {
-  transform: scale(0.97);
+  min-width: 0;
+  min-height: 92px;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(125, 23, 54, 0.07);
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: rgba(125, 23, 54, 0.06);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  display: grid;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  color: var(--primary);
+  background: linear-gradient(135deg, rgba(125, 23, 54, 0.09), rgba(125, 23, 54, 0.025));
+  border-radius: 13px;
 }
-
 .stat-icon ion-icon {
-  font-size: 26px;
-  color: #7d1736;
+  font-size: 22px;
 }
 
 .stat-content {
   flex: 1;
   min-width: 0;
 }
-
 .stat-value {
+  overflow: hidden;
   margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: #222;
-  line-height: 1.2;
+  color: var(--text);
+  font-size: 21px;
+  font-weight: 850;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
 .stat-title {
-  margin: 0;
-  font-size: 14px;
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.stat-subtitle {
+  overflow: hidden;
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 9px;
   font-weight: 500;
-  color: #666;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.stat-subtitle {
-  margin: 2px 0 0;
-  font-size: 11px;
-  color: #999;
+@media (max-width: 390px) {
+  .stat-card {
+    min-height: 84px;
+    gap: 9px;
+    padding: 12px 10px;
+  }
+  .stat-icon {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+  .stat-icon ion-icon {
+    font-size: 20px;
+  }
+  .stat-value {
+    font-size: 18px;
+  }
+  .stat-title {
+    font-size: 10px;
+  }
+  .stat-subtitle {
+    font-size: 8px;
+  }
 }

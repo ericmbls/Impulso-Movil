@@ -1,139 +1,147 @@
+// home.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {
-  calendarOutline,
-  starOutline,
-  cardOutline,
-  checkmarkCircleOutline,
-  notificationsOutline,
-  personOutline,
-  timeOutline,
-  schoolOutline,
-  bookOutline,
-  megaphoneOutline,
-  peopleOutline,
-  mailOutline,
-  chatbubbleOutline,
-  logoWhatsapp,
-  phonePortraitOutline
-} from 'ionicons/icons';
-
+import { calendarOutline, chatbubbleOutline, logoWhatsapp, mailOutline, notificationsOutline, phonePortraitOutline, starOutline } from 'ionicons/icons';
 import { StudentCardComponent } from '@shared/components/dashboard/student-card/student-card.component';
 import { StatCardComponent } from '@shared/components/stat-card/stat-card.component';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
-import { DashboardService } from '@features/dashboard/services/dashboard.service';
+import { DashboardGrade, DashboardNotification, DashboardService } from '@features/dashboard/services/dashboard.service';
 
-type StatItem = {
+interface StatItem {
   icon: string;
   value: string;
   title: string;
   subtitle: string;
-};
+}
+
+interface RecentActivity {
+  id: number | string;
+  icon: string;
+  text: string;
+  time: string;
+}
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    CommonModule,
-    IonContent,
-    IonIcon,
-    StudentCardComponent,
-    StatCardComponent
-  ],
+  imports: [IonContent, IonIcon, StudentCardComponent, StatCardComponent],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
-  average = '0.0';
-  attendance = '0%';
-  nextClasses: any[] = [];
-  recentActivities: any[] = [];
+  average = '—';
+  attendance = '—';
+  recentActivities: RecentActivity[] = [];
+  isLoadingStats = false;
+  isLoadingActivities = false;
+  statsError = false;
+  activitiesError = false;
 
   constructor(
-    public authState: AuthStateService,
-    private dashboardService: DashboardService,
-    private router: Router
+    public readonly authState: AuthStateService,
+    private readonly dashboardService: DashboardService,
+    private readonly router: Router,
   ) {
-    addIcons({
-      calendarOutline,
-      starOutline,
-      cardOutline,
-      checkmarkCircleOutline,
-      notificationsOutline,
-      personOutline,
-      timeOutline,
-      schoolOutline,
-      bookOutline,
-      megaphoneOutline,
-      peopleOutline,
-      mailOutline,
-      chatbubbleOutline,
-      logoWhatsapp,
-      phonePortraitOutline
-    });
+    addIcons({ calendarOutline, chatbubbleOutline, logoWhatsapp, mailOutline, notificationsOutline, phonePortraitOutline, starOutline });
   }
 
   ngOnInit(): void {
     const user = this.authState.user();
     if (!user) return;
+    this.loadRecentActivities();
     if (user.role === 'STUDENT' && user.studentProfile) {
-      this.loadStudentDashboard(user.studentProfile.id, user.studentProfile.groupId);
+      this.loadStudentDashboard(user.studentProfile.id);
     }
   }
 
-  private loadStudentDashboard(studentId: number, groupId: number): void {
+  private loadStudentDashboard(studentId: number): void {
+    this.isLoadingStats = true;
+    this.statsError = false;
+    let pendingRequests = 2;
+    const requestFinished = (): void => {
+      pendingRequests -= 1;
+      if (pendingRequests <= 0) this.isLoadingStats = false;
+    };
+
     this.dashboardService.getGrades(studentId).subscribe({
-      next: grades => {
-        if (grades.length) {
-          const total = grades.reduce((sum, grade) => sum + (grade.finalGrade ?? 0), 0);
-          this.average = (total / grades.length).toFixed(1);
-        }
+      next: grades => { this.average = this.calculateAverage(grades); requestFinished(); },
+      error: error => {
+        console.warn('[DASHBOARD] No fue posible cargar calificaciones:', error);
+        this.average = '—';
+        this.statsError = true;
+        requestFinished();
       }
     });
 
     this.dashboardService.getAttendanceStats(studentId).subscribe({
       next: stats => {
-        if (stats?.attendanceRate !== undefined) {
-          this.attendance = `${stats.attendanceRate}%`;
-        }
-      }
-    });
-
-    this.dashboardService.getSchedule(groupId).subscribe({
-      next: schedule => {
-        this.nextClasses = schedule.map((item: any) => ({
-          name: item.class.subject.name,
-          time: `${item.startTime} - ${item.endTime}`,
-          room: item.classroom?.name ?? 'Sin aula',
-          remaining: '',
-          color: '#7d1736'
-        }));
-      }
-    });
-
-    this.dashboardService.getNotifications().subscribe({
-      next: (notifications: any[]) => {
-        this.recentActivities = notifications
-          .slice(0, 5)
-          .map(notification => ({
-            id: notification.id,
-            icon: this.getNotificationIcon(notification.channel),
-            text: notification.content,
-            time: this.formatDate(notification.createdAt)
-          }));
+        const rate = Number(stats?.attendanceRate);
+        if (Number.isFinite(rate)) this.attendance = `${this.formatPercentage(rate)}%`;
+        else this.attendance = '—';
+        requestFinished();
       },
-      error: () => {
-        this.recentActivities = [];
+      error: error => {
+        console.warn('[DASHBOARD] No fue posible cargar asistencia:', error);
+        this.attendance = '—';
+        this.statsError = true;
+        requestFinished();
       }
     });
   }
 
+  private loadRecentActivities(): void {
+    this.isLoadingActivities = true;
+    this.activitiesError = false;
+    this.dashboardService.getNotifications().subscribe({
+      next: notifications => {
+        this.recentActivities = [...notifications]
+          .sort((a, b) => this.getDateTimestamp(b.createdAt) - this.getDateTimestamp(a.createdAt))
+          .slice(0, 5)
+          .map(notification => this.mapNotification(notification));
+        this.isLoadingActivities = false;
+      },
+      error: error => {
+        console.warn('[DASHBOARD] No fue posible cargar la actividad reciente:', error);
+        this.recentActivities = [];
+        this.activitiesError = true;
+        this.isLoadingActivities = false;
+      }
+    });
+  }
+
+  private calculateAverage(grades: DashboardGrade[]): string {
+    const finalGrades = grades.map(g => g.finalGrade).filter((g): g is number => typeof g === 'number' && Number.isFinite(g));
+    if (!finalGrades.length) return '—';
+    const total = finalGrades.reduce((sum, g) => sum + g, 0);
+    return (total / finalGrades.length).toFixed(1);
+  }
+
+  private mapNotification(notification: DashboardNotification): RecentActivity {
+    return {
+      id: notification.id,
+      icon: this.getNotificationIcon(notification.channel),
+      text: notification.content,
+      time: this.formatDate(notification.createdAt),
+    };
+  }
+
+  private getNotificationIcon(channel?: string | null): string {
+    switch (channel) {
+      case 'EMAIL': return 'mail-outline';
+      case 'SMS': return 'chatbubble-outline';
+      case 'WHATSAPP': return 'logo-whatsapp';
+      case 'PUSH': return 'phone-portrait-outline';
+      case 'IN_APP': return 'notifications-outline';
+      default: return 'notifications-outline';
+    }
+  }
+
   get fullName(): string {
     const user = this.authState.user();
-    return user ? `${user.firstName} ${user.lastName}` : '';
+    if (!user) return '';
+    return [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
   }
 
   get role(): string {
@@ -143,68 +151,37 @@ export class HomeComponent implements OnInit {
       case 'STUDENT': return 'Alumno';
       case 'TEACHER': return 'Docente';
       case 'ADMIN': return 'Administrador';
-      case 'PARENT': return 'Padre de familia';
-      default: return user.role;
+      case 'PARENT': return 'Tutor';
+      default: return '';
     }
   }
 
   get stats(): StatItem[] {
     const user = this.authState.user();
-    if (!user) return [];
-
-    switch (user.role) {
-      case 'STUDENT':
-        return [
-          { icon: 'calendar-outline', value: this.attendance, title: 'Asistencia', subtitle: 'Actual' },
-          { icon: 'star-outline', value: this.average, title: 'Promedio', subtitle: 'General' }
-        ];
-      case 'TEACHER':
-        return [
-          { icon: 'people-outline', value: '5', title: 'Grupos', subtitle: 'Activos' },
-          { icon: 'person-outline', value: '120', title: 'Alumnos', subtitle: 'Totales' },
-          { icon: 'calendar-outline', value: '4', title: 'Clases hoy', subtitle: 'Pendientes' }
-        ];
-      case 'ADMIN':
-        return [
-          { icon: 'people-outline', value: '23', title: 'Docentes', subtitle: 'Activos' },
-          { icon: 'school-outline', value: '18', title: 'Grupos', subtitle: 'Totales' },
-          { icon: 'calendar-outline', value: '8', title: 'Clases hoy', subtitle: 'En curso' }
-        ];
-      case 'PARENT':
-        return [
-          { icon: 'star-outline', value: this.average, title: 'Promedio', subtitle: 'Hijo(a)' },
-          { icon: 'calendar-outline', value: this.attendance, title: 'Asistencia', subtitle: 'Actual' }
-        ];
-      default:
-        return [];
-    }
-  }
-
-  goToSchedule(): void {
-    this.router.navigateByUrl('/app/schedule');
+    if (!user || user.role !== 'STUDENT') return [];
+    return [
+      { icon: 'calendar-outline', value: this.attendance, title: 'Asistencia', subtitle: 'General' },
+      { icon: 'star-outline', value: this.average, title: 'Promedio', subtitle: 'General' },
+    ];
   }
 
   goToNotifications(): void {
-    this.router.navigateByUrl('/app/notifications');
+    void this.router.navigateByUrl('/app/notifications');
   }
 
-  private getNotificationIcon(channel: string): string {
-    switch (channel) {
-      case 'EMAIL':      return 'mail-outline';
-      case 'SMS':        return 'chatbubble-outline';
-      case 'WHATSAPP':   return 'logo-whatsapp';
-      case 'PUSH':       return 'phone-portrait-outline';
-      case 'IN_APP':     return 'notifications-outline';
-      default:           return 'notifications-outline';
-    }
+  private formatPercentage(value: number): string {
+    const normalized = Math.min(100, Math.max(0, value));
+    return Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1);
+  }
+
+  private getDateTimestamp(date: string): number {
+    const timestamp = new Date(date).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 
   private formatDate(date: string): string {
-    return new Date(date).toLocaleString('es-MX', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const parsedDate = new Date(date);
+    if (Number.isNaN(parsedDate.getTime())) return '';
+    return parsedDate.toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   }
 }

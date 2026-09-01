@@ -1,42 +1,46 @@
+<!-- student-card.component.html -->
 @if (user(); as u) {
-  <div class="student-card" [class.inactive-card]="!u.active">
-    <div class="badge-wrapper">
+  <article class="student-card" [class.inactive-card]="!u.active">
+    <div class="card-top">
+      <span class="role-label">{{ u.role }}</span>
       <span class="status-badge" [class.inactive]="!u.active">
-        <ion-icon name="ellipse"></ion-icon>
+        <ion-icon name="ellipse" aria-hidden="true"></ion-icon>
         {{ u.active ? 'Activo' : 'Inactivo' }}
       </span>
     </div>
-
     <div class="main-info">
-      <div class="avatar">
-        {{ u.avatar }}
-      </div>
+      <div class="avatar" aria-hidden="true">{{ u.avatar }}</div>
       <div class="name-group">
         <h2>{{ u.name }}</h2>
-        @if (u.group) {
-          <p class="group">{{ u.group }}</p>
+        @if (u.primaryDetail) {
+          <p class="primary-detail">{{ u.primaryDetail }}</p>
         }
-        @if (u.career) {
-          <small class="career">{{ u.career }}</small>
+        @if (u.secondaryDetail) {
+          <p class="secondary-detail">{{ u.secondaryDetail }}</p>
         }
       </div>
     </div>
-
     <div class="contact-info">
-      <p>
-        <ion-icon name="mail-outline"></ion-icon>
-        {{ u.email }}
-      </p>
+      <div class="contact-row">
+        <span class="contact-icon"><ion-icon name="mail-outline" aria-hidden="true"></ion-icon></span>
+        <span class="contact-value">{{ u.email }}</span>
+      </div>
       @if (u.phone) {
-        <p>
-          <ion-icon name="call-outline"></ion-icon>
-          {{ u.phone }}
-        </p>
+        <div class="contact-row">
+          <span class="contact-icon"><ion-icon name="call-outline" aria-hidden="true"></ion-icon></span>
+          <span class="contact-value">{{ u.phone }}</span>
+        </div>
       }
     </div>
-  </div>
+  </article>
 } @else {
-  <div class="student-card loading-card">
-    <div class="loading-text">Cargando...</div>
+  <div class="student-card loading-card" aria-label="Cargando información del usuario">
+    <div class="loading-profile">
+      <div class="loading-avatar"></div>
+      <div class="loading-lines">
+        <div class="loading-line loading-line-large"></div>
+        <div class="loading-line loading-line-small"></div>
+      </div>
+    </div>
   </div>
 }

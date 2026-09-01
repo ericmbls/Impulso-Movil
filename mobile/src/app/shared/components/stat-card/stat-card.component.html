@@ -1,10 +1,13 @@
-<div class="stat-card">
-  <div class="stat-icon">
+<!-- stat-card.component.html -->
+<article class="stat-card">
+  <div class="stat-icon" aria-hidden="true">
     <ion-icon [name]="icon"></ion-icon>
   </div>
   <div class="stat-content">
     <p class="stat-value">{{ value }}</p>
     <p class="stat-title">{{ title }}</p>
-    <p class="stat-subtitle">{{ subtitle }}</p>
+    @if (subtitle) {
+      <p class="stat-subtitle">{{ subtitle }}</p>
+    }
   </div>
-</div>
+</article>
