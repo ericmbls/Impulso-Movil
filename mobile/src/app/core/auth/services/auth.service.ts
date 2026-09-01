@@ -1,25 +1,25 @@
+// auth.service.ts
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
-import { tap } from 'rxjs/operators';
+import { User } from '@core/auth/models/user';
+
+export interface AuthLoginResponse {
+  accessToken: string;
+  user?: User;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
   private readonly api = `${environment.apiUrl}/auth`;
 
-  login(email: string, password: string) {
-    return this.http.post<{ accessToken: string, user: any }>(`${this.api}/login`, { email, password })
-      .pipe(
-        tap(res => {
-          localStorage.setItem('token', res.accessToken);
-        })
-      );
+  login(email: string, password: string): Observable<AuthLoginResponse> {
+    return this.http.post<AuthLoginResponse>(`${this.api}/login`, { email, password });
   }
 
-  getProfile() {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get(`${this.api}/profile`, { headers });
+  getProfile(): Observable<User> {
+    return this.http.get<User>(`${this.api}/profile`);
   }
 }

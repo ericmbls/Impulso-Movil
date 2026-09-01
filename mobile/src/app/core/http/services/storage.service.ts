@@ -1,3 +1,4 @@
+// storage.service.ts
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { PendingAttendance } from '@core/offline/models/pending-attendance.model';
@@ -21,6 +22,7 @@ export class StorageService {
 
   async removeToken(): Promise<void> {
     await Preferences.remove({ key: this.TOKEN_KEY });
+    try { localStorage.removeItem('token'); } catch { /* ignore */ }
   }
 
   async saveUser(user: unknown): Promise<void> {
@@ -32,13 +34,23 @@ export class StorageService {
     if (!value) return null;
     try {
       return JSON.parse(value) as T;
-    } catch {
+    } catch (error) {
+      console.warn('[STORAGE] Usuario almacenado inválido:', error);
+      await this.removeUser();
       return null;
     }
   }
 
   async removeUser(): Promise<void> {
     await Preferences.remove({ key: this.USER_KEY });
+  }
+
+  async isLoggedIn(): Promise<boolean> {
+    return !!(await this.getToken());
+  }
+
+  async clear(): Promise<void> {
+    await Promise.all([this.removeToken(), this.removeUser()]);
   }
 
   async saveCachedStudentQr(value: CachedStudentQr): Promise<void> {
@@ -50,7 +62,9 @@ export class StorageService {
     if (!value) return null;
     try {
       return JSON.parse(value) as CachedStudentQr;
-    } catch {
+    } catch (error) {
+      console.warn('[STORAGE] QR almacenado inválido:', error);
+      await this.removeCachedStudentQr();
       return null;
     }
   }
@@ -61,9 +75,7 @@ export class StorageService {
 
   async getValidCachedStudentQr(): Promise<CachedStudentQr | null> {
     const cached = await this.getCachedStudentQr();
-    if (!cached || !cached.qr || !cached.qr.qrToken || !cached.qr.qrImage || !cached.qr.expiresAt) {
-      return null;
-    }
+    if (!cached || !cached.qr || !cached.qr.qrToken || !cached.qr.qrImage || !cached.qr.expiresAt) return null;
     const expiration = new Date(cached.qr.expiresAt).getTime();
     if (Number.isNaN(expiration) || expiration <= Date.now()) {
       await this.removeCachedStudentQr();
@@ -78,7 +90,8 @@ export class StorageService {
     try {
       const parsed = JSON.parse(value);
       return Array.isArray(parsed) ? parsed as PendingAttendance[] : [];
-    } catch {
+    } catch (error) {
+      console.warn('[STORAGE] Cola offline inválida:', error);
       return [];
     }
   }
@@ -94,7 +107,7 @@ export class StorageService {
         item.teacherId === record.teacherId &&
         item.qrToken === record.qrToken &&
         item.classScheduleId === record.classScheduleId &&
-        item.scannedAt === record.scannedAt
+        (item.status === 'PENDING' || item.status === 'SYNCING' || item.status === 'FAILED')
     );
     if (duplicate) return false;
     records.push(record);
@@ -104,9 +117,7 @@ export class StorageService {
 
   async updatePendingAttendance(id: string, changes: Partial<PendingAttendance>): Promise<void> {
     const records = await this.getPendingAttendances();
-    const updated = records.map(record =>
-      record.id === id ? { ...record, ...changes } : record
-    );
+    const updated = records.map(record => record.id === id ? { ...record, ...changes } : record);
     await this.savePendingAttendances(updated);
   }
 
@@ -123,20 +134,11 @@ export class StorageService {
 
   async getPendingAttendanceCount(teacherId?: number): Promise<number> {
     const records = await this.getPendingAttendances();
-    if (!teacherId) return records.length;
+    if (teacherId === undefined) return records.length;
     return records.filter(record => record.teacherId === teacherId).length;
   }
 
   async clearPendingAttendances(): Promise<void> {
     await Preferences.remove({ key: this.PENDING_ATTENDANCE_KEY });
-  }
-
-  async clear(): Promise<void> {
-    await this.removeToken();
-    await this.removeUser();
-  }
-
-  async isLoggedIn(): Promise<boolean> {
-    return !!(await this.getToken());
   }
 }

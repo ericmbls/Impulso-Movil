@@ -1,174 +1,120 @@
-<ion-content fullscreen>
-  <div class="login-container">
-    <div class="hero">
+<ion-content fullscreen class="login-content">
+  <main class="login-container">
+    <section class="hero" aria-label="IMPULSO CBTIS 61">
       <div class="hero-content">
-        <ion-icon
-          name="school-outline"
-          class="brand-icon"
-        ></ion-icon>
-
+        <div class="brand-symbol">
+          <ion-icon name="school-outline" aria-hidden="true"></ion-icon>
+        </div>
         <h1>IMPULSO</h1>
-
-        <p>
-          Sistema Escolar Inteligente
-        </p>
-
-        <span class="badge">
-          CBTIS No. 61
-        </span>
+        <p>Sistema Escolar Inteligente</p>
+        <span class="badge">CBTIS No. 61</span>
       </div>
-    </div>
+    </section>
 
-    <div class="login-card">
-      <h2>
-        Bienvenido de vuelta
-      </h2>
+    <form class="login-card" (ngSubmit)="login()" novalidate>
+      <div class="login-heading">
+        <span class="eyebrow">Acceso institucional</span>
+        <h2>Bienvenido</h2>
+        <p class="subtitle">Ingresa tus credenciales para continuar.</p>
+      </div>
 
-      <p class="subtitle">
-        Ingresa tus credenciales para continuar
-      </p>
-
-      <div class="form-group">
-        <label>
-          <ion-icon
-            name="mail-outline"
-          ></ion-icon>
-
+      <div class="form-group" [class.has-error]="emailInvalid">
+        <label for="loginEmail">
+          <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
           Correo institucional
         </label>
-
-        <ion-item class="custom-input">
+        <ion-item class="custom-input" lines="none">
           <ion-input
+            id="loginEmail"
+            name="email"
             [(ngModel)]="email"
             type="email"
-            placeholder="ej. usuario@institucion.edu"
+            placeholder="usuario@institucion.edu"
             autocomplete="email"
             inputmode="email"
-            [disabled]="isLoading"
-          >
+            autocapitalize="off"
+            enterkeyhint="next"
+            [spellcheck]="false"
+            [disabled]="isLoading">
           </ion-input>
         </ion-item>
+        @if (emailInvalid) {
+          <span class="field-error">Ingresa un correo válido.</span>
+        }
       </div>
 
-      <div class="form-group">
-        <label>
-          <ion-icon
-            name="lock-closed-outline"
-          ></ion-icon>
-
+      <div class="form-group" [class.has-error]="passwordInvalid">
+        <label for="loginPassword">
+          <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
           Contraseña
         </label>
-
-        <ion-item class="custom-input">
+        <ion-item class="custom-input password-input" lines="none">
           <ion-input
+            id="loginPassword"
+            name="password"
             [(ngModel)]="password"
             [type]="showPassword ? 'text' : 'password'"
             placeholder="••••••••"
             autocomplete="current-password"
-            [disabled]="isLoading"
-          >
+            enterkeyhint="done"
+            [disabled]="isLoading">
           </ion-input>
-
-          <ion-icon
+          <button
+            type="button"
             slot="end"
-            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-            [class.disabled]="isLoading"
-            (click)="!isLoading && togglePassword()"
-            class="toggle-password"
-          >
-          </ion-icon>
+            class="password-toggle"
+            [disabled]="isLoading"
+            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            (click)="togglePassword()">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" aria-hidden="true"></ion-icon>
+          </button>
         </ion-item>
+        @if (passwordInvalid) {
+          <span class="field-error">Ingresa tu contraseña.</span>
+        }
       </div>
 
       <div class="form-options">
-        <div class="remember-wrapper">
-          <ion-checkbox
-            [(ngModel)]="rememberMe"
-            (ionChange)="onRememberChange()"
-            name="rememberMe"
-            id="rememberCheckbox"
-            [disabled]="isLoading"
-          >
-          </ion-checkbox>
-
-          <label
-            for="rememberCheckbox"
-            class="remember-label"
-          >
-            Recordar mi sesión
-          </label>
-        </div>
+        <label class="remember-wrapper">
+          <ion-checkbox name="rememberMe" [(ngModel)]="rememberMe" [disabled]="isLoading" (ionChange)="onRememberChange()"></ion-checkbox>
+          <span>Recordar mi correo</span>
+        </label>
       </div>
 
-      <ion-button
-        expand="block"
-        class="login-btn"
-        [disabled]="isLoading"
-        (click)="login()"
-      >
+      <ion-button type="submit" expand="block" class="login-btn" [disabled]="!canSubmit">
         <ion-icon
           slot="start"
           [name]="isLoading ? 'refresh-outline' : 'log-in-outline'"
-          [class.spinning]="isLoading"
-        >
+          [class.spinning]="isLoading">
         </ion-icon>
-
-        {{
-          isLoading
-            ? 'Ingresando...'
-            : 'Ingresar'
-        }}
+        @if (isLoading) {
+          Ingresando...
+        } @else {
+          Ingresar
+        }
       </ion-button>
-    </div>
+    </form>
 
-    <div class="support-card">
-      <ion-icon
-        name="desktop-outline"
-        class="support-icon"
-      >
-      </ion-icon>
-
+    <aside class="support-card">
+      <div class="support-icon">
+        <ion-icon name="desktop-outline" aria-hidden="true"></ion-icon>
+      </div>
       <div class="support-content">
-        <p>
-          ¿Problemas con el acceso?
-
-          <a class="support-email">
-            soporte@cbtis61.edu.mx
-          </a>
-        </p>
+        <span>¿Problemas con el acceso?</span>
+        <a href="mailto:soporte@cbtis61.edu.mx" class="support-email">soporte@cbtis61.edu.mx</a>
       </div>
-    </div>
+    </aside>
 
-    <div class="footer">
+    <footer class="footer">
       <div class="footer-links">
-        <a>
-          Aviso de Privacidad
-        </a>
-
-        <span class="separator">
-          •
-        </span>
-
-        <a>
-          Términos de Uso
-        </a>
-
-        <span class="separator">
-          •
-        </span>
-
-        <a>
-          Ayuda
-        </a>
+        <span>Aviso de Privacidad</span>
+        <span class="separator" aria-hidden="true">•</span>
+        <span>Términos de Uso</span>
+        <span class="separator" aria-hidden="true">•</span>
+        <span>Ayuda</span>
       </div>
-
-      <p class="footer-version">
-        Versión 1.0.0
-      </p>
-
-      <p class="footer-copy">
-        © 2026 CBTIS No. 61
-      </p>
-    </div>
-  </div>
+      <p class="footer-version">Versión 1.0.0</p>
+      <p class="footer-copy">© 2026 CBTIS No. 61</p>
+    </footer>
+  </main>
 </ion-content>
