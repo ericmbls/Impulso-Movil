@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -13,30 +9,24 @@ import {
   timeOutline,
 } from 'ionicons/icons';
 
+export type LastScanStatus =
+  | 'success'
+  | 'pending'
+  | 'error';
+
 @Component({
   selector: 'app-last-scan-card',
   standalone: true,
-  imports: [
-    CommonModule,
-    IonIcon,
-  ],
+  imports: [IonIcon],
   templateUrl: './last-scan-card.component.html',
   styleUrl: './last-scan-card.component.scss',
 })
 export class LastScanCardComponent {
   @Input() subject = '';
-
   @Input() studentName = '';
-
   @Input() date = '';
-
   @Input() time = '';
-
-  @Input()
-  status:
-    | 'success'
-    | 'pending'
-    | 'error' = 'success';
+  @Input() status: LastScanStatus = 'success';
 
   constructor() {
     addIcons({
@@ -52,10 +42,8 @@ export class LastScanCardComponent {
     switch (this.status) {
       case 'success':
         return 'checkmark-circle-outline';
-
       case 'pending':
         return 'time-outline';
-
       case 'error':
         return 'close-circle-outline';
     }
@@ -65,10 +53,8 @@ export class LastScanCardComponent {
     switch (this.status) {
       case 'success':
         return 'Registrado';
-
       case 'pending':
         return 'Pendiente';
-
       case 'error':
         return 'Error';
     }

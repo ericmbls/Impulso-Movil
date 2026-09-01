@@ -1,49 +1,144 @@
-<div class="scan-frame barcode-scanner-modal" [class.disabled]="disabled" [class.inactive]="!active">
+<div
+  class="scan-frame barcode-scanner-modal"
+  [class.disabled]="disabled"
+  [class.inactive]="!active"
+  [class.scanning]="isScanning">
+
   <div class="scanner-area">
     <div class="scanner">
-      <span class="corner tl"></span>
-      <span class="corner tr"></span>
-      <span class="corner bl"></span>
-      <span class="corner br"></span>
+      <span
+        class="corner tl"
+        aria-hidden="true">
+      </span>
+
+      <span
+        class="corner tr"
+        aria-hidden="true">
+      </span>
+
+      <span
+        class="corner bl"
+        aria-hidden="true">
+      </span>
+
+      <span
+        class="corner br"
+        aria-hidden="true">
+      </span>
 
       @if (active && isScanning) {
-        <div class="scan-line"></div>
+        <div
+          class="scan-line"
+          aria-hidden="true">
+        </div>
       }
 
       @if (!active) {
         <div class="scanner-center-message">
-          <ion-icon name="camera-outline"></ion-icon>
-          <strong>Escáner en pausa</strong>
-          <span>La cámara se activará al volver a esta sección.</span>
+          <div class="center-icon">
+            <ion-icon
+              name="camera-outline"
+              aria-hidden="true">
+            </ion-icon>
+          </div>
+
+          <strong>
+            Escáner en pausa
+          </strong>
+
+          <span>
+            La cámara se activará al volver
+            a esta sección.
+          </span>
         </div>
       } @else if (scanStatus === 'idle') {
         <div class="scanner-center-message">
-          <ion-icon name="camera-outline"></ion-icon>
-          <strong>Preparando cámara</strong>
-          <span>El escáner iniciará automáticamente.</span>
+          <div class="center-icon loading">
+            <ion-icon
+              name="camera-outline"
+              aria-hidden="true">
+            </ion-icon>
+          </div>
+
+          <strong>
+            Preparando cámara
+          </strong>
+
+          <span>
+            El escáner iniciará
+            automáticamente.
+          </span>
         </div>
       } @else if (scanStatus === 'scanning') {
-        <div class="scanner-guide">
-          <strong>Coloca el QR dentro del marco</strong>
-          <span>La lectura es automática</span>
-        </div>
         <div class="scanner-live">
-          <span></span>
+          <span
+            class="live-dot"
+            aria-hidden="true">
+          </span>
+
           Escaneando
+        </div>
+
+        <div class="scanner-guide">
+          <ion-icon
+            name="camera-outline"
+            aria-hidden="true">
+          </ion-icon>
+
+          <div>
+            <strong>
+              Coloca el QR dentro del marco
+            </strong>
+
+            <span>
+              La lectura se realiza automáticamente
+            </span>
+          </div>
         </div>
       } @else if (scanStatus === 'success') {
         <div class="scan-status-overlay success-overlay">
-          <ion-icon name="checkmark-circle-outline"></ion-icon>
-          <strong>Código detectado</strong>
-          <span>Validando asistencia...</span>
+          <div class="status-icon">
+            <ion-icon
+              name="checkmark-circle-outline"
+              aria-hidden="true">
+            </ion-icon>
+          </div>
+
+          <strong>
+            Código detectado
+          </strong>
+
+          <span>
+            Validando asistencia...
+          </span>
         </div>
       } @else if (scanStatus === 'error') {
         <div class="scan-status-overlay error-overlay">
-          <ion-icon name="close-circle-outline"></ion-icon>
-          <strong>Cámara no disponible</strong>
-          <span>No fue posible iniciar el escáner.</span>
-          <button type="button" [disabled]="disabled || !active" (click)="retryScan()">
-            <ion-icon name="refresh-outline"></ion-icon>
+          <div class="status-icon">
+            <ion-icon
+              name="close-circle-outline"
+              aria-hidden="true">
+            </ion-icon>
+          </div>
+
+          <strong>
+            Cámara no disponible
+          </strong>
+
+          <span>
+            No fue posible iniciar el escáner.
+          </span>
+
+          <button
+            type="button"
+            [disabled]="disabled || !active"
+            (click)="retryScan()">
+
+            <ion-icon
+              name="refresh-outline"
+              aria-hidden="true">
+            </ion-icon>
+
             Reintentar
           </button>
         </div>

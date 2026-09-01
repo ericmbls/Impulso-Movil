@@ -1,365 +1,307 @@
 <ion-content fullscreen [class.teacher-content]="isTeacher">
   @if (isStudent) {
-    <div class="qr-container student-mode">
-      <div class="hero">
-        <div class="hero-content">
-          <h1><ion-icon name="qr-code-outline"></ion-icon>Mi código QR</h1>
+    <main class="role-page student-page">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="hero-eyebrow"><ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon>Credencial digital</div>
+          <h1>Mi código QR</h1>
           <p>Muéstralo al docente para registrar tu asistencia.</p>
         </div>
-        <div class="hero-decoration">
-          <div class="circle circle-1"></div>
-          <div class="circle circle-2"></div>
-        </div>
-      </div>
+        <div class="hero-orb hero-orb-large" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-small" aria-hidden="true"></div>
+      </section>
 
-      <div class="qr-card">
+      <section class="student-qr-card">
         @if (loading) {
-          <div class="loading">
-            <ion-icon name="refresh-outline" class="loading-icon"></ion-icon>
-            <p>Cargando código QR...</p>
+          <div class="state-card qr-loading">
+            <div class="loading-ring"><ion-icon name="refresh-outline" aria-hidden="true"></ion-icon></div>
+            <strong>Preparando tu código</strong>
+            <span>Obteniendo el QR de asistencia del día.</span>
           </div>
         } @else if (qr?.isValid && qr?.qrImage) {
-          <img [src]="qr?.qrImage" alt="Código QR de asistencia" class="qr-image" />
+          <div class="qr-heading"><span class="qr-status-dot"></span><span>Código listo para escanear</span></div>
+          <div class="qr-visual">
+            <div class="qr-corner top-left"></div><div class="qr-corner top-right"></div>
+            <div class="qr-corner bottom-left"></div><div class="qr-corner bottom-right"></div>
+            <img [src]="qr?.qrImage" alt="Código QR de asistencia" class="qr-image" />
+          </div>
+          <div class="qr-validity">
+            <div class="qr-validity-icon"><ion-icon name="time-outline" aria-hidden="true"></ion-icon></div>
+            <div class="qr-validity-copy">
+              <span>@if (usingCachedQr) { QR almacenado } @else { Tiempo restante }</span>
+              <strong>{{ countdown }}</strong>
+            </div>
+            @if (usingCachedQr) { <div class="offline-chip">Offline</div> }
+          </div>
           @if (usingCachedQr) {
-            <div class="student-offline-badge">
-              <ion-icon name="time-outline"></ion-icon>
-              <div>
-                <strong>Modo sin conexión</strong>
-                <span>Usando el código QR guardado del día.</span>
-              </div>
+            <div class="offline-notice">
+              <ion-icon name="wifi-outline" aria-hidden="true"></ion-icon>
+              <div><strong>Disponible sin conexión</strong><span>Este es el código guardado correspondiente al día actual.</span></div>
             </div>
           }
-          <p class="expires">
-            <ion-icon name="time-outline"></ion-icon>
-            @if (usingCachedQr) { QR guardado válido por } @else { Válido durante }
-            <strong>{{ countdown }}</strong>
-          </p>
         } @else {
-          <div class="expired">
-            <ion-icon name="time-outline"></ion-icon>
+          <div class="state-card qr-unavailable">
+            <div class="state-icon warning"><ion-icon name="time-outline" aria-hidden="true"></ion-icon></div>
             <strong>Código QR no disponible</strong>
-            <p>Obtén el código QR correspondiente al día actual.</p>
-            <button type="button" class="refresh-button" [disabled]="loading" (click)="refresh()">
-              <ion-icon name="refresh-outline"></ion-icon>
-              Obtener QR del día
+            <span>Obtén el código correspondiente al día actual.</span>
+            <button type="button" class="primary-button" [disabled]="loading" (click)="refresh()">
+              <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>Obtener QR
             </button>
           </div>
         }
-      </div>
+      </section>
 
       @if (offlineMessage && usingCachedQr) {
-        <div class="student-offline-message">
-          <ion-icon name="time-outline"></ion-icon>
+        <div class="inline-message warning-message">
+          <ion-icon name="wifi-outline" aria-hidden="true"></ion-icon>
           <span>{{ offlineMessage }}</span>
         </div>
       }
 
       @if (lastAttendance) {
-        <div class="student-attendance-card">
-          <div class="student-attendance-icon">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <section class="attendance-card">
+          <div class="section-heading">
+            <div><span>Actividad reciente</span><strong>Último registro</strong></div>
+            <div class="section-heading-icon success"><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon></div>
           </div>
-          <div class="student-attendance-content">
-            <span class="student-attendance-label">Último registro</span>
-            <strong class="student-attendance-title">Asistencia registrada</strong>
-            <p class="student-attendance-subject">
-              {{ lastAttendance.classes?.subject?.name ?? 'Materia' }}
-            </p>
-            <div class="student-attendance-meta">
-              <span>{{ formatAttendanceDate(lastAttendance.date) }}</span>
-              <span class="separator">•</span>
-              <span>{{ formatAttendanceTime(lastAttendance.date) }}</span>
+          <div class="attendance-main">
+            <div>
+              <span class="attendance-subject-label">Materia</span>
+              <strong class="attendance-subject">{{ lastAttendance.classes?.subject?.name ?? 'Materia' }}</strong>
             </div>
-            <div
-              class="student-attendance-status"
-              [class.present]="lastAttendance.status === 'PRESENT'"
-              [class.late]="lastAttendance.status === 'LATE'"
-              [class.justified]="lastAttendance.status === 'JUSTIFIED'"
-              [class.absent]="lastAttendance.status === 'ABSENT'">
-              <ion-icon name="checkmark-circle-outline"></ion-icon>
-              <span>{{ getAttendanceStatusLabel(lastAttendance.status) }}</span>
+            <div class="status-pill" [class.present]="lastAttendance.status === 'PRESENT'" [class.late]="lastAttendance.status === 'LATE'" [class.justified]="lastAttendance.status === 'JUSTIFIED'" [class.absent]="lastAttendance.status === 'ABSENT'">
+              <span class="status-dot"></span>{{ getAttendanceStatusLabel(lastAttendance.status) }}
             </div>
           </div>
-        </div>
+          <div class="attendance-meta">
+            <span><ion-icon name="time-outline" aria-hidden="true"></ion-icon>{{ formatAttendanceTime(lastAttendance.date) }}</span>
+            <span>{{ formatAttendanceDate(lastAttendance.date) }}</span>
+          </div>
+        </section>
       }
 
       @if (scanError) {
-        <div class="error-message">
-          <ion-icon name="close-circle-outline"></ion-icon>
+        <div class="inline-message error-message">
+          <ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon>
           <span>{{ scanError }}</span>
         </div>
       }
-    </div>
+    </main>
   }
 
   @if (isParent) {
-    <div class="qr-container parent-mode">
-      <div class="hero">
-        <div class="hero-content">
-          <h1><ion-icon name="people-outline"></ion-icon>Asistencia</h1>
-          <p>Consulta el último registro de asistencia de tu hijo.</p>
+    <main class="role-page parent-page">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="hero-eyebrow"><ion-icon name="people-outline" aria-hidden="true"></ion-icon>Seguimiento</div>
+          <h1>Asistencia</h1>
+          <p>Consulta el registro más reciente de tus alumnos vinculados.</p>
         </div>
-        <div class="hero-decoration">
-          <div class="circle circle-1"></div>
-          <div class="circle circle-2"></div>
-        </div>
-      </div>
+        <div class="hero-orb hero-orb-large" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-small" aria-hidden="true"></div>
+      </section>
 
       @if (parentChildren.length > 1) {
-        <div class="parent-children">
-          <span class="parent-children-label">Alumno</span>
-          <div class="parent-children-list">
+        <section class="child-selector">
+          <span class="selector-label">Seleccionar alumno</span>
+          <div class="child-list">
             @for (child of parentChildren; track child.id) {
-              <button
-                type="button"
-                class="parent-child-button"
-                [class.active]="selectedChild?.id === child.id"
-                (click)="selectChild(child)">
+              <button type="button" class="child-button" [class.active]="selectedChild?.id === child.id" (click)="selectChild(child)">
                 {{ child.user?.firstName ?? 'Alumno' }}
               </button>
             }
           </div>
-        </div>
+        </section>
       }
 
       @if (selectedChild) {
-        <div class="parent-student-card">
-          <div class="parent-student-avatar">
-            <ion-icon name="people-outline"></ion-icon>
-          </div>
-          <div class="parent-student-info">
+        <section class="selected-student">
+          <div class="student-avatar">{{ (selectedChild.user?.firstName ?? 'A').charAt(0) }}</div>
+          <div class="student-copy">
             <span>Alumno</span>
             <strong>{{ parentChildName }}</strong>
-            @if (selectedChild.group?.name) {
-              <small>{{ selectedChild.group?.name }}</small>
-            }
+            @if (selectedChild.group?.name) { <small>{{ selectedChild.group?.name }}</small> }
           </div>
-        </div>
+        </section>
       }
 
       @if (loadingParentAttendance) {
-        <div class="teacher-loading-state">
-          <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
+        <section class="state-card surface-state">
+          <div class="loading-ring compact"><ion-icon name="refresh-outline" aria-hidden="true"></ion-icon></div>
           <strong>Consultando asistencia</strong>
-          <p>Cargando el último registro del alumno.</p>
-        </div>
+          <span>Buscando el último registro disponible.</span>
+        </section>
       } @else if (lastAttendance) {
-        <div class="student-attendance-card">
-          <div class="student-attendance-icon">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <section class="attendance-card">
+          <div class="section-heading">
+            <div><span>Último registro</span><strong>{{ parentChildName }}</strong></div>
+            <div class="section-heading-icon success"><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon></div>
           </div>
-          <div class="student-attendance-content">
-            <span class="student-attendance-label">Último registro</span>
-            <strong class="student-attendance-title">{{ parentChildName }}</strong>
-            <p class="student-attendance-subject">
-              {{ lastAttendance.classes?.subject?.name ?? 'Materia' }}
-            </p>
-            <div class="student-attendance-meta">
-              <span>{{ formatAttendanceDate(lastAttendance.date) }}</span>
-              <span class="separator">•</span>
-              <span>{{ formatAttendanceTime(lastAttendance.date) }}</span>
+          <div class="attendance-main">
+            <div>
+              <span class="attendance-subject-label">Materia</span>
+              <strong class="attendance-subject">{{ lastAttendance.classes?.subject?.name ?? 'Materia' }}</strong>
             </div>
-            <div
-              class="student-attendance-status"
-              [class.present]="lastAttendance.status === 'PRESENT'"
-              [class.late]="lastAttendance.status === 'LATE'"
-              [class.justified]="lastAttendance.status === 'JUSTIFIED'"
-              [class.absent]="lastAttendance.status === 'ABSENT'">
-              <ion-icon name="checkmark-circle-outline"></ion-icon>
-              <span>{{ getAttendanceStatusLabel(lastAttendance.status) }}</span>
+            <div class="status-pill" [class.present]="lastAttendance.status === 'PRESENT'" [class.late]="lastAttendance.status === 'LATE'" [class.justified]="lastAttendance.status === 'JUSTIFIED'" [class.absent]="lastAttendance.status === 'ABSENT'">
+              <span class="status-dot"></span>{{ getAttendanceStatusLabel(lastAttendance.status) }}
             </div>
           </div>
-        </div>
+          <div class="attendance-meta">
+            <span><ion-icon name="time-outline" aria-hidden="true"></ion-icon>{{ formatAttendanceTime(lastAttendance.date) }}</span>
+            <span>{{ formatAttendanceDate(lastAttendance.date) }}</span>
+          </div>
+        </section>
       } @else if (selectedChild) {
-        <div class="teacher-no-class">
-          <div class="teacher-no-class-icon">
-            <ion-icon name="time-outline"></ion-icon>
-          </div>
+        <section class="state-card surface-state">
+          <div class="state-icon neutral"><ion-icon name="time-outline" aria-hidden="true"></ion-icon></div>
           <strong>Sin registros</strong>
-          <p>Todavía no hay registros de asistencia disponibles para {{ parentChildName }}.</p>
-        </div>
+          <span>Todavía no hay asistencias disponibles para {{ parentChildName }}.</span>
+        </section>
       }
 
       @if (scanError) {
-        <div class="error-message">
-          <ion-icon name="close-circle-outline"></ion-icon>
+        <div class="inline-message error-message">
+          <ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon>
           <span>{{ scanError }}</span>
         </div>
       }
-    </div>
+    </main>
   }
 
   @if (isTeacher) {
-    <div class="teacher-scanner-page" [class.camera-ready]="scannerActive">
-      <div class="teacher-hero">
-        <div class="teacher-hero-content">
-          <div class="teacher-hero-title">
-            <ion-icon name="scan-outline"></ion-icon>
-            <div>
-              <span>Asistencia</span>
-              <h1>Escanear QR</h1>
+    <main class="scanner-page" [class.camera-active]="scannerActive">
+      <section class="scanner-header">
+        <div class="scanner-header-top">
+          <div class="scanner-title-icon"><ion-icon name="scan-outline" aria-hidden="true"></ion-icon></div>
+          <div class="scanner-title"><span>Control de asistencia</span><h1>Escanear QR</h1></div>
+          <div class="scanner-live-chip" [class.active]="scannerActive">
+            <span></span>{{ scannerActive ? 'Activo' : 'Preparando' }}
+          </div>
+        </div>
+
+        @if (loadingSchedules) {
+          <div class="class-loading">
+            <ion-icon name="refresh-outline" class="spin" aria-hidden="true"></ion-icon>Consultando horario...
+          </div>
+        } @else if (currentSchedule) {
+          <div class="active-class">
+            <div class="active-class-main"><span>Clase activa</span><strong>{{ currentSubject }}</strong></div>
+            <div class="class-details">
+              @if (currentGroup) { <span><ion-icon name="school-outline" aria-hidden="true"></ion-icon>{{ currentGroup }}</span> }
+              <span><ion-icon name="time-outline" aria-hidden="true"></ion-icon>{{ currentScheduleTime }}</span>
+              @if (currentClassroom) { <span><ion-icon name="location-outline" aria-hidden="true"></ion-icon>{{ currentClassroom }}</span> }
             </div>
           </div>
-          @if (loadingSchedules) {
-            <p>Consultando tu horario...</p>
-          } @else if (currentSchedule) {
-            <div class="teacher-hero-details">
-              <strong>{{ currentSubject }}</strong>
-              <span>
-                @if (currentGroup) { {{ currentGroup }} • }
-                {{ currentScheduleTime }}
-                @if (currentClassroom) { • {{ currentClassroom }} }
-              </span>
-            </div>
-          } @else {
-            <p>El escáner permanece disponible. La asistencia solo se registrará durante una clase activa.</p>
-          }
-        </div>
-        <div class="hero-decoration">
-          <div class="circle circle-1"></div>
-          <div class="circle circle-2"></div>
-        </div>
-      </div>
-
-      <div class="scanner-stage">
-        <app-scan-frame
-          [active]="scannerActive"
-          [disabled]="false"
-          [autoStart]="true"
-          (scan)="onScanSuccess($event)"
-          (close)="onScanClose()">
-        </app-scan-frame>
-      </div>
-
-      @if (loadingSchedules) {
-        <div class="teacher-loading-state">
-          <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
-          <strong>Consultando horario</strong>
-          <p>Verificando si tienes una clase activa.</p>
-        </div>
-      } @else if (!currentSchedule) {
-        <div class="teacher-no-class">
-          <div class="teacher-no-class-icon">
-            <ion-icon name="time-outline"></ion-icon>
+        } @else {
+          <div class="no-active-class">
+            <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+            <div><strong>Sin clase activa</strong><span>Puedes mantener el escáner abierto, pero el registro requiere un horario válido.</span></div>
           </div>
-          <strong>Sin clase activa</strong>
-          <p>Puedes utilizar el escáner, pero la asistencia únicamente se registrará dentro del horario de una clase asignada.</p>
+        }
+      </section>
+
+      <section class="scanner-shell" [class.camera-active]="scannerActive">
+        <div class="scanner-stage">
+          <app-scan-frame
+            [active]="scannerActive"
+            [disabled]="false"
+            [autoStart]="true"
+            (scan)="onScanSuccess($event)"
+            (close)="onScanClose()">
+          </app-scan-frame>
         </div>
-      }
+      </section>
 
       @if (scanningAttendance) {
-        <div class="scanner-process-card">
-          <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
-          <div>
-            <strong>Procesando asistencia</strong>
-            <span>Validando o guardando el registro...</span>
-          </div>
-        </div>
-      }
-
-      @if (offlineMessage) {
-        <div class="scanner-feedback offline">
-          <div class="scanner-feedback-icon">
-            <ion-icon name="time-outline"></ion-icon>
-          </div>
-          <div class="scanner-feedback-content">
-            <span>Pendiente de sincronización</span>
-            <strong>QR guardado en el dispositivo</strong>
-            <small>{{ offlineMessage }}</small>
-            @if (pendingAttendanceCount > 0) {
-              <small>{{ pendingAttendanceCount }} asistencia(s) pendiente(s)</small>
-            }
-          </div>
-        </div>
+        <section class="feedback-card processing">
+          <div class="feedback-icon"><ion-icon name="refresh-outline" class="spin" aria-hidden="true"></ion-icon></div>
+          <div><span>Procesando</span><strong>Validando asistencia</strong><small>Espera mientras se verifica el registro.</small></div>
+        </section>
       }
 
       @if (scanMessage && lastSuccessfulScan) {
-        <div class="scanner-feedback success">
-          <div class="scanner-feedback-icon">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-          </div>
-          <div class="scanner-feedback-content">
+        <section class="feedback-card success">
+          <div class="feedback-icon"><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon></div>
+          <div class="feedback-copy">
             <span>Asistencia registrada</span>
             <strong>{{ getStudentName(lastSuccessfulScan) }}</strong>
             <small>
               {{ lastSuccessfulScan.classes?.subject?.name ?? currentSubject }}
-              @if (lastSuccessfulScan.student?.group?.name) {
-                • {{ lastSuccessfulScan.student?.group?.name }}
-              }
+              @if (lastSuccessfulScan.student?.group?.name) { • {{ lastSuccessfulScan.student?.group?.name }} }
             </small>
-            <small>{{ formatAttendanceTime(lastSuccessfulScan.date) }}</small>
           </div>
-        </div>
+          <div class="feedback-time">{{ formatAttendanceTime(lastSuccessfulScan.date) }}</div>
+        </section>
+      }
+
+      @if (offlineMessage) {
+        <section class="feedback-card offline">
+          <div class="feedback-icon"><ion-icon name="wifi-outline" aria-hidden="true"></ion-icon></div>
+          <div class="feedback-copy"><span>Sin conexión</span><strong>Registro guardado localmente</strong><small>{{ offlineMessage }}</small></div>
+        </section>
       }
 
       @if (scanError) {
-        <div class="scanner-feedback error">
-          <div class="scanner-feedback-icon">
-            <ion-icon name="close-circle-outline"></ion-icon>
-          </div>
-          <div class="scanner-feedback-content">
-            <span>No fue posible registrar</span>
-            <strong>{{ scanError }}</strong>
-          </div>
-        </div>
+        <section class="feedback-card error">
+          <div class="feedback-icon"><ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon></div>
+          <div class="feedback-copy"><span>No fue posible registrar</span><strong>{{ scanError }}</strong></div>
+        </section>
       }
 
       @if (pendingAttendanceCount > 0) {
-        <div class="offline-queue-card">
-          <div class="offline-queue-info">
+        <section class="sync-card">
+          <div class="sync-icon"><ion-icon name="cloud-done-outline" aria-hidden="true"></ion-icon></div>
+          <div class="sync-copy">
             <span>Sincronización pendiente</span>
             <strong>{{ pendingAttendanceCount }} asistencia(s)</strong>
-            <small>Se enviarán automáticamente cuando vuelva la conexión.</small>
+            <small>Se enviarán cuando exista conexión con el servidor.</small>
           </div>
-          <button type="button" class="offline-sync-button" (click)="syncPendingAttendances()">
-            <ion-icon name="refresh-outline"></ion-icon>
-            Sincronizar
+          <button type="button" class="sync-button" (click)="syncPendingAttendances()">
+            <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>Sincronizar
           </button>
-        </div>
+        </section>
       }
 
       @if (currentSchedule) {
-        <div class="recent-panel">
-          <div class="recent-panel-header">
-            <div>
-              <span>Clase actual</span>
-              <strong>Últimos registros</strong>
-            </div>
-            @if (lastScans.length > 0) {
-              <span class="records-count">{{ lastScans.length }}</span>
-            }
+        <section class="recent-card">
+          <div class="section-heading recent-heading">
+            <div><span>Clase actual</span><strong>Últimos registros</strong></div>
+            @if (lastScans.length > 0) { <div class="record-count">{{ lastScans.length }}</div> }
           </div>
+
           @if (loadingScans) {
-            <div class="recent-state">
-              <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
-              <span>Cargando registros...</span>
-            </div>
+            <div class="recent-state"><ion-icon name="refresh-outline" class="spin" aria-hidden="true"></ion-icon><span>Cargando registros...</span></div>
           } @else if (lastScans.length > 0) {
             <div class="recent-list">
               @for (record of lastScans; track record.id) {
-                <div class="recent-item">
-                  <div class="recent-avatar">
-                    <ion-icon name="checkmark-circle-outline"></ion-icon>
-                  </div>
-                  <div class="recent-info">
-                    <strong>{{ getStudentName(record) }}</strong>
-                    <span>{{ record.student?.group?.name ?? currentGroup }}</span>
-                  </div>
-                  <div class="recent-time">
-                    <strong>{{ formatAttendanceTime(record.date) }}</strong>
-                    <span>{{ formatAttendanceDate(record.date) }}</span>
-                  </div>
-                </div>
+                <app-last-scan-card
+                  [subject]="record.classes?.subject?.name ?? currentSubject"
+                  [studentName]="getStudentName(record)"
+                  [date]="formatAttendanceDate(record.date)"
+                  [time]="formatAttendanceTime(record.date)"
+                  status="success">
+                </app-last-scan-card>
               }
             </div>
           } @else {
             <div class="recent-empty">
-              <ion-icon name="qr-code-outline"></ion-icon>
-              <span>Aún no hay asistencias registradas en esta clase.</span>
+              <div class="recent-empty-icon"><ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon></div>
+              <strong>Aún no hay registros</strong>
+              <span>Los alumnos escaneados aparecerán aquí.</span>
             </div>
           }
-        </div>
+        </section>
       }
-    </div>
+    </main>
+  }
+
+  @if (!isSupportedRole) {
+    <main class="role-page">
+      <section class="state-card unsupported-state">
+        <div class="state-icon neutral"><ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon></div>
+        <strong>Función no disponible</strong>
+        <span>El módulo QR está disponible para alumnos, docentes y tutores.</span>
+      </section>
+    </main>
   }
 </ion-content>

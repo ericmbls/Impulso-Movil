@@ -1,46 +1,78 @@
-<div class="last-scan-card">
+<article class="last-scan-card">
   <div class="card-header">
     <div class="scan-info">
-      <div class="scan-icon">
-        <ion-icon name="qr-code-outline"></ion-icon>
+      <div
+        class="scan-icon"
+        [class.success]="status === 'success'"
+        [class.pending]="status === 'pending'"
+        [class.error]="status === 'error'">
+        <ion-icon
+          name="qr-code-outline"
+          aria-hidden="true">
+        </ion-icon>
       </div>
 
       <div class="scan-details">
-        <h3 class="subject">
-          {{ subject }}
+        <span class="scan-label">
+          Alumno
+        </span>
+
+        <h3 class="student-name">
+          {{ studentName || 'Alumno' }}
         </h3>
 
-        <p class="student-name">
-          {{ studentName }}
+        <p class="subject">
+          {{ subject || 'Materia' }}
         </p>
       </div>
     </div>
 
     <span
       class="status-badge"
-      [ngClass]="status"
-    >
+      [class.success]="status === 'success'"
+      [class.pending]="status === 'pending'"
+      [class.error]="status === 'error'">
+
       <ion-icon
         [name]="getStatusIcon()"
-      ></ion-icon>
+        aria-hidden="true">
+      </ion-icon>
 
       {{ getStatusText() }}
     </span>
   </div>
 
-  <div class="card-footer">
-    <p class="date-time">
-      <ion-icon name="calendar-outline"></ion-icon>
+  @if (date || time) {
+    <footer class="card-footer">
+      @if (date) {
+        <span class="meta-item">
+          <ion-icon
+            name="calendar-outline"
+            aria-hidden="true">
+          </ion-icon>
 
-      {{ date }}
+          {{ date }}
+        </span>
+      }
 
-      <span class="divider">
-        •
-      </span>
+      @if (date && time) {
+        <span
+          class="meta-divider"
+          aria-hidden="true">
+          •
+        </span>
+      }
 
-      <ion-icon name="time-outline"></ion-icon>
+      @if (time) {
+        <span class="meta-item">
+          <ion-icon
+            name="time-outline"
+            aria-hidden="true">
+          </ion-icon>
 
-      {{ time }}
-    </p>
-  </div>
-</div>
+          {{ time }}
+        </span>
+      }
+    </footer>
+  }
+</article>

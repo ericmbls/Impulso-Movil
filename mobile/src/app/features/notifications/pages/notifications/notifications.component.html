@@ -1,79 +1,107 @@
-<ion-content>
+<ion-content fullscreen>
   <ion-refresher
     slot="fixed"
-    (ionRefresh)="loadNotifications($event)"
-  >
+    (ionRefresh)="loadNotifications($event)">
     <ion-refresher-content>
     </ion-refresher-content>
   </ion-refresher>
 
-  <div class="notifications-page">
-
+  <main class="notifications-page">
     <section class="hero">
-      <div class="hero-icon">
-        <ion-icon
-          name="notifications-outline"
-        ></ion-icon>
+      <div class="hero-content">
+        <div class="hero-icon">
+          <ion-icon
+            name="notifications-outline"
+            aria-hidden="true">
+          </ion-icon>
+        </div>
+
+        <div class="hero-copy">
+          <span class="eyebrow">
+            IMPULSO
+          </span>
+
+          <h1>Notificaciones</h1>
+
+          <p>
+            Avisos y actualizaciones de tu
+            actividad académica.
+          </p>
+        </div>
       </div>
 
-      <div>
-        <span class="eyebrow">
-          IMPULSO
-        </span>
+      <div
+        class="hero-orb hero-orb-large"
+        aria-hidden="true">
+      </div>
 
-        <h1>
-          Notificaciones
-        </h1>
-
-        <p>
-          Avisos y actualizaciones de tu actividad académica.
-        </p>
+      <div
+        class="hero-orb hero-orb-small"
+        aria-hidden="true">
       </div>
     </section>
 
-    <div class="section-header">
+    <section class="section-header">
       <div>
-        <h2>
-          Recientes
-        </h2>
+        <span class="section-eyebrow">
+          Bandeja
+        </span>
 
-        @if (unreadCount > 0) {
-          <span class="unread-label">
-            {{ unreadCount }}
-            sin leer
-          </span>
-        }
+        <h2>Recientes</h2>
       </div>
-    </div>
+
+      @if (unreadCount > 0) {
+        <div class="unread-count">
+          <span class="unread-count-dot">
+          </span>
+
+          {{ unreadCount }}
+          sin leer
+        </div>
+      } @else if (
+        !loading &&
+        !errorMessage
+      ) {
+        <div class="all-read">
+          <ion-icon
+            name="checkmark-circle-outline"
+            aria-hidden="true">
+          </ion-icon>
+
+          Al día
+        </div>
+      }
+    </section>
 
     @if (loading) {
-      <div class="state-card">
-        <ion-icon
-          name="refresh-outline"
-          class="loading-icon"
-        ></ion-icon>
+      <section class="state-card">
+        <div class="state-icon loading">
+          <ion-icon
+            name="refresh-outline"
+            aria-hidden="true">
+          </ion-icon>
+        </div>
 
         <strong>
           Cargando notificaciones
         </strong>
 
         <p>
-          Estamos obteniendo tus avisos más recientes.
+          Obteniendo tus avisos más
+          recientes.
         </p>
-      </div>
-    }
-
-    @if (
-      !loading &&
-      errorMessage
-    ) {
-      <div class="state-card error">
-        <ion-icon
-          name="alert-circle-outline"
-        ></ion-icon>
+      </section>
+    } @else if (errorMessage) {
+      <section class="state-card error">
+        <div class="state-icon">
+          <ion-icon
+            name="alert-circle-outline"
+            aria-hidden="true">
+          </ion-icon>
+        </div>
 
         <strong>
-          Ocurrió un problema
+          No pudimos cargar tus avisos
         </strong>
 
         <p>
@@ -82,38 +110,39 @@
 
         <button
           type="button"
-          (click)="loadNotifications()"
-        >
+          class="retry-button"
+          (click)="loadNotifications()">
+
+          <ion-icon
+            name="refresh-outline"
+            aria-hidden="true">
+          </ion-icon>
+
           Intentar nuevamente
         </button>
-      </div>
-    }
-
-    @if (
-      !loading &&
-      !errorMessage &&
+      </section>
+    } @else if (
       notifications.length === 0
     ) {
-      <div class="state-card empty">
-        <ion-icon
-          name="checkmark-circle-outline"
-        ></ion-icon>
+      <section class="state-card empty">
+        <div class="state-icon">
+          <ion-icon
+            name="checkmark-circle-outline"
+            aria-hidden="true">
+          </ion-icon>
+        </div>
 
         <strong>
           Todo al día
         </strong>
 
         <p>
-          No tienes notificaciones por el momento.
+          No tienes notificaciones por
+          el momento.
         </p>
-      </div>
-    }
-
-    @if (
-      !loading &&
-      notifications.length > 0
-    ) {
-      <div class="notification-list">
+      </section>
+    } @else {
+      <section class="notification-list">
         @for (
           notification of notifications;
           track notification.id
@@ -121,61 +150,130 @@
           <button
             type="button"
             class="notification-card"
-            [class.unread]="isUnread(notification)"
-            (click)="openNotification(notification)"
-          >
+            [class.unread]="
+              isUnread(notification)
+            "
+            (click)="
+              openNotification(notification)
+            ">
+
             <div
               class="notification-icon"
-              [ngClass]="getPriorityClass(notification)"
-            >
+              [class.low]="
+                getPriorityClass(
+                  notification
+                ) === 'low'
+              "
+              [class.medium]="
+                getPriorityClass(
+                  notification
+                ) === 'medium'
+              "
+              [class.high]="
+                getPriorityClass(
+                  notification
+                ) === 'high'
+              "
+              [class.critical]="
+                getPriorityClass(
+                  notification
+                ) === 'critical'
+              ">
+
               <ion-icon
                 [name]="getIcon(notification)"
-              ></ion-icon>
+                aria-hidden="true">
+              </ion-icon>
             </div>
 
             <div class="notification-content">
               <div class="notification-top">
                 <span class="notification-type">
-                  {{ getTypeLabel(notification) }}
+                  {{
+                    getTypeLabel(
+                      notification
+                    )
+                  }}
                 </span>
 
                 @if (
                   isUnread(notification)
                 ) {
-                  <span class="unread-dot">
+                  <span
+                    class="unread-dot"
+                    aria-label="Sin leer">
                   </span>
                 }
               </div>
 
               <p class="notification-message">
                 {{
-                  notification.alert?.message ||
+                  notification.alert
+                    ?.message ||
                   notification.content
                 }}
               </p>
 
               @if (
-                notification.alert?.student?.user
+                notification.alert
+                  ?.student?.user
               ) {
-                <span class="student-name">
-                  {{
-                    notification.alert?.student?.user?.firstName
-                  }}
-                  {{
-                    notification.alert?.student?.user?.lastName
-                  }}
-                </span>
+                <div class="student-row">
+                  <div class="student-avatar">
+                    {{
+                      (
+                        notification.alert
+                          ?.student
+                          ?.user
+                          ?.firstName ??
+                        'A'
+                      ).charAt(0)
+                    }}
+                  </div>
+
+                  <div>
+                    <span class="student-label">
+                      Alumno
+                    </span>
+
+                    <strong class="student-name">
+                      {{
+                        notification.alert
+                          ?.student
+                          ?.user
+                          ?.firstName
+                      }}
+                      {{
+                        notification.alert
+                          ?.student
+                          ?.user
+                          ?.lastName
+                      }}
+                    </strong>
+                  </div>
+                </div>
               }
 
               <div class="notification-meta">
                 <ion-icon
                   name="time-outline"
-                ></ion-icon>
+                  aria-hidden="true">
+                </ion-icon>
 
                 <span>
-                  {{ getRelativeDate(notification.createdAt) }}
+                  {{
+                    getRelativeDate(
+                      notification.createdAt
+                    )
+                  }}
+
                   ·
-                  {{ getTime(notification.createdAt) }}
+
+                  {{
+                    getTime(
+                      notification.createdAt
+                    )
+                  }}
                 </span>
               </div>
             </div>
@@ -183,11 +281,11 @@
             <ion-icon
               name="chevron-forward-outline"
               class="chevron"
-            ></ion-icon>
+              aria-hidden="true">
+            </ion-icon>
           </button>
         }
-      </div>
+      </section>
     }
-
-  </div>
+  </main>
 </ion-content>

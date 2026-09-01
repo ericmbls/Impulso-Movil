@@ -49,18 +49,39 @@ ion-content {
   height: 100%;
 }
 
-body.barcode-scanner-active,
+body.barcode-scanner-active {
+  background: transparent !important;
+  --background: transparent !important;
+  --ion-background-color: transparent !important;
+}
+
 body.barcode-scanner-active ion-app,
+body.barcode-scanner-active app-root,
 body.barcode-scanner-active ion-router-outlet,
-body.barcode-scanner-active ion-content.teacher-content,
-body.barcode-scanner-active .teacher-scanner-page,
-body.barcode-scanner-active .barcode-scanner-modal {
+body.barcode-scanner-active app-qr-check,
+body.barcode-scanner-active app-qr-check.ion-page {
   background: transparent !important;
   --background: transparent !important;
 }
 
-body.barcode-scanner-active {
-  --ion-background-color: transparent !important;
+body.barcode-scanner-active ion-content.teacher-content {
+  background: transparent !important;
+  --background: transparent !important;
+}
+
+body.barcode-scanner-active ion-content.teacher-content::part(background) {
+  background: transparent !important;
+}
+
+body.barcode-scanner-active .scanner-page,
+body.barcode-scanner-active .scanner-shell,
+body.barcode-scanner-active .scanner-shell.camera-active,
+body.barcode-scanner-active .scanner-stage,
+body.barcode-scanner-active .barcode-scanner-modal {
+  background: transparent !important;
+  --background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 body.barcode-scanner-active .barcode-scanner-modal {

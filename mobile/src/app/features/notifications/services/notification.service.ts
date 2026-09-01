@@ -1,97 +1,87 @@
-import {
-  Injectable,
-  inject,
-} from '@angular/core';
-import {
-  HttpClient,
-} from '@angular/common/http';
-import {
-  Observable,
-  Subject,
-} from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, Subject } from 'rxjs';
+import { environment } from '@env/environment';
 
-import {
-  environment,
-} from '@env/environment';
+export type NotificationStatus =
+  | 'PENDING'
+  | 'SENT'
+  | 'FAILED'
+  | 'SIMULATED'
+  | 'READ';
+
+export type NotificationChannel =
+  | 'EMAIL'
+  | 'SMS'
+  | 'WHATSAPP'
+  | 'PUSH'
+  | 'IN_APP';
+
+export type NotificationRecipientType =
+  | 'STUDENT'
+  | 'PARENT'
+  | 'TEACHER'
+  | 'ADMIN';
+
+export type AlertType =
+  | 'ATTENDANCE'
+  | 'GRADE'
+  | 'BEHAVIOR'
+  | 'GENERAL';
+
+export type AlertPriority =
+  | 'LOW'
+  | 'MEDIUM'
+  | 'HIGH'
+  | 'CRITICAL';
+
+export interface NotificationStudent {
+  id: number;
+  user?: {
+    firstName?: string;
+    lastName?: string;
+  } | null;
+  group?: {
+    id?: number;
+    name?: string;
+  } | null;
+}
+
+export interface NotificationAlert {
+  id: number;
+  studentId: number;
+  type: AlertType;
+  priority: AlertPriority;
+  message: string;
+  student?: NotificationStudent | null;
+}
+
+export interface NotificationSender {
+  firstName?: string;
+  lastName?: string;
+}
 
 export interface AppNotification {
   id: number;
-
   alertId?: number | null;
-
   senderId?: number | null;
-
-  recipientType: string;
-
+  recipientType: NotificationRecipientType;
   recipientId: number;
-
-  channel: string;
-
-  status:
-    | 'PENDING'
-    | 'SENT'
-    | 'FAILED'
-    | 'SIMULATED'
-    | 'READ'
-    | string;
-
+  channel: NotificationChannel;
+  status: NotificationStatus;
   content: string;
-
-  metadata?: any;
-
+  metadata?: Record<string, unknown> | null;
   sentAt?: string | null;
-
   createdAt: string;
-
-  alert?: {
-    id: number;
-
-    studentId: number;
-
-    type:
-      | 'ATTENDANCE'
-      | 'GRADE'
-      | 'BEHAVIOR'
-      | 'GENERAL'
-      | string;
-
-    priority:
-      | 'LOW'
-      | 'MEDIUM'
-      | 'HIGH'
-      | 'CRITICAL'
-      | string;
-
-    message: string;
-
-    student?: {
-      id: number;
-
-      user?: {
-        firstName?: string;
-        lastName?: string;
-      };
-
-      group?: {
-        id?: number;
-        name?: string;
-      };
-    };
-  };
-
-  sender?: {
-    firstName?: string;
-    lastName?: string;
-  };
+  alert?: NotificationAlert | null;
+  sender?: NotificationSender | null;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
-  private readonly http =
-    inject(HttpClient);
-
+  private readonly http = inject(HttpClient);
   private readonly apiUrl =
     `${environment.apiUrl}/notifications`;
 
@@ -103,9 +93,7 @@ export class NotificationService {
 
   getMyNotifications():
     Observable<AppNotification[]> {
-    return this.http.get<
-      AppNotification[]
-    >(
+    return this.http.get<AppNotification[]>(
       `${this.apiUrl}/my-notifications`,
     );
   }
@@ -120,9 +108,7 @@ export class NotificationService {
   getById(
     id: number,
   ): Observable<AppNotification> {
-    return this.http.get<
-      AppNotification
-    >(
+    return this.http.get<AppNotification>(
       `${this.apiUrl}/${id}`,
     );
   }
@@ -130,9 +116,7 @@ export class NotificationService {
   markAsRead(
     id: number,
   ): Observable<AppNotification> {
-    return this.http.put<
-      AppNotification
-    >(
+    return this.http.put<AppNotification>(
       `${this.apiUrl}/${id}/read`,
       {},
     );

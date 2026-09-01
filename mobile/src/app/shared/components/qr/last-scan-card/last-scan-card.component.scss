@@ -1,122 +1,248 @@
 :host {
   display: block;
   width: 100%;
+
+  --primary: #7d1736;
+  --primary-dark: #5d1028;
+
+  --text: #211d1e;
+  --text-soft: #716a6c;
+  --text-muted: #9d9698;
+
+  --success: #2f9955;
+  --warning: #c17b13;
+  --danger: #c54141;
 }
 
 .last-scan-card {
   width: 100%;
-  padding: 16px;
-  background: #ffffff;
-  border: 1px solid rgba(199, 161, 90, 0.25);
-  border-radius: 18px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+
+  padding: 13px 14px;
+
+  background:
+    rgba(255, 255, 255, 0.82);
+
+  border:
+    1px solid
+    rgba(125, 23, 54, 0.07);
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 5px 18px
+    rgba(27, 18, 21, 0.045);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .card-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+
+  gap: 10px;
 }
 
 .scan-info {
   display: flex;
-  min-width: 0;
   align-items: center;
-  gap: 12px;
+
+  flex: 1;
+  min-width: 0;
+
+  gap: 10px;
 }
 
 .scan-icon {
-  display: flex;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  align-items: center;
-  justify-content: center;
-  color: #7d1736;
-  background: rgba(125, 23, 54, 0.08);
-  border-radius: 13px;
+  display: grid;
+
+  flex: 0 0 38px;
+
+  width: 38px;
+  height: 38px;
+
+  place-items: center;
+
+  color: var(--primary);
+
+  background:
+    rgba(125, 23, 54, 0.07);
+
+  border-radius: 12px;
 }
 
 .scan-icon ion-icon {
-  font-size: 22px;
+  font-size: 19px;
+}
+
+.scan-icon.success {
+  color: var(--success);
+
+  background:
+    rgba(47, 153, 85, 0.09);
+}
+
+.scan-icon.pending {
+  color: var(--warning);
+
+  background:
+    rgba(193, 123, 19, 0.09);
+}
+
+.scan-icon.error {
+  color: var(--danger);
+
+  background:
+    rgba(197, 65, 65, 0.09);
 }
 
 .scan-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
   min-width: 0;
 }
 
-.subject {
-  overflow: hidden;
-  margin: 0 0 4px;
-  color: #352d2d;
-  font-size: 15px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.scan-label {
+  color: var(--text-muted);
+
+  font-size: 7px;
+  font-weight: 900;
+
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
 }
 
 .student-name {
   overflow: hidden;
-  margin: 0;
-  color: #746d6d;
-  font-size: 13px;
+
+  margin: 1px 0 0;
+
+  color: var(--text);
+
+  font-size: 11px;
+  font-weight: 900;
+
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subject {
+  overflow: hidden;
+
+  margin: 2px 0 0;
+
+  color: var(--text-soft);
+
+  font-size: 8px;
+  font-weight: 600;
+
+  line-height: 1.35;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .status-badge {
   display: inline-flex;
-  flex: 0 0 auto;
   align-items: center;
-  gap: 5px;
-  padding: 7px 9px;
+
+  flex-shrink: 0;
+
+  gap: 4px;
+
+  padding: 5px 7px;
+
   border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
+
+  font-size: 7px;
+  font-weight: 900;
 }
 
 .status-badge ion-icon {
-  font-size: 15px;
-}
-
-.status-badge.success {
-  color: #2e7d32;
-  background: rgba(46, 125, 50, 0.1);
-}
-
-.status-badge.pending {
-  color: #a56b0c;
-  background: rgba(249, 168, 37, 0.13);
-}
-
-.status-badge.error {
-  color: #b13c3c;
-  background: rgba(177, 60, 60, 0.1);
-}
-
-.card-footer {
-  margin-top: 13px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(199, 161, 90, 0.13);
-}
-
-.date-time {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin: 0;
-  color: #8a8282;
   font-size: 12px;
 }
 
-.date-time ion-icon {
-  color: #7d1736;
-  font-size: 14px;
+.status-badge.success {
+  color: var(--success);
+
+  background:
+    rgba(47, 153, 85, 0.09);
 }
 
-.divider {
-  margin: 0 2px;
-  color: #c7a15a;
+.status-badge.pending {
+  color: var(--warning);
+
+  background:
+    rgba(193, 123, 19, 0.1);
+}
+
+.status-badge.error {
+  color: var(--danger);
+
+  background:
+    rgba(197, 65, 65, 0.09);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 10px;
+
+  padding-top: 9px;
+
+  color: var(--text-muted);
+
+  border-top:
+    1px solid
+    rgba(125, 23, 54, 0.055);
+
+  font-size: 7px;
+  font-weight: 600;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.meta-item ion-icon {
+  color: var(--primary);
+
+  font-size: 11px;
+}
+
+.meta-divider {
+  color:
+    rgba(199, 161, 90, 0.75);
+}
+
+@media (max-width: 380px) {
+  .last-scan-card {
+    padding: 11px 12px;
+  }
+
+  .scan-icon {
+    flex-basis: 35px;
+
+    width: 35px;
+    height: 35px;
+  }
+
+  .status-badge {
+    padding: 5px 6px;
+
+    font-size: 6.5px;
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
@@ -12,15 +12,14 @@ export interface StudentQr {
 
 @Injectable({ providedIn: 'root' })
 export class QrService {
-  private readonly api = `${environment.apiUrl}/qr`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/qr`;
 
   getMyQr(): Observable<StudentQr> {
-    return this.http.get<StudentQr>(`${this.api}/my-qr`);
+    return this.http.get<StudentQr>(`${this.apiUrl}/my-qr`);
   }
 
   refreshQr(): Observable<StudentQr> {
-    return this.http.post<StudentQr>(`${this.api}/refresh`, {});
+    return this.http.post<StudentQr>(`${this.apiUrl}/refresh`, {});
   }
 }

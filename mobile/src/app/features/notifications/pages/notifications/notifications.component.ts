@@ -1,10 +1,8 @@
 import {
   Component,
+  OnDestroy,
   inject,
 } from '@angular/core';
-import {
-  CommonModule,
-} from '@angular/common';
 import {
   IonContent,
   IonIcon,
@@ -12,9 +10,7 @@ import {
   IonRefresherContent,
   ViewWillEnter,
 } from '@ionic/angular/standalone';
-import {
-  addIcons,
-} from 'ionicons';
+import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
   bookOutline,
@@ -27,56 +23,40 @@ import {
   timeOutline,
   warningOutline,
 } from 'ionicons/icons';
-
+import { Subscription } from 'rxjs';
 import {
-  Subscription,
-} from 'rxjs';
-
-import {
+  AlertPriority,
   AppNotification,
   NotificationService,
 } from '@features/notifications/services/notification.service';
 
 @Component({
-  selector:
-    'app-notifications',
-
-  standalone:
-    true,
-
+  selector: 'app-notifications',
+  standalone: true,
   imports: [
-    CommonModule,
     IonContent,
     IonIcon,
     IonRefresher,
     IonRefresherContent,
   ],
-
   templateUrl:
     './notifications.component.html',
-
   styleUrl:
     './notifications.component.scss',
 })
 export class NotificationsComponent
-  implements ViewWillEnter
+  implements ViewWillEnter, OnDestroy
 {
   private readonly notificationService =
     inject(NotificationService);
 
-  notifications:
-    AppNotification[] = [];
+  notifications: AppNotification[] = [];
 
-  unreadCount =
-    0;
+  unreadCount = 0;
+  loading = false;
+  errorMessage = '';
 
-  loading =
-    false;
-
-  errorMessage =
-    '';
-
-  private changedSubscription?:
+  private readonly changedSubscription:
     Subscription;
 
   constructor() {
@@ -94,79 +74,71 @@ export class NotificationsComponent
     });
 
     this.changedSubscription =
-      this.notificationService
-        .changed$
-        .subscribe(
-          () => {
-            this.loadNotifications();
-          },
-        );
+      this.notificationService.changed$
+        .subscribe(() => {
+          this.loadNotifications();
+        });
   }
 
-  ionViewWillEnter():
-    void {
+  ionViewWillEnter(): void {
     this.loadNotifications();
   }
 
-  loadNotifications(
-    event?: any,
-  ): void {
-    this.loading =
-      !event;
+  ngOnDestroy(): void {
+    this.changedSubscription.unsubscribe();
+  }
 
-    this.errorMessage =
-      '';
+  loadNotifications(
+    event?: Event,
+  ): void {
+    this.loading = !event;
+    this.errorMessage = '';
 
     this.notificationService
       .getMyNotifications()
       .subscribe({
-        next: (
-          notifications,
-        ) => {
+        next: notifications => {
           this.notifications =
             notifications ?? [];
 
           this.updateUnreadCount();
 
-          this.loading =
-            false;
+          this.loading = false;
 
-          event?.target
-            ?.complete();
+          this.completeRefresher(event);
         },
-
         error: () => {
-          this.loading =
-            false;
+          this.loading = false;
 
           this.errorMessage =
             'No se pudieron cargar las notificaciones.';
 
-          event?.target
-            ?.complete();
+          this.completeRefresher(event);
         },
       });
   }
 
   openNotification(
-    notification:
-      AppNotification,
+    notification: AppNotification,
   ): void {
-    if (
-      notification.status ===
-      'READ'
-    ) {
+    if (!this.isUnread(notification)) {
       return;
     }
 
     this.notificationService
-      .markAsRead(
-        notification.id,
-      )
+      .markAsRead(notification.id)
       .subscribe({
-        next: () => {
+        next: updated => {
           notification.status =
-            'READ';
+            updated.status === 'READ'
+              ? 'READ'
+              : notification.status;
+
+          if (
+            notification.status !== 'READ'
+          ) {
+            notification.status = 'READ';
+          }
 
           this.updateUnreadCount();
 
@@ -177,22 +149,15 @@ export class NotificationsComponent
   }
 
   isUnread(
-    notification:
-      AppNotification,
+    notification: AppNotification,
   ): boolean {
-    return (
-      notification.status !==
-      'READ'
-    );
+    return notification.status !== 'READ';
   }
 
   getIcon(
-    notification:
-      AppNotification,
+    notification: AppNotification,
   ): string {
-    switch (
-      notification.alert?.type
-    ) {
+    switch (notification.alert?.type) {
       case 'ATTENDANCE':
         return 'school-outline';
 
@@ -211,12 +176,9 @@ export class NotificationsComponent
   }
 
   getTypeLabel(
-    notification:
-      AppNotification,
+    notification: AppNotification,
   ): string {
-    switch (
-      notification.alert?.type
-    ) {
+    switch (notification.alert?.type) {
       case 'ATTENDANCE':
         return 'Asistencia';
 
@@ -235,109 +197,118 @@ export class NotificationsComponent
   }
 
   getPriorityClass(
-    notification:
-      AppNotification,
-  ): string {
+    notification: AppNotification,
+  ): Lowercase<AlertPriority> {
     return (
-      notification.alert
-        ?.priority
-        ?.toLowerCase() ??
-      'medium'
-    );
+      notification.alert?.priority ??
+      'MEDIUM'
+    ).toLowerCase() as Lowercase<AlertPriority>;
   }
 
   getRelativeDate(
     date: string,
   ): string {
-    const value =
-      new Date(date);
+    const value = new Date(date);
 
-    const now =
+    if (Number.isNaN(value.getTime())) {
+      return '';
+    }
+
+    const notificationDate =
+      this.getMexicoCityDateString(value);
+
+    const today =
+      this.getMexicoCityDateString();
+
+    if (notificationDate === today) {
+      return 'Hoy';
+    }
+
+    const yesterday =
       new Date();
 
+    yesterday.setDate(
+      yesterday.getDate() - 1,
+    );
+
+    if (
+      notificationDate ===
+      this.getMexicoCityDateString(
+        yesterday,
+      )
+    ) {
+      return 'Ayer';
+    }
+
+    return new Intl.DateTimeFormat(
+      'es-MX',
+      {
+        timeZone:
+          'America/Mexico_City',
+        day: 'numeric',
+        month: 'short',
+      },
+    ).format(value);
+  }
+
+  getTime(
+    date: string,
+  ): string {
+    const value = new Date(date);
+
+    if (Number.isNaN(value.getTime())) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat(
+      'es-MX',
+      {
+        timeZone:
+          'America/Mexico_City',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      },
+    ).format(value);
+  }
+
+  private getMexicoCityDateString(
+    date: Date = new Date(),
+  ): string {
     const formatter =
       new Intl.DateTimeFormat(
         'en-CA',
         {
           timeZone:
             'America/Mexico_City',
-          year:
-            'numeric',
-          month:
-            '2-digit',
-          day:
-            '2-digit',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
         },
       );
 
-    const currentDate =
-      formatter.format(
-        now,
-      );
-
-    const notificationDate =
-      formatter.format(
-        value,
-      );
-
-    if (
-      currentDate ===
-      notificationDate
-    ) {
-      return 'Hoy';
-    }
-
-    return new Intl
-      .DateTimeFormat(
-        'es-MX',
-        {
-          timeZone:
-            'America/Mexico_City',
-          day:
-            'numeric',
-          month:
-            'short',
-        },
-      )
-      .format(
-        value,
-      );
+    return formatter.format(date);
   }
 
-  getTime(
-    date: string,
-  ): string {
-    return new Intl
-      .DateTimeFormat(
-        'es-MX',
-        {
-          timeZone:
-            'America/Mexico_City',
-          hour:
-            '2-digit',
-          minute:
-            '2-digit',
-          hour12:
-            true,
-        },
-      )
-      .format(
-        new Date(date),
-      );
-  }
-
-  private updateUnreadCount():
-    void {
+  private updateUnreadCount(): void {
     this.unreadCount =
-      this.notifications
-        .filter(
-          (
-            notification,
-          ) =>
-            this.isUnread(
-              notification,
-            ),
-        )
-        .length;
+      this.notifications.filter(
+        notification =>
+          this.isUnread(notification),
+      ).length;
+  }
+
+  private completeRefresher(
+    event?: Event,
+  ): void {
+    if (!event) return;
+
+    const target =
+      event.target as {
+        complete?: () =>
+          Promise<void> | void;
+      } | null;
+
+    void target?.complete?.();
   }
 }

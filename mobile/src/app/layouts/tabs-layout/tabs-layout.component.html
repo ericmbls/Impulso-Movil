@@ -1,26 +1,90 @@
-<!-- tabs-layout.component.html -->
 <ion-tabs>
-  <ion-router-outlet slot="top"></ion-router-outlet>
+  <ion-router-outlet slot="top">
+  </ion-router-outlet>
+
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="dashboard" routerLink="/app/dashboard" routerLinkActive="tab-selected">
-      <ion-icon name="home-outline"></ion-icon>
-      <ion-label>Inicio</ion-label>
+    <ion-tab-button
+      tab="dashboard"
+      routerLink="/app/dashboard"
+      routerLinkActive="tab-selected">
+
+      <ion-icon
+        name="home-outline"
+        aria-hidden="true">
+      </ion-icon>
+
+      <ion-label>
+        Inicio
+      </ion-label>
     </ion-tab-button>
-    <ion-tab-button tab="schedule" routerLink="/app/schedule" routerLinkActive="tab-selected">
-      <ion-icon name="calendar-outline"></ion-icon>
-      <ion-label>Horario</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="qr-check" routerLink="/app/qr-check" routerLinkActive="tab-selected" class="qr-tab">
-      <ion-icon name="qr-code-outline"></ion-icon>
-      <ion-label>QR</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="grades" routerLink="/app/grades" routerLinkActive="tab-selected">
-      <ion-icon name="stats-chart-outline"></ion-icon>
-      <ion-label>Calif.</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="profile" routerLink="/app/profile" routerLinkActive="tab-selected">
-      <ion-icon name="person-outline"></ion-icon>
-      <ion-label>Perfil</ion-label>
+
+    @if (showSchedule) {
+      <ion-tab-button
+        tab="schedule"
+        routerLink="/app/schedule"
+        routerLinkActive="tab-selected">
+
+        <ion-icon
+          name="calendar-outline"
+          aria-hidden="true">
+        </ion-icon>
+
+        <ion-label>
+          Horario
+        </ion-label>
+      </ion-tab-button>
+    }
+
+    @if (showQr) {
+      <ion-tab-button
+        tab="qr-check"
+        routerLink="/app/qr-check"
+        routerLinkActive="tab-selected"
+        class="qr-tab">
+
+        <div class="qr-button-icon">
+          <ion-icon
+            [name]="qrIcon"
+            aria-hidden="true">
+          </ion-icon>
+        </div>
+
+        <ion-label>
+          {{ qrLabel }}
+        </ion-label>
+      </ion-tab-button>
+    }
+
+    @if (showGrades) {
+      <ion-tab-button
+        tab="grades"
+        routerLink="/app/grades"
+        routerLinkActive="tab-selected">
+
+        <ion-icon
+          name="stats-chart-outline"
+          aria-hidden="true">
+        </ion-icon>
+
+        <ion-label>
+          Calif.
+        </ion-label>
+      </ion-tab-button>
+    }
+
+    <ion-tab-button
+      tab="profile"
+      routerLink="/app/profile"
+      routerLinkActive="tab-selected">
+
+      <ion-icon
+        name="person-outline"
+        aria-hidden="true">
+      </ion-icon>
+
+      <ion-label>
+        Perfil
+      </ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
