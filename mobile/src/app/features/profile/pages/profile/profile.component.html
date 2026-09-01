@@ -1,110 +1,161 @@
-<!-- profile.component.html -->
 <ion-content fullscreen="true">
-  <div class="profile-container">
-    <div class="hero">
+  <main class="profile-container">
+    <section class="hero">
       <div class="hero-content">
         <h1>
-          <ion-icon name="person-outline"></ion-icon>
+          <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
           Perfil
         </h1>
         <p>{{ getSubtitulo() }}</p>
       </div>
-      <div class="hero-decoration">
+      <div class="hero-decoration" aria-hidden="true">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
       </div>
-    </div>
-
-    <div class="seccion-selector">
-      <button
-        class="seccion-btn"
-        [class.active]="seccionActiva() === 'info'"
-        (click)="cambiarSeccion('info')">
-        Información
-      </button>
-      @if (mostrarSeccionAcademica()) {
-        <button
-          class="seccion-btn"
-          [class.active]="seccionActiva() === 'academico'"
-          (click)="cambiarSeccion('academico')">
-          Académico
-        </button>
-      }
-      <button
-        class="seccion-btn"
-        [class.active]="seccionActiva() === 'contacto'"
-        (click)="cambiarSeccion('contacto')">
-        Contacto
-      </button>
-    </div>
+    </section>
 
     @if (user(); as u) {
+      <nav class="seccion-selector" [class.two-sections]="!mostrarSeccionAcademica()" aria-label="Secciones del perfil">
+        <button
+          type="button"
+          class="seccion-btn"
+          [class.active]="seccionActiva() === 'info'"
+          [attr.aria-pressed]="seccionActiva() === 'info'"
+          (click)="cambiarSeccion('info')">
+          Información
+        </button>
+
+        @if (mostrarSeccionAcademica()) {
+          <button
+            type="button"
+            class="seccion-btn"
+            [class.active]="seccionActiva() === 'academico'"
+            [attr.aria-pressed]="seccionActiva() === 'academico'"
+            (click)="cambiarSeccion('academico')">
+            Académico
+          </button>
+        }
+
+        <button
+          type="button"
+          class="seccion-btn"
+          [class.active]="seccionActiva() === 'contacto'"
+          [attr.aria-pressed]="seccionActiva() === 'contacto'"
+          (click)="cambiarSeccion('contacto')">
+          Contacto
+        </button>
+      </nav>
+
       @if (seccionActiva() === 'info') {
-        <div class="profile-card">
+        <section class="profile-card">
           <div class="avatar-wrapper">
             <div class="avatar-ring">
-              <div class="avatar">{{ u.photo }}</div>
+              <div class="avatar" aria-hidden="true">
+                {{ u.photo }}
+              </div>
             </div>
           </div>
-          <h2 class="user-name">{{ u.fullName }}</h2>
+
+          <h2 class="user-name">
+            {{ u.fullName }}
+          </h2>
+
           <div class="user-badges">
-            <span class="badge role-badge">{{ u.roleLabel }}</span>
+            <span class="badge role-badge">
+              {{ u.roleLabel }}
+            </span>
+
             @if (u.studentProfile?.groupName) {
-              <span class="badge group-badge">{{ u.studentProfile?.groupName }}</span>
+              <span class="badge group-badge">
+                {{ u.studentProfile?.groupName }}
+              </span>
             }
+
             @if (u.studentProfile?.careerName) {
-              <span class="badge career-badge">{{ u.studentProfile?.careerName }}</span>
+              <span class="badge career-badge">
+                {{ u.studentProfile?.careerName }}
+              </span>
             }
+
             @if (u.teacherProfile?.specialty) {
-              <span class="badge specialty-badge">{{ u.teacherProfile?.specialty }}</span>
+              <span class="badge specialty-badge">
+                {{ u.teacherProfile?.specialty }}
+              </span>
             }
+
             @if (u.adminProfile?.position) {
-              <span class="badge position-badge">{{ u.adminProfile?.position }}</span>
+              <span class="badge position-badge">
+                {{ u.adminProfile?.position }}
+              </span>
             }
           </div>
-        </div>
+        </section>
       }
 
       @if (seccionActiva() === 'academico') {
-        <div class="section">
+        <section class="section">
           @if (u.role === 'STUDENT' && u.studentProfile) {
             <div class="info-card">
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="card-outline"></ion-icon></div>
+                <div class="info-icon">
+                  <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
+                </div>
                 <div class="info-content">
                   <p class="info-label">Número de control</p>
-                  <p class="info-value">{{ u.studentProfile.controlNumber }}</p>
-                </div>
-              </div>
-              <div class="info-item">
-                <div class="info-icon"><ion-icon name="people-outline"></ion-icon></div>
-                <div class="info-content">
-                  <p class="info-label">Grupo</p>
-                  <p class="info-value">{{ u.studentProfile.groupName || 'No asignado' }}</p>
-                </div>
-              </div>
-              <div class="info-item">
-                <div class="info-icon"><ion-icon name="school-outline"></ion-icon></div>
-                <div class="info-content">
-                  <p class="info-label">Carrera</p>
-                  <p class="info-value">{{ u.studentProfile.careerName || 'No especificada' }}</p>
-                </div>
-              </div>
-              <div class="info-item">
-                <div class="info-icon"><ion-icon name="flag-outline"></ion-icon></div>
-                <div class="info-content">
-                  <p class="info-label">Semáforo</p>
-                  <p class="info-value" [style.color]="u.studentProfile.semaphore === 'RED' ? '#d32f2f' : u.studentProfile.semaphore === 'YELLOW' ? '#f57c00' : '#388e3c'">
-                    {{ u.studentProfile.semaphore || 'No definido' }}
+                  <p class="info-value">
+                    {{ u.studentProfile.controlNumber || 'No registrado' }}
                   </p>
                 </div>
               </div>
-              @if (u.studentProfile.gradeLevel) {
+
+              <div class="info-item">
+                <div class="info-icon">
+                  <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+                </div>
+                <div class="info-content">
+                  <p class="info-label">Grupo</p>
+                  <p class="info-value">
+                    {{ u.studentProfile.groupName || 'No asignado' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">
+                  <ion-icon name="school-outline" aria-hidden="true"></ion-icon>
+                </div>
+                <div class="info-content">
+                  <p class="info-label">Carrera</p>
+                  <p class="info-value">
+                    {{ u.studentProfile.careerName || 'No especificada' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">
+                  <ion-icon name="flag-outline" aria-hidden="true"></ion-icon>
+                </div>
+                <div class="info-content">
+                  <p class="info-label">Semáforo</p>
+                  <p
+                    class="info-value semaphore-value"
+                    [class]="getSemaphoreClass(u.studentProfile.semaphore)">
+                    {{ u.studentProfile.semaphoreLabel }}
+                  </p>
+                </div>
+              </div>
+
+              @if (u.studentProfile.gradeLevel !== null) {
                 <div class="info-item">
-                  <div class="info-icon"><ion-icon name="star-outline"></ion-icon></div>
+                  <div class="info-icon">
+                    <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
+                  </div>
                   <div class="info-content">
                     <p class="info-label">Grado</p>
-                    <p class="info-value">{{ u.studentProfile.gradeLevel }}°</p>
+                    <p class="info-value">
+                      {{ u.studentProfile.gradeLevel }}°
+                    </p>
                   </div>
                 </div>
               }
@@ -114,17 +165,26 @@
           @if (u.role === 'TEACHER' && u.teacherProfile) {
             <div class="info-card">
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="card-outline"></ion-icon></div>
+                <div class="info-icon">
+                  <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
+                </div>
                 <div class="info-content">
                   <p class="info-label">Número de empleado</p>
-                  <p class="info-value">{{ u.teacherProfile.employeeId }}</p>
+                  <p class="info-value">
+                    {{ u.teacherProfile.employeeId || 'No registrado' }}
+                  </p>
                 </div>
               </div>
+
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="school-outline"></ion-icon></div>
+                <div class="info-icon">
+                  <ion-icon name="school-outline" aria-hidden="true"></ion-icon>
+                </div>
                 <div class="info-content">
                   <p class="info-label">Especialidad</p>
-                  <p class="info-value">{{ u.teacherProfile.specialty }}</p>
+                  <p class="info-value">
+                    {{ u.teacherProfile.specialty || 'No especificada' }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -133,42 +193,41 @@
           @if (u.role === 'ADMIN' && u.adminProfile) {
             <div class="info-card">
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="briefcase-outline"></ion-icon></div>
+                <div class="info-icon">
+                  <ion-icon name="briefcase-outline" aria-hidden="true"></ion-icon>
+                </div>
                 <div class="info-content">
                   <p class="info-label">Cargo</p>
-                  <p class="info-value">{{ u.adminProfile.position }}</p>
+                  <p class="info-value">
+                    {{ u.adminProfile.position || 'No especificado' }}
+                  </p>
                 </div>
               </div>
             </div>
           }
-
-          @if (u.role === 'PARENT' && u.parentProfile) {
-            <div class="info-card">
-              <div class="info-item">
-                <div class="info-icon"><ion-icon name="location-outline"></ion-icon></div>
-                <div class="info-content">
-                  <p class="info-label">Dirección</p>
-                  <p class="info-value">{{ u.parentProfile.address || 'No registrada' }}</p>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
+        </section>
       }
 
       @if (seccionActiva() === 'contacto') {
-        <div class="section">
+        <section class="section">
           <div class="info-card">
             <div class="info-item">
-              <div class="info-icon"><ion-icon name="mail-outline"></ion-icon></div>
+              <div class="info-icon">
+                <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+              </div>
               <div class="info-content">
                 <p class="info-label">Correo electrónico</p>
-                <p class="info-value">{{ u.email }}</p>
+                <p class="info-value break-value">
+                  {{ u.email }}
+                </p>
               </div>
             </div>
+
             @if (u.studentProfile?.phone || u.teacherProfile?.phone || u.adminProfile?.phone || u.parentProfile?.phone) {
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="call-outline"></ion-icon></div>
+                <div class="info-icon">
+                  <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+                </div>
                 <div class="info-content">
                   <p class="info-label">Teléfono</p>
                   <p class="info-value">
@@ -177,31 +236,40 @@
                 </div>
               </div>
             }
+
             @if (u.parentProfile?.address) {
               <div class="info-item">
-                <div class="info-icon"><ion-icon name="location-outline"></ion-icon></div>
+                <div class="info-icon">
+                  <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                </div>
                 <div class="info-content">
                   <p class="info-label">Dirección</p>
-                  <p class="info-value">{{ u.parentProfile?.address }}</p>
+                  <p class="info-value">
+                    {{ u.parentProfile?.address }}
+                  </p>
                 </div>
               </div>
             }
           </div>
-        </div>
+        </section>
       }
 
-      <button class="logout-btn" (click)="logout()">
-        <ion-icon name="log-out-outline"></ion-icon>
+      <button type="button" class="logout-btn" (click)="logout()">
+        <ion-icon name="log-out-outline" aria-hidden="true"></ion-icon>
         Cerrar sesión
       </button>
-
     } @else {
-      <div class="loading">Cargando perfil...</div>
+      <div class="loading">
+        <div class="loading-avatar"></div>
+        <div class="loading-line loading-line-lg"></div>
+        <div class="loading-line"></div>
+        <span>Cargando perfil...</span>
+      </div>
     }
 
-    <div class="footer">
+    <footer class="footer">
       <p>Versión 1.0.0</p>
       <small>CBTIS 61 • IMPULSO</small>
-    </div>
-  </div>
+    </footer>
+  </main>
 </ion-content>

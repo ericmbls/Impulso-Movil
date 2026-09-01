@@ -1,30 +1,111 @@
-<ion-content fullscreen>
+<ion-content fullscreen="true">
+  <main class="attendance-container">
+    <section class="hero">
+      <div class="hero-content">
+        <h1>
+          <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+          Asistencia
+        </h1>
+        <p>
+          {{ getStudentGroup() }}
+          @if (getSelectedStudentName()) {
+            • {{ getSelectedStudentName() }}
+          }
+        </p>
+      </div>
+      <div class="hero-decoration" aria-hidden="true">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+      </div>
+    </section>
 
-  <div class="attendance-container">
-
-    <h1>Asistencia</h1>
-
-    <p class="subtitle">
-      Segundo Parcial
-    </p>
-
-    <app-attendance-summary
-      percentage="94"
-      status="Excelente">
-    </app-attendance-summary>
-
-    <h2>Registro</h2>
-
-    @for (item of attendance; track item.subject) {
-
-      <app-attendance-card
-        [subject]="item.subject"
-        [status]="item.status"
-        [present]="item.present">
-      </app-attendance-card>
-
+    @if (isParent && children.length > 0) {
+      <section class="student-selector-card">
+        <div class="student-selector-header">
+          <span class="student-selector-icon">
+            <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+          </span>
+          <div>
+            <small>Alumno seleccionado</small>
+            <strong>{{ getSelectedStudentName() || 'Alumno' }}</strong>
+          </div>
+        </div>
+        <select
+          aria-label="Seleccionar alumno"
+          [value]="selectedStudentId"
+          [disabled]="loading"
+          (change)="onStudentChange($event)">
+          @for (child of children; track child.id) {
+            <option [value]="child.id">
+              {{ child.user?.firstName || 'Alumno' }}
+              {{ child.user?.lastName || '' }}
+            </option>
+          }
+        </select>
+      </section>
     }
 
-  </div>
+    @if (!loading && !errorMessage && (isStudent || isParent)) {
+      <app-attendance-summary
+        [percentage]="attendancePercentage"
+        [status]="attendanceStatus">
+      </app-attendance-summary>
+    }
 
+    <section class="section">
+      <div class="section-header">
+        <h2>
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+          Registro
+        </h2>
+        @if (!loading && !errorMessage && displayedAttendance.length > 0) {
+          <span class="attendance-count">
+            {{
+              displayedAttendance.length === 1
+                ? '1 registro'
+                : displayedAttendance.length + ' registros'
+            }}
+          </span>
+        }
+      </div>
+
+      @if (loading) {
+        <div class="attendance-state" aria-live="polite">
+          <ion-spinner name="crescent"></ion-spinner>
+          <strong>Cargando asistencia</strong>
+          <p>Espera un momento mientras obtenemos el historial de asistencia.</p>
+        </div>
+      } @else if (errorMessage) {
+        <div class="attendance-state error" role="alert">
+          <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+          <strong>No se pudo cargar la asistencia</strong>
+          <p>{{ errorMessage }}</p>
+          @if (selectedStudentId) {
+            <button type="button" class="retry-button" (click)="retry()">
+              Reintentar
+            </button>
+          }
+        </div>
+      } @else if (displayedAttendance.length > 0) {
+        <div class="attendance-list">
+          @for (item of displayedAttendance; track item.id) {
+            <app-attendance-card
+              [subject]="item.subject"
+              [status]="item.status"
+              [present]="item.present"
+              [teacher]="item.teacher"
+              [date]="item.date"
+              [time]="item.time">
+            </app-attendance-card>
+          }
+        </div>
+      } @else {
+        <div class="attendance-state empty">
+          <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+          <strong>Sin registros de asistencia</strong>
+          <p>Aún no hay asistencias registradas para este alumno.</p>
+        </div>
+      }
+    </section>
+  </main>
 </ion-content>

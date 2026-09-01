@@ -1,20 +1,36 @@
-<div class="attendance-card">
-
-  <div>
-
+<article class="attendance-card">
+  <div class="status-line" [class]="statusClass" aria-hidden="true"></div>
+  <div class="info">
     <h3>{{ subject }}</h3>
 
-    <small>{{ status }}</small>
+    @if (teacher) {
+      <div class="meta-row">
+        <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+        <span>{{ teacher }}</span>
+      </div>
+    }
 
+    @if (date) {
+      <div class="meta-row">
+        <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+        <span>{{ date }}</span>
+      </div>
+    }
+
+    @if (time) {
+      <div class="meta-row">
+        <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+        <span>{{ time }}</span>
+      </div>
+    }
   </div>
 
-  <div
-    class="badge"
-    [class.present]="present"
-    [class.absent]="!present">
-
-    {{ present ? '✔' : '✖' }}
-
+  <div class="status-wrapper">
+    <div class="badge" [class]="statusClass">
+      <ion-icon [name]="statusIcon" aria-hidden="true"></ion-icon>
+    </div>
+    <span class="status-label" [class]="statusClass">
+      {{ status }}
+    </span>
   </div>
-
-</div>
+</article>

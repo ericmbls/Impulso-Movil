@@ -1,67 +1,172 @@
-.attendance-card{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  background:white;
-
-  padding:18px;
-
-  margin-bottom:14px;
-
-  border-radius:18px;
-
-  border:1px solid rgba(199,161,90,.35);
-
+:host {
+  display: block;
+  --primary: #7d1736;
+  --text: #211d1e;
+  --text-soft: #716a6c;
+  --text-muted: #aaa3a5;
 }
 
-h3{
-
-  margin:0;
-
-  color:#333;
-
+.attendance-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 13px;
+  overflow: hidden;
+  padding: 14px 15px;
+  background: rgba(255, 255, 255, 0.87);
+  border: 1px solid rgba(125, 23, 54, 0.065);
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
 }
 
-small{
-
-  color:#777;
-
+.status-line {
+  flex: 0 0 4px;
+  width: 4px;
+  min-height: 64px;
+  align-self: stretch;
+  border-radius: 999px;
 }
 
-.badge{
-
-  width:42px;
-
-  height:42px;
-
-  border-radius:50%;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  color:white;
-
-  font-weight:700;
-
-  font-size:18px;
-
+.status-line.present {
+  background: #2e7d32;
 }
 
-.present{
-
-  background:#2E7D32;
-
+.status-line.absent {
+  background: #c62828;
 }
 
-.absent{
+.status-line.late {
+  background: #ed6c02;
+}
 
-  background:#C62828;
+.status-line.justified {
+  background: #4d6f9e;
+}
 
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.info h3 {
+  overflow: hidden;
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 5px;
+  margin-top: 3px;
+  color: var(--text-soft);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.meta-row ion-icon {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+.meta-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 5px;
+  min-width: 66px;
+}
+
+.badge {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 12px;
+}
+
+.badge ion-icon {
+  font-size: 18px;
+}
+
+.badge.present {
+  color: #2e7d32;
+  background: rgba(46, 125, 50, 0.1);
+}
+
+.badge.absent {
+  color: #c62828;
+  background: rgba(198, 40, 40, 0.09);
+}
+
+.badge.late {
+  color: #d96700;
+  background: rgba(237, 108, 2, 0.1);
+}
+
+.badge.justified {
+  color: #4d6f9e;
+  background: rgba(77, 111, 158, 0.1);
+}
+
+.status-label {
+  font-size: 7px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.status-label.present {
+  color: #2e7d32;
+}
+
+.status-label.absent {
+  color: #c62828;
+}
+
+.status-label.late {
+  color: #d96700;
+}
+
+.status-label.justified {
+  color: #4d6f9e;
+}
+
+@media (max-width: 420px) {
+  .attendance-card {
+    gap: 10px;
+    padding: 13px 12px;
+    border-radius: 16px;
+  }
+
+  .info h3 {
+    font-size: 13px;
+  }
+
+  .status-wrapper {
+    min-width: 58px;
+  }
+
+  .badge {
+    width: 33px;
+    height: 33px;
+    border-radius: 10px;
+  }
 }

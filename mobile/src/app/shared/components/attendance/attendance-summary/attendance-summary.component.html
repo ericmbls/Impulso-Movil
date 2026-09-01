@@ -1,17 +1,35 @@
-<div class="summary-card">
-
-  <div class="circle">
-
-    {{ percentage }}%
-
+<article class="summary-card">
+  <div
+    class="circle"
+    [class]="statusClass"
+    [style.--attendance-progress]="percentageValue">
+    <div class="circle-inner">
+      <strong>
+        {{ hasPercentage ? percentage + '%' : '—' }}
+      </strong>
+      @if (hasPercentage) {
+        <small>asistencia</small>
+      }
+    </div>
   </div>
 
   <div class="info">
+    <span class="eyebrow">
+      Asistencia general
+    </span>
 
-    <h2>{{ status }}</h2>
+    <h2 [class]="statusClass">
+      {{ status }}
+    </h2>
 
-    <p>Asistencia general</p>
-
+    @if (hasPercentage) {
+      <p>
+        Has registrado {{ percentage }}% de asistencia.
+      </p>
+    } @else {
+      <p>
+        Aún no hay información suficiente para calcular tu asistencia.
+      </p>
+    }
   </div>
-
-</div>
+</article>
