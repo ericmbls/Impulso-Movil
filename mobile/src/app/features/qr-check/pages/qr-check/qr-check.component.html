@@ -190,7 +190,7 @@
   }
 
   @if (isTeacher) {
-    <div class="teacher-scanner-page" [class.camera-ready]="viewActive">
+    <div class="teacher-scanner-page" [class.camera-ready]="scannerActive">
       <div class="teacher-hero">
         <div class="teacher-hero-content">
           <div class="teacher-hero-title">
@@ -212,7 +212,7 @@
               </span>
             </div>
           } @else {
-            <p>El escáner está disponible en todo momento. La asistencia solo se registrará durante una clase activa.</p>
+            <p>El escáner permanece disponible. La asistencia solo se registrará durante una clase activa.</p>
           }
         </div>
         <div class="hero-decoration">
@@ -223,7 +223,7 @@
 
       <div class="scanner-stage">
         <app-scan-frame
-          [active]="viewActive"
+          [active]="scannerActive"
           [disabled]="false"
           [autoStart]="true"
           (scan)="onScanSuccess($event)"
@@ -235,7 +235,7 @@
         <div class="teacher-loading-state">
           <ion-icon name="refresh-outline" class="processing-icon"></ion-icon>
           <strong>Consultando horario</strong>
-          <p>Estamos verificando si tienes una clase activa.</p>
+          <p>Verificando si tienes una clase activa.</p>
         </div>
       } @else if (!currentSchedule) {
         <div class="teacher-no-class">
@@ -243,7 +243,7 @@
             <ion-icon name="time-outline"></ion-icon>
           </div>
           <strong>Sin clase activa</strong>
-          <p>Puedes utilizar el escáner, pero las asistencias únicamente se registrarán dentro del horario de una clase asignada.</p>
+          <p>Puedes utilizar el escáner, pero la asistencia únicamente se registrará dentro del horario de una clase asignada.</p>
         </div>
       }
 
@@ -336,7 +336,7 @@
             </div>
           } @else if (lastScans.length > 0) {
             <div class="recent-list">
-              @for (record of lastScans.slice(0, 3); track record.id) {
+              @for (record of lastScans; track record.id) {
                 <div class="recent-item">
                   <div class="recent-avatar">
                     <ion-icon name="checkmark-circle-outline"></ion-icon>

@@ -1,397 +1,372 @@
 :host {
   display: block;
-
   width: 100%;
+  --scanner-accent: #c7a15a;
+  --scanner-success: #78e188;
+  --scanner-danger: #ff8585;
+  --scanner-text: #ffffff;
+  --scanner-overlay: rgba(10, 10, 10, 0.52);
+  --scanner-border: rgba(255, 255, 255, 0.12);
+  --scanner-radius: 22px;
 }
 
 .scan-frame {
   width: 100%;
-
   background: transparent;
-
   border: 0;
-
   box-shadow: none;
+  transition: opacity 0.18s ease;
+}
+.scan-frame.inactive {
+  opacity: 0.92;
+}
+.scan-frame.disabled {
+  opacity: 0.8;
 }
 
 .scanner-area {
   display: flex;
   align-items: center;
   justify-content: center;
-
   width: 100%;
-
-  padding: 20px 0;
-
+  padding: 12px 0;
   background: transparent;
 }
 
 .scanner {
   position: relative;
-
-  width: min(72vw, 310px);
+  width: min(72vw, 300px);
+  max-width: 100%;
   aspect-ratio: 1;
-
   overflow: hidden;
-
   background: transparent;
-
-  border-radius: 22px;
+  border-radius: var(--scanner-radius);
+  isolation: isolate;
 }
-
+.scan-frame.inactive .scanner,
 .scan-frame.disabled .scanner {
-  background:
-    rgba(15, 15, 15, 0.82);
+  background: rgba(15, 15, 15, 0.72);
 }
 
 .corner {
   position: absolute;
   z-index: 8;
-
-  width: 48px;
-  height: 48px;
-
-  border-color: #c7a15a;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+  border-color: var(--scanner-accent);
   border-style: solid;
-
-  filter:
-    drop-shadow(
-      0 2px 5px
-      rgba(0, 0, 0, 0.45)
-    );
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.42));
 }
-
 .tl {
-  top: 6px;
-  left: 6px;
-
+  top: 7px;
+  left: 7px;
   border-width: 5px 0 0 5px;
-
-  border-radius:
-    8px 0 0 0;
+  border-radius: 9px 0 0 0;
 }
-
 .tr {
-  top: 6px;
-  right: 6px;
-
-  border-width:
-    5px 5px 0 0;
-
-  border-radius:
-    0 8px 0 0;
+  top: 7px;
+  right: 7px;
+  border-width: 5px 5px 0 0;
+  border-radius: 0 9px 0 0;
 }
-
 .bl {
-  bottom: 6px;
-  left: 6px;
-
-  border-width:
-    0 0 5px 5px;
-
-  border-radius:
-    0 0 0 8px;
+  bottom: 7px;
+  left: 7px;
+  border-width: 0 0 5px 5px;
+  border-radius: 0 0 0 9px;
 }
-
 .br {
-  right: 6px;
-  bottom: 6px;
-
-  border-width:
-    0 5px 5px 0;
-
-  border-radius:
-    0 0 8px 0;
+  right: 7px;
+  bottom: 7px;
+  border-width: 0 5px 5px 0;
+  border-radius: 0 0 9px 0;
 }
 
 .scan-line {
   position: absolute;
   z-index: 7;
-
-  top: 40px;
+  top: 38px;
   right: 30px;
   left: 30px;
-
   height: 2px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #c7a15a,
-      transparent
-    );
-
-  box-shadow:
-    0 0 16px
-    rgba(199, 161, 90, 0.9);
-
-  animation:
-    scanLine
-    2s
-    ease-in-out
-    infinite;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--scanner-accent), transparent);
+  box-shadow: 0 0 15px rgba(199, 161, 90, 0.9);
+  animation: scanLine 2s ease-in-out infinite;
 }
 
 .scanner-guide {
   position: absolute;
   z-index: 9;
-
-  right: 20px;
-  bottom: 18px;
-  left: 20px;
-
+  right: 18px;
+  bottom: 17px;
+  left: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 3px;
-
-  padding: 9px 12px;
-
-  color: #ffffff;
-
-  background:
-    rgba(10, 10, 10, 0.52);
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.12);
-
+  padding: 9px 11px;
+  color: var(--scanner-text);
+  background: rgba(10, 10, 10, 0.5);
+  border: 1px solid var(--scanner-border);
   border-radius: 12px;
-
-  backdrop-filter:
-    blur(8px);
-
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   text-align: center;
-
-  strong {
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  span {
-    color:
-      rgba(255, 255, 255, 0.63);
-
-    font-size: 9px;
-  }
+  pointer-events: none;
+}
+.scanner-guide strong {
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.scanner-guide span {
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 9px;
+  line-height: 1.3;
 }
 
 .scanner-live {
   position: absolute;
   z-index: 9;
-
-  top: 16px;
+  top: 15px;
   left: 50%;
-
   display: flex;
   align-items: center;
-
   gap: 6px;
-
   padding: 6px 9px;
-
-  color: #ffffff;
-
-  background:
-    rgba(10, 10, 10, 0.5);
-
+  color: var(--scanner-text);
+  background: rgba(10, 10, 10, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
-
-  backdrop-filter:
-    blur(8px);
-
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   font-size: 9px;
-  font-weight: 700;
-
-  transform:
-    translateX(-50%);
-
-  span {
-    width: 6px;
-    height: 6px;
-
-    background: #58dd6d;
-
-    border-radius: 50%;
-
-    box-shadow:
-      0 0 0 3px
-      rgba(88, 221, 109, 0.16);
-  }
+  font-weight: 800;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.scanner-live span {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  background: #58dd6d;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(88, 221, 109, 0.16);
+  animation: scannerPulse 1.4s ease-in-out infinite;
 }
 
 .scanner-center-message {
   position: absolute;
   inset: 0;
   z-index: 5;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
-
   padding: 24px;
-
-  color: #ffffff;
-
-  background:
-    rgba(12, 12, 12, 0.58);
-
+  color: var(--scanner-text);
+  background: rgba(12, 12, 12, 0.64);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   text-align: center;
-
-  ion-icon {
-    margin-bottom: 4px;
-
-    color: #c7a15a;
-
-    font-size: 36px;
-  }
-
-  strong {
-    font-size: 13px;
-  }
-
-  span {
-    color:
-      rgba(255, 255, 255, 0.65);
-
-    font-size: 10px;
-  }
+}
+.scanner-center-message ion-icon {
+  margin-bottom: 4px;
+  color: var(--scanner-accent);
+  font-size: 34px;
+}
+.scanner-center-message strong {
+  font-size: 13px;
+  font-weight: 800;
+}
+.scanner-center-message span {
+  max-width: 210px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 10px;
+  line-height: 1.4;
 }
 
 .scan-status-overlay {
   position: absolute;
   inset: 0;
   z-index: 15;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 7px;
-
   padding: 24px;
-
-  color: #ffffff;
-
-  backdrop-filter:
-    blur(6px);
-
+  color: var(--scanner-text);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   text-align: center;
-
-  > ion-icon {
-    margin-bottom: 5px;
-
-    font-size: 58px;
-  }
-
-  strong {
-    font-size: 15px;
-    font-weight: 800;
-  }
-
-  span {
-    color:
-      rgba(255, 255, 255, 0.7);
-
-    font-size: 10px;
-  }
-
-  button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 7px;
-
-    margin-top: 10px;
-    padding: 10px 15px;
-
-    color: #ffffff;
-
-    background:
-      rgba(255, 255, 255, 0.14);
-
-    border:
-      1px solid
-      rgba(255, 255, 255, 0.2);
-
-    border-radius: 11px;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    ion-icon {
-      font-size: 17px;
-    }
-  }
+}
+.scan-status-overlay > ion-icon {
+  margin-bottom: 5px;
+  font-size: 54px;
+}
+.scan-status-overlay strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+.scan-status-overlay span {
+  max-width: 220px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
+  line-height: 1.4;
+}
+.scan-status-overlay button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  margin-top: 9px;
+  padding: 9px 14px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 11px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+.scan-status-overlay button ion-icon {
+  font-size: 17px;
+}
+.scan-status-overlay button:active:not(:disabled) {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.2);
+}
+.scan-status-overlay button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .success-overlay {
-  background:
-    rgba(24, 87, 38, 0.8);
-
-  > ion-icon {
-    color: #7cea8d;
-  }
+  background: rgba(24, 87, 38, 0.82);
+}
+.success-overlay > ion-icon {
+  color: var(--scanner-success);
 }
 
 .error-overlay {
-  background:
-    rgba(98, 25, 31, 0.85);
-
-  > ion-icon {
-    color: #ff8585;
-  }
+  background: rgba(98, 25, 31, 0.88);
+}
+.error-overlay > ion-icon {
+  color: var(--scanner-danger);
 }
 
 @keyframes scanLine {
   0% {
-    top: 40px;
+    top: 38px;
+    opacity: 0.8;
   }
-
   50% {
-    top:
-      calc(
-        100% - 40px
-      );
+    top: calc(100% - 38px);
+    opacity: 1;
   }
-
   100% {
-    top: 40px;
+    top: 38px;
+    opacity: 0.8;
   }
 }
 
-@media (
-  prefers-reduced-motion: reduce
-) {
+@keyframes scannerPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.82);
+  }
+}
+
+@media (min-width: 700px) {
+  .scanner {
+    width: min(44vw, 320px);
+  }
+}
+
+@media (max-width: 480px) {
+  .scanner-area {
+    padding: 7px 0;
+  }
+  .scanner {
+    width: min(72vw, 275px);
+    border-radius: 20px;
+  }
+  .corner {
+    width: 41px;
+    height: 41px;
+  }
+  .scanner-guide {
+    right: 15px;
+    bottom: 15px;
+    left: 15px;
+    padding: 8px 10px;
+  }
+  .scanner-guide strong {
+    font-size: 10px;
+  }
+  .scanner-guide span {
+    font-size: 8px;
+  }
+  .scanner-live {
+    top: 13px;
+    padding: 5px 8px;
+    font-size: 8px;
+  }
+  .scanner-center-message {
+    padding: 20px;
+  }
+  .scanner-center-message ion-icon {
+    font-size: 31px;
+  }
+  .scanner-center-message strong {
+    font-size: 12px;
+  }
+  .scanner-center-message span {
+    font-size: 9px;
+  }
+  .scan-status-overlay {
+    padding: 20px;
+  }
+  .scan-status-overlay > ion-icon {
+    font-size: 48px;
+  }
+  .scan-status-overlay strong {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 390px) {
+  .scanner {
+    width: min(74vw, 255px);
+  }
+  .corner {
+    width: 38px;
+    height: 38px;
+  }
   .scan-line {
+    right: 26px;
+    left: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line,
+  .scanner-live span {
     animation: none;
   }
-}
-
-@media (
-  max-width: 480px
-) {
-  .scanner-area {
-    padding: 12px 0;
-  }
-
-  .scanner {
-    width:
-      min(
-        74vw,
-        285px
-      );
-  }
-
-  .corner {
-    width: 43px;
-    height: 43px;
+  .scan-frame,
+  .scan-status-overlay button {
+    transition: none;
   }
 }
