@@ -1,5 +1,9 @@
-<div class="average-card">
-  <p class="label">Promedio general</p>
+<!-- average-card.component.html -->
+<article class="average-card" [class.no-average]="!hasAverage">
+  <p class="label">{{ label }}</p>
   <p class="value">{{ average }}</p>
-  <p class="max">sobre 10.0</p>
-</div>
+  @if (hasAverage) {
+    <p class="max">sobre 10.0</p>
+  }
+  <p class="description">{{ description }}</p>
+</article>

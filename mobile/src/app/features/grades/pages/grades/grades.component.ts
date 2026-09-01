@@ -1,18 +1,28 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { alertCircleOutline, schoolOutline } from 'ionicons/icons';
+import { bookOutline, notificationsOutline, personOutline, schoolOutline, starOutline } from 'ionicons/icons';
 import { AuthStateService } from '@core/auth/services/auth-state.service';
 import { FeedbackService } from '@core/shared/services/feedback.service';
+import { StudentProfile } from '@core/auth/models/user';
 import { GradeItem, GradesService } from '@features/grades/services/grades.service';
 import { AverageCardComponent } from '@shared/components/grades/average-card/average-card.component';
-import { GradeCardComponent } from '@shared/components/grades/grade-card/grade-card.component';
+import { GradeCardComponent, GradeVisualStatus } from '@shared/components/grades/grade-card/grade-card.component';
+
+interface GradeViewItem {
+  id: number;
+  subject: string;
+  teacher: string;
+  grade: string;
+  status: GradeVisualStatus;
+}
+
+type PartialNumber = 1 | 2 | 3;
 
 @Component({
   selector: 'app-grades',
   standalone: true,
-  imports: [CommonModule, IonicModule, AverageCardComponent, GradeCardComponent],
+  imports: [IonContent, IonIcon, IonSpinner, AverageCardComponent, GradeCardComponent],
   templateUrl: './grades.component.html',
   styleUrl: './grades.component.scss',
 })
@@ -21,41 +31,65 @@ export class GradesComponent implements OnInit {
   private readonly gradesService = inject(GradesService);
   private readonly feedback = inject(FeedbackService);
 
-  user: any = null;
-  children: any[] = [];
-  selectedStudent: any = null;
+  children: StudentProfile[] = [];
+  selectedStudent: StudentProfile | null = null;
   selectedStudentId: number | null = null;
   grades: GradeItem[] = [];
-  parcialActual = 1;
+  parcialActual: PartialNumber = 1;
   loading = false;
   errorMessage = '';
 
   constructor() {
-    addIcons({ alertCircleOutline, schoolOutline });
+    addIcons({ bookOutline, notificationsOutline, personOutline, schoolOutline, starOutline });
+  }
+
+  get user() { return this.authState.user(); }
+  get isParent(): boolean { return this.user?.role === 'PARENT'; }
+  get isStudent(): boolean { return this.user?.role === 'STUDENT'; }
+
+  get displayedGrades(): GradeViewItem[] {
+    return this.grades.map(grade => {
+      const value = this.getPartialGrade(grade);
+      return {
+        id: grade.id,
+        subject: grade.subject?.name ?? 'Materia',
+        teacher: this.getTeacherName(grade),
+        grade: value !== null ? this.formatGrade(value) : '—',
+        status: this.getGradeStatus(value),
+      };
+    });
+  }
+
+  get average(): string {
+    const values = this.grades
+      .map(grade => this.getPartialGrade(grade))
+      .filter((value): value is number => value !== null && Number.isFinite(value));
+    if (!values.length) return '—';
+    return (values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(1);
   }
 
   ngOnInit(): void {
     this.initializeGrades();
   }
 
-  get isParent(): boolean {
-    return this.user?.role === 'PARENT';
-  }
-
-  get isStudent(): boolean {
-    return this.user?.role === 'STUDENT';
-  }
-
-  cambiarParcial(parcial: number): void {
-    if (parcial < 1 || parcial > 3) return;
+  cambiarParcial(parcial: PartialNumber): void {
+    if (this.loading || this.parcialActual === parcial) return;
     this.parcialActual = parcial;
+  }
+
+  getParcialLabel(): string {
+    switch (this.parcialActual) {
+      case 1: return 'Primer Parcial';
+      case 2: return 'Segundo Parcial';
+      case 3: return 'Tercer Parcial';
+    }
   }
 
   onStudentChange(event: Event): void {
     if (this.loading) return;
     const target = event.target as HTMLSelectElement;
     const studentId = Number(target.value);
-    if (!studentId || Number.isNaN(studentId)) return;
+    if (!Number.isFinite(studentId) || studentId <= 0) return;
     const child = this.children.find(item => item.id === studentId);
     if (!child) {
       void this.feedback.error('No se encontró el alumno seleccionado.');
@@ -64,39 +98,25 @@ export class GradesComponent implements OnInit {
     if (this.selectedStudentId === child.id) return;
     this.selectedStudent = child;
     this.selectedStudentId = child.id;
-    this.loadGrades(child.id, true);
+    this.loadGrades(child.id);
   }
 
-  loadGrades(studentId: number, showStudentFeedback = false): void {
+  private loadGrades(studentId: number): void {
     if (this.loading) return;
     this.loading = true;
     this.errorMessage = '';
     this.grades = [];
     this.gradesService.getByStudent(studentId).subscribe({
-      next: async response => {
+      next: response => {
         this.grades = response ?? [];
         this.loading = false;
-        if (showStudentFeedback && this.isParent && this.grades.length > 0) {
-          const name = this.getSelectedStudentName();
-          await this.feedback.info(name ? `Calificaciones de ${name} actualizadas.` : 'Calificaciones actualizadas.');
-        }
-        if (this.grades.length === 0) {
-          await this.feedback.info('Aún no hay calificaciones registradas para este alumno.');
-        }
       },
-      error: async error => {
+      error: error => {
         this.loading = false;
         this.grades = [];
-        let message = 'No fue posible cargar las calificaciones.';
-        if (error?.status === 403) {
-          message = 'No tienes permiso para consultar las calificaciones de este alumno.';
-        } else if (error?.status === 404) {
-          message = 'No se encontró información de calificaciones para este alumno.';
-        } else if (error?.error?.message) {
-          message = error.error.message;
-        }
+        const message = this.getErrorMessage(error);
         this.errorMessage = message;
-        await this.feedback.error(message);
+        void this.feedback.error(message);
       },
     });
   }
@@ -106,63 +126,26 @@ export class GradesComponent implements OnInit {
     this.loadGrades(this.selectedStudentId);
   }
 
-  getGrades(): { subject: string; teacher: string; grade: string; status: string }[] {
-    return this.grades.map(grade => {
-      const value = this.getPartialGrade(grade);
-      const normalized = value !== null ? this.normalizeGrade(value) : null;
-      return {
-        subject: grade.subject?.name ?? 'Materia',
-        teacher: this.getTeacherName(grade),
-        grade: normalized !== null ? normalized.toFixed(1) : '-',
-        status: this.getGradeStatus(normalized),
-      };
-    });
-  }
-
-  getAverage(): string {
-    const values = this.grades
-      .map(grade => {
-        const value = this.getPartialGrade(grade);
-        return value !== null ? this.normalizeGrade(value) : null;
-      })
-      .filter((value): value is number => value !== null);
-    if (values.length === 0) return '-';
-    const total = values.reduce((sum, value) => sum + value, 0);
-    return (total / values.length).toFixed(1);
-  }
-
-  getParcialLabel(): string {
-    switch (this.parcialActual) {
-      case 1: return 'Primer Parcial';
-      case 2: return 'Segundo Parcial';
-      case 3: return 'Tercer Parcial';
-      default: return 'Calificaciones';
-    }
-  }
-
   getSelectedStudentName(): string {
-    if (!this.selectedStudent) return '';
     if (this.isParent) {
       const firstName = this.selectedStudent?.user?.firstName ?? '';
       const lastName = this.selectedStudent?.user?.lastName ?? '';
-      return `${firstName} ${lastName}`.trim();
+      return [firstName, lastName].filter(Boolean).join(' ').trim();
     }
-    return `${this.user?.firstName ?? ''} ${this.user?.lastName ?? ''}`.trim();
+    const user = this.user;
+    if (!user) return '';
+    return [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
   }
 
   getStudentGroup(): string {
-    if (this.isParent) {
-      return this.selectedStudent?.group?.name ?? 'Sin grupo';
-    }
+    if (this.isParent) return this.selectedStudent?.group?.name ?? 'Sin grupo';
     return this.user?.studentProfile?.group?.name ?? 'Sin grupo';
   }
 
   private initializeGrades(): void {
-    this.user = this.authState.user();
-    if (!this.user) {
-      const message = 'No se encontró información del usuario.';
-      this.errorMessage = message;
-      void this.feedback.error(message);
+    const user = this.user;
+    if (!user) {
+      this.setInitialError('No se encontró información del usuario.');
       return;
     }
     if (this.isStudent) {
@@ -173,31 +156,24 @@ export class GradesComponent implements OnInit {
       this.initializeParent();
       return;
     }
-    const message = 'Este usuario no tiene acceso a las calificaciones.';
-    this.errorMessage = message;
-    void this.feedback.warning(message);
+    this.errorMessage = 'Este usuario no tiene acceso a las calificaciones.';
   }
 
   private initializeStudent(): void {
     const studentProfile = this.user?.studentProfile;
-    const studentId = studentProfile?.id;
-    if (!studentId) {
-      const message = 'No se encontró el perfil del alumno.';
-      this.errorMessage = message;
-      void this.feedback.error(message);
+    if (!studentProfile?.id) {
+      this.setInitialError('No se encontró el perfil del alumno.');
       return;
     }
     this.selectedStudent = studentProfile;
-    this.selectedStudentId = studentId;
-    this.loadGrades(studentId);
+    this.selectedStudentId = studentProfile.id;
+    this.loadGrades(studentProfile.id);
   }
 
   private initializeParent(): void {
     this.children = this.user?.parentProfile?.children ?? [];
-    if (this.children.length === 0) {
-      const message = 'No hay alumnos asociados a este tutor.';
-      this.errorMessage = message;
-      void this.feedback.info(message);
+    if (!this.children.length) {
+      this.errorMessage = 'No hay alumnos asociados a este tutor.';
       return;
     }
     const firstChild = this.children[0];
@@ -211,27 +187,40 @@ export class GradesComponent implements OnInit {
       case 1: return grade.partial1 ?? null;
       case 2: return grade.partial2 ?? null;
       case 3: return grade.partial3 ?? null;
-      default: return null;
     }
+  }
+
+  private formatGrade(grade: number): string {
+    if (!Number.isFinite(grade)) return '—';
+    return grade.toFixed(1);
   }
 
   private getTeacherName(grade: GradeItem): string {
     const firstName = grade.subject?.teacher?.user?.firstName ?? '';
     const lastName = grade.subject?.teacher?.user?.lastName ?? '';
-    return `${firstName} ${lastName}`.trim() || 'Docente';
+    return [firstName, lastName].filter(Boolean).join(' ').trim() || 'Docente';
   }
 
-  private getGradeStatus(grade: number | null): string {
+  private getGradeStatus(grade: number | null): GradeVisualStatus {
     if (grade === null) return 'Sin calificación';
     if (grade >= 9) return 'Excelente';
-    if (grade >= 7) return 'Aprobado';
+    if (grade >= 6) return 'Aprobado';
     return 'En riesgo';
   }
 
-  private normalizeGrade(grade: number): number {
-    if (grade > 10) {
-      return Number((grade / 10).toFixed(1));
-    }
-    return grade;
+  private setInitialError(message: string): void {
+    this.errorMessage = message;
+    void this.feedback.error(message);
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (typeof error !== 'object' || error === null) return 'No fue posible cargar las calificaciones.';
+    const httpError = error as { status?: number; error?: { message?: string | string[] } };
+    if (httpError.status === 403) return 'No tienes permiso para consultar las calificaciones de este alumno.';
+    if (httpError.status === 404) return 'No se encontró información de calificaciones para este alumno.';
+    const backendMessage = httpError.error?.message;
+    if (Array.isArray(backendMessage)) return backendMessage.join('. ');
+    if (typeof backendMessage === 'string' && backendMessage.trim()) return backendMessage;
+    return 'No fue posible cargar las calificaciones.';
   }
 }

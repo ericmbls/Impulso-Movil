@@ -1,7 +1,8 @@
+// schedule-card.component.ts
 import { Component, Input } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { timeOutline } from 'ionicons/icons';
+import { locationOutline, timeOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-schedule-card',
@@ -11,14 +12,14 @@ import { timeOutline } from 'ionicons/icons';
   styleUrl: './schedule-card.component.scss',
 })
 export class ScheduleCardComponent {
-
-  @Input() subject = '';
+  @Input({ required: true }) subject = '';
   @Input() teacher = '';
+  @Input() detailLabel = 'Docente';
   @Input() classroom = '';
-  @Input() time = '';
+  @Input({ required: true }) time = '';
   @Input() color = '#7d1736';
 
   constructor() {
-    addIcons({ timeOutline });
+    addIcons({ locationOutline, timeOutline });
   }
 }

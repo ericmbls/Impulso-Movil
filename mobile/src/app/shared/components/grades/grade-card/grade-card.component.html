@@ -1,9 +1,16 @@
-<div class="grade-card">
+<!-- grade-card.component.html -->
+<article class="grade-card">
   <div class="info">
-    <p class="subject">{{ subject }}</p>
-    <p class="teacher">{{ teacher }}</p>
+    <h3 class="subject">{{ subject }}</h3>
+    @if (teacher) {
+      <p class="teacher">
+        <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+        <span>{{ teacher }}</span>
+      </p>
+    }
   </div>
   <div class="grade-wrapper">
     <span class="value">{{ grade }}</span>
+    <span class="status" [class]="statusClass">{{ status }}</span>
   </div>
-</div>
+</article>

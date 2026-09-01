@@ -1,74 +1,85 @@
+<!-- schedule.component.html -->
 <ion-content fullscreen="true">
-  <div class="schedule-container">
-    <div class="hero">
+  <main class="schedule-container">
+    <section class="hero">
       <div class="hero-content">
         <h1>
-          <ion-icon name="calendar-outline"></ion-icon>
+          <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
           {{ isTeacher ? 'Horario de hoy' : 'Horario' }}
         </h1>
         <p>{{ getSubtitle() }}</p>
       </div>
-      <div class="hero-decoration">
+      <div class="hero-decoration" aria-hidden="true">
         <div class="circle circle-1"></div>
         <div class="circle circle-2"></div>
       </div>
-    </div>
+    </section>
 
-    @if (!isTeacher) {
-      <div class="days-selector">
+    @if (isStudent) {
+      <nav class="days-selector" aria-label="Seleccionar día">
         @for (day of days; track day.day; let i = $index) {
           <button
             type="button"
             class="day-btn"
             [class.active]="diaActual === i"
-            (click)="cambiarDia(i)"
-          >
+            [attr.aria-pressed]="diaActual === i"
+            [attr.aria-label]="day.fullLabel"
+            [disabled]="loading"
+            (click)="cambiarDia(i)">
             {{ day.label }}
           </button>
         }
-      </div>
+      </nav>
     }
 
-    <div class="section">
-      <h3>
-        <ion-icon name="time-outline"></ion-icon>
-        {{ isTeacher ? 'Clases de hoy' : 'Clases' }}
-      </h3>
+    <section class="section">
+      <div class="section-header">
+        <h2>
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+          {{ isTeacher ? 'Clases de hoy' : 'Clases' }}
+        </h2>
+        @if (!loading && !errorMessage && selectedClasses.length) {
+          <span class="class-count">
+            {{ selectedClasses.length === 1 ? '1 clase' : selectedClasses.length + ' clases' }}
+          </span>
+        }
+      </div>
 
       @if (loading) {
-        <div class="schedule-state">
+        <div class="schedule-state" aria-live="polite">
           <ion-spinner name="crescent"></ion-spinner>
           <strong>Cargando horario</strong>
           <p>Espera un momento mientras obtenemos tus clases.</p>
         </div>
       } @else if (errorMessage) {
-        <div class="schedule-state error">
-          <ion-icon name="alert-circle-outline"></ion-icon>
+        <div class="schedule-state error" role="alert">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
           <strong>No se pudo cargar el horario</strong>
           <p>{{ errorMessage }}</p>
-          <button type="button" class="retry-button" (click)="retry()">Reintentar</button>
+          @if (isStudent || isTeacher) {
+            <button type="button" class="retry-button" (click)="retry()">Reintentar</button>
+          }
         </div>
-      } @else if (getClasses().length > 0) {
-        @for (item of getClasses(); track item.id) {
-          <app-schedule-card
-            [subject]="item.subject"
-            [teacher]="isTeacher ? item.group : item.teacher"
-            [classroom]="item.classroom"
-            [time]="item.time"
-            [color]="item.color"
-          ></app-schedule-card>
-        }
+      } @else if (selectedClasses.length) {
+        <div class="schedule-list">
+          @for (item of selectedClasses; track item.id) {
+            <app-schedule-card
+              [subject]="item.subject"
+              [teacher]="isTeacher ? item.group : item.teacher"
+              [detailLabel]="isTeacher ? 'Grupo' : 'Docente'"
+              [classroom]="item.classroom"
+              [time]="item.time"
+              [color]="item.color">
+            </app-schedule-card>
+          }
+        </div>
       } @else {
         <div class="schedule-state empty">
-          <ion-icon name="calendar-outline"></ion-icon>
-          <strong>
-            {{ isTeacher ? 'No tienes clases programadas para hoy' : 'No hay clases para este día' }}
-          </strong>
-          <p>
-            {{ isTeacher ? 'Tu horario está libre durante el día de hoy.' : 'Selecciona otro día para consultar tu horario.' }}
-          </p>
+          <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+          <strong>{{ isTeacher ? 'No tienes clases programadas para hoy' : 'No hay clases para este día' }}</strong>
+          <p>{{ isTeacher ? 'Tu horario está libre durante el día de hoy.' : 'Selecciona otro día para consultar tu horario.' }}</p>
         </div>
       }
-    </div>
-  </div>
+    </section>
+  </main>
 </ion-content>

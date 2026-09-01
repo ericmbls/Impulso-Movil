@@ -1,14 +1,25 @@
-<div class="schedule-card">
-  <div class="color-bar" [style.background]="color"></div>
+<!-- schedule-card.component.html -->
+<article class="schedule-card">
+  <span class="color-bar" [style.background]="color" aria-hidden="true"></span>
   <div class="info">
-    <p class="subject">{{ subject }}</p>
+    <h3 class="subject">{{ subject }}</h3>
     <div class="meta">
-      <span class="teacher">{{ teacher }}</span>
-      <span class="classroom">{{ classroom }}</span>
+      @if (teacher) {
+        <span class="detail">
+          <small>{{ detailLabel }}</small>
+          <strong>{{ teacher }}</strong>
+        </span>
+      }
+      @if (classroom) {
+        <span class="classroom">
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+          {{ classroom }}
+        </span>
+      }
     </div>
   </div>
   <div class="time">
-    <ion-icon name="time-outline"></ion-icon>
-    {{ time }}
+    <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+    <span>{{ time }}</span>
   </div>
-</div>
+</article>

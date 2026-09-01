@@ -34,6 +34,7 @@ export interface TeacherProfile {
 export interface StudentProfile {
   id: number;
   userId?: number;
+  user?: { id?: number; email?: string; firstName?: string; lastName?: string; } | null;
   enrollmentId?: string;
   controlNumber?: string;
   groupId: number;

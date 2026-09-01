@@ -1,3 +1,4 @@
+// average-card.component.ts
 import { Component, Input } from '@angular/core';
 
 @Component({
@@ -8,11 +9,21 @@ import { Component, Input } from '@angular/core';
   styleUrl: './average-card.component.scss',
 })
 export class AverageCardComponent {
+  @Input({ required: true }) average = '—';
+  @Input() label = 'Promedio del parcial';
 
-  @Input() average = '9.2';
+  get description(): string {
+    const value = Number(this.average);
+    if (!Number.isFinite(value)) {
+      return 'Sin calificaciones registradas';
+    }
+    if (value >= 9) return 'Excelente desempeño';
+    if (value >= 8) return 'Muy buen desempeño';
+    if (value >= 6) return 'Desempeño aprobatorio';
+    return 'Requiere atención académica';
+  }
 
-  @Input() label = 'Promedio General';
-
-  @Input() description = 'Excelente desempeño';
-
+  get hasAverage(): boolean {
+    return Number.isFinite(Number(this.average));
+  }
 }

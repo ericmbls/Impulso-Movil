@@ -1,39 +1,35 @@
+// schedule-card.component.scss
 :host {
   display: block;
+  --primary: #7d1736;
+  --primary-soft: rgba(125, 23, 54, 0.07);
+  --gold: #c7a15a;
+  --text: #211d1e;
+  --text-soft: #6f686a;
+  --text-muted: #aaa3a5;
 }
 
 .schedule-card {
-  background: white;
-  border-radius: 20px;
-  padding: 16px 18px;
-  border: 1px solid rgba(199, 161, 90, 0.4);
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.schedule-card:hover {
-  transform: translateX(4px);
-  border-color: rgba(199, 161, 90, 0.7);
-  box-shadow: 0 4px 16px rgba(125, 23, 54, 0.06);
-}
-
-.schedule-card:active {
-  transform: scale(0.98);
+  min-width: 0;
+  gap: 13px;
+  overflow: hidden;
+  padding: 14px 15px;
+  background: rgba(255, 255, 255, 0.87);
+  border: 1px solid rgba(125, 23, 54, 0.065);
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
 }
 
 .color-bar {
+  flex: 0 0 4px;
   width: 4px;
-  height: 48px;
-  border-radius: 4px;
-  flex-shrink: 0;
-  transition: height 0.2s ease;
-}
-
-.schedule-card:hover .color-bar {
-  height: 56px;
+  height: 50px;
+  border-radius: 999px;
 }
 
 .info {
@@ -42,45 +38,122 @@
 }
 
 .subject {
+  overflow: hidden;
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #222;
-  letter-spacing: -0.2px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .meta {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 4px;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 10px;
+  margin-top: 6px;
 }
 
-.teacher {
-  font-size: 13px;
-  color: #666;
+.detail {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.detail small {
+  color: var(--text-muted);
+  font-size: 7px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.detail strong {
+  overflow: hidden;
+  max-width: 175px;
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .classroom {
-  font-size: 12px;
-  color: #999;
-  background: rgba(199, 161, 90, 0.12);
-  padding: 2px 10px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 150px;
+  overflow: hidden;
+  padding: 4px 7px;
+  color: var(--text-soft);
+  background: rgba(199, 161, 90, 0.1);
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.classroom ion-icon {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-size: 11px;
 }
 
 .time {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #7d1736;
-  white-space: nowrap;
   flex-shrink: 0;
+  gap: 4px;
+  min-width: 72px;
+  padding: 7px 8px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-radius: 11px;
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+}
+.time ion-icon {
+  font-size: 15px;
 }
 
-.time ion-icon {
-  font-size: 18px;
+@media (max-width: 420px) {
+  .schedule-card {
+    gap: 10px;
+    padding: 13px 12px;
+    border-radius: 16px;
+  }
+  .color-bar {
+    height: 47px;
+  }
+  .subject {
+    font-size: 13px;
+  }
+  .detail strong {
+    max-width: 130px;
+    font-size: 9px;
+  }
+  .time {
+    min-width: 63px;
+    padding: 6px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .schedule-card {
+    align-items: flex-start;
+  }
+  .time {
+    min-width: 58px;
+  }
+  .time span {
+    max-width: 48px;
+    white-space: normal;
+    line-height: 1.25;
+  }
 }

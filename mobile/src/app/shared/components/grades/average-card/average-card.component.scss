@@ -1,30 +1,83 @@
+// average-card.component.scss
 :host {
   display: block;
+  --primary: #7d1736;
+  --primary-dark: #5d1028;
+  --primary-soft: rgba(125, 23, 54, 0.07);
+  --text: #211d1e;
+  --text-soft: #716a6c;
+  --text-muted: #aaa3a5;
 }
 
 .average-card {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  border: 1px solid rgba(199, 161, 90, 0.4);
+  position: relative;
+  overflow: hidden;
+  padding: 20px 18px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(125, 23, 54, 0.07);
+  border-radius: 20px;
+  box-shadow: 0 7px 24px rgba(0, 0, 0, 0.045);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.average-card .label {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-  margin-bottom: 4px;
+.average-card::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  content: '';
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.75;
 }
 
-.average-card .value {
-  font-size: 48px;
-  font-weight: 700;
-  color: #7d1736;
+.label {
+  margin: 0 0 6px;
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.value {
+  margin: 0;
+  color: var(--primary);
+  font-size: 42px;
+  font-weight: 900;
   line-height: 1;
+  letter-spacing: -1px;
 }
 
-.average-card .max {
-  font-size: 14px;
-  color: #999;
+.max {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.description {
+  margin: 9px 0 0;
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.average-card.no-average .value {
+  color: var(--text-muted);
+}
+.average-card.no-average::before {
+  opacity: 0.25;
+}
+
+@media (max-width: 420px) {
+  .average-card {
+    padding: 17px 15px;
+    border-radius: 18px;
+  }
+  .value {
+    font-size: 38px;
+  }
 }
